@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard do Clima</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f0f4f8;
+            color: #333;
+            margin: 0;
+            padding: 0;
+        }
+        header {
+            background-color: #4a90e2;
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+        .container {
+            padding: 30px;
+            max-width: 600px;
+            margin: auto;
+            background: white;
+            margin-top: 40px;
+            margin-left: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .info {
+            text-align: center;
+        }
+        .temp {
+            font-size: 48px;
+            font-weight: bold;
+        }
+        .details {
+            margin-top: 20px;
+        }
+        .details p {
+            margin: 6px 0;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Dashboard do Clima</h1>
+        <p>{{ cidade }}, {{ pais }}</p>
+    </header>
+
+    <div class="container">
+        <div class="info">
+            <div class="temp">{{ temperatura }}°C</div>
+            <div>{{ descricao }}</div>
+        </div>
+        <div class="details">
+            <p><strong>Umidade:</strong> {{ umidade }}%</p>
+            <p><strong>Vento:</strong> {{ vento }} km/h</p>
+            <p><strong>Atualizado em:</strong> {{ atualizado_em }}</p>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="info">
+            <div class="temp">{{ temperatura }}°C</div>
+            <div>{{ descricao }}</div>
+        </div>
+        <div class="details">
+            <p><strong>Umidade:</strong> {{ umidade }}%</p>
+            <p><strong>Vento:</strong> {{ vento }} km/h</p>
+            <p><strong>Atualizado em:</strong> {{ atualizado_em }}</p>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="info">
+            <div class="temp">{{ temperatura }}°C</div>
+            <div>{{ descricao }}</div>
+        </div>
+        <div class="details">
+            <p><strong>Umidade:</strong> {{ umidade }}%</p>
+            <p><strong>Vento:</strong> {{ vento }} km/h</p>
+            <p><strong>Atualizado em:</strong> {{ atualizado_em }}</p>
+        </div>
+    </div>
+</body>
+</html>
