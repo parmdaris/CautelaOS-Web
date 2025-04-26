@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cautela de Materiais</title>
+  <style>
+    html, body {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      font-size: 12px;
+      background: white;
+      color: #333;
+    }
+    .container {
+      display: flex;
+      flex-direction: column;
+      min-height: 100%;
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px 30px;
+      box-sizing: border-box;
+    }
+    .header-top {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 20px;
+    }
+    .header-box {
+      border: 1px solid #ddd;
+      width: 48%;
+      padding: 12px;
+      text-align: center;
+      font-size: 12px;
+    }
+    .main-title {
+      text-align: center;
+      font-weight: bold;
+      font-size: 18px;
+      margin-bottom: 20px;
+    }
+    .main-content {
+      flex: 1;
+    }
+    .section {
+      margin-bottom: 15px;
+    }
+    .section-title {
+      text-align: center;
+      font-size: 14px;
+      font-weight: bold;
+      margin-bottom: 8px;
+      margin-top: 15px;
+    }
+    .section h2 {
+      font-size: 14px;
+      border-bottom: 1px solid #ddd;
+      padding-bottom: 4px;
+      margin-bottom: 8px;
+    }
+    .material-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 5px;
+    }
+    .material-table th, .material-table td {
+      padding: 6px 8px;
+      border: 1px solid #ddd;
+      text-align: left;
+    }
+    .material-table th {
+      background-color: #ffffff;
+      color: rgb(0, 0, 0);
+      font-size: 12px;
+    }
+    .material-table td {
+      font-size: 12px;
+    }
+    .signatures {
+      display: flex;
+      justify-content: space-between;
+      margin-top: auto;
+      padding-top: 40px;
+    }
+    .signature {
+      width: 45%;
+      text-align: center;
+      font-size: 12px;
+    }
+    .signature-line {
+      margin-top: 30px;
+      border-top: 1px solid #000;
+      width: 100%;
+      height: 1px;
+    }
+    @page {
+      size: A4;
+      margin: 20mm 15mm;
+    }
+    @media print {
+      body, html {
+        background: white;
+      }
+      .container {
+        box-shadow: none;
+        border: none;
+        margin: 0;
+        width: auto;
+        padding: 0;
+      }
+      .header-box {
+        font-size: 11px;
+        padding: 10px;
+      }
+      .main-title {
+        font-size: 16px;
+        margin-bottom: 15px;
+      }
+      .material-table th, .material-table td {
+        padding: 5px;
+      }
+      .signatures {
+        padding-top: 20px;
+      }
+    }
+  </style>
+</head>
+<body onload="window.print()">
+
+<div class="container">
+
+  <!-- Cabeçalho Superior: Logotipo + Empresa -->
+  <div class="header-top">
+    <div class="header-box">
+      Logotipo
+    </div>
+    <div class="header-box">
+      <strong>Niitech da Amazônia</strong><br>
+      Rua São Pedro, 162 - Parque 10 - Manaus - AM<br>
+      Tel: (92) 98151-2345 - niitecham@gmail.com
+    </div>
+  </div>
+
+  <!-- Título Principal -->
+  <div class="main-title">
+    Cautela de entrega de materiais
+  </div>
+
+  <!-- Conteúdo Principal -->
+  <div class="main-content">
+
+    <!-- Informações Gerais -->
+    <div class="section">
+      <p><strong>Destino:</strong> {{ nome_cliente }}</p>
+      <p><strong>Data:</strong> {{ data_cautela }}</p>
+      <p><strong>Quantidade de Itens:</strong> {{ qtd_itens }}</p>
+    </div>
+
+    <!-- Relação de Materiais -->
+    <div class="section">
+      <div class="section-title">
+        Relação de Materiais
+      </div>
+      <table class="material-table">
+        <thead>
+          <tr>
+            <th>Código</th>
+            <th>Nome do Item</th>
+            <th>Quantidade</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for item in itens_cautela %}
+          <tr>
+            <td>{{ item.codigo }}</td>
+            <td>{{ item.nome }}</td>
+            <td>{{ item.quantidade }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Observações -->
+    <div class="section">
+      <div class="section-title">
+        Observações
+      </div>
+      <p>{{ obs_cautela }}</p>
+    </div>
+
+  </div>
+
+  <!-- Assinaturas -->
+  <div class="section signatures">
+    <div class="signature">
+      <p>Entregue por:</p>
+      <div class="signature-line"></div>
+    </div>
+    <div class="signature">
+      <p>Recebido por:</p>
+      <div class="signature-line"></div>
+    </div>
+  </div>
+
+</div>
+
+</body>
+</html>
