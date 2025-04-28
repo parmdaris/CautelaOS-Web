@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <title>{{titulo}}</title>
+    <title>Início - Cautela OS</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
         body {
@@ -14,7 +14,7 @@
         header {
             background-color: #007bff;
             color: white;
-            padding: 20px;
+            padding: 10px;
             text-align: center;
         }
         .container {
@@ -57,12 +57,13 @@
 </head>
 <body>
     <header>
-        <h1>{{titulo}}</h1>
+        <h1>Cautela OS</h1>
     </header>
     <div class="container">
-        <a href="{{ url_for('ver_estoque') }}" class="menu-button">📦 Ver Estoque</a>
-        <a href="{{ url_for('ver_cautelas') }}" class="menu-button">📋 Ver Cautelas</a>
-        <a href="{{ url_for('nova_cautela') }}" class="menu-button">📝 Nova Cautela</a>
+        <a href="{{ url_for('ver_estoque') }}" class="menu-button">📦 Saída de material - WIP</a> 
+        <a href="{{ url_for('ver_estoque') }}" class="menu-button">🔎 Ver Estoque</a>
+        <a href="{{ url_for('listar_cautelas') }}" class="menu-button">📋 Ver Cautelas</a>
+        <a href="{{ url_for('nova_cautela') }}" class="menu-button">📝 Nova Cautela - WIP</a>
     </div>
 </body>
 </html>

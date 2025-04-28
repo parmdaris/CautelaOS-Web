@@ -7,18 +7,17 @@ def iniciarIndex():
 
     @app.route('/')
     def cautelaos():
-        titulo = "CautelaOS Web"
-        return render_template('index.html', titulo=titulo)
+        return render_template('index.html')
 
 
     @app.route("/cautelas/")
-    def ver_cautelas():
+    def listar_cautelas():
         cautelas = db.listaCautelas()
         return render_template('lista_cautelas.html', dados=cautelas)
 
 
     @app.route('/cautelas/<id_cautela>')
-    def cautela(id_cautela):
+    def ver_cautela(id_cautela):
         detalhe_dados = db.getDadosCautela(id_cautela)
         itens_cautela = db.getItensCautela(id_cautela, detalhe_dados["qtd_itens"])
         return render_template("cautela.html", itens_cautela=itens_cautela, **detalhe_dados)
@@ -39,7 +38,18 @@ def iniciarIndex():
 
     @app.route("/estoque")
     def ver_estoque():
-        return "<h2>Página de Estoque</h2>"
+        dados_estoque = db.getEstoque()
+        return render_template('listagem_estoque.html', dados_estq=dados_estoque)
+    
+
+    @app.route("/estoque/<codigo_item>")
+    def ver_item(codigo_item):
+        return codigo_item
+    
+    @app.route("/estoque/print")
+    def imprimir_estoque():
+        dados_estoque = db.getEstoque()
+        return render_template('imprimir_estoque.html', dados_estq=dados_estoque)
 
     @app.route("/cautela/nova")
     def nova_cautela():

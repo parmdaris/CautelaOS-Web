@@ -155,9 +155,10 @@
 
     <!-- Informações Gerais -->
     <div class="section">
+      <p><strong>Documento nº:</strong> {{ id_cautela }}</p>
       <p><strong>Destino:</strong> {{ nome_cliente }}</p>
       <p><strong>Data:</strong> {{ data_cautela }}</p>
-      <p><strong>Quantidade de Itens:</strong> {{ qtd_itens }}</p>
+      <p><strong>Volumes:</strong> {{ volumes }}</p>
     </div>
 
     <!-- Relação de Materiais -->
@@ -186,7 +187,7 @@
     </div>
 
     <!-- Observações -->
-    <div class="section">
+    <div class="section" style="margin-top: 40px;">
       <div class="section-title">
         Observações
       </div>
@@ -198,12 +199,14 @@
   <!-- Assinaturas -->
   <div class="section signatures">
     <div class="signature">
-      <p>Entregue por:</p>
       <div class="signature-line"></div>
+      <p>Entregue por:</p>
+      
     </div>
     <div class="signature">
-      <p>Recebido por:</p>
       <div class="signature-line"></div>
+      <p>Recebido por:</p>
+      
     </div>
   </div>
 

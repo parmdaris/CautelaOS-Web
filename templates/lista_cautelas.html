@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <title>Menu Principal</title>
+    <title>Cautelas emitidas - Cautela OS</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
         body {
@@ -14,13 +14,13 @@
         header {
             background-color: #007bff;
             color: white;
-            padding: 20px;
+            padding: 10px;
             text-align: center;
         }
         .container { /*Características do contêiner*/
             padding: 30px;
             max-width: 800px;
-            height: 1000px;
+            /*height: 800px;*/
             margin: auto;
             background: white;
             margin-top: 40px;
@@ -81,7 +81,7 @@
 
 <body>
     <header>
-        <h1>Cautela OS - Histórico</h1>
+        <h1>Cautelas emitidas</h1>
     </header>
     <div class="container">
         <table class="material-table">
@@ -99,11 +99,80 @@
                     <td>{{ item.id_cautela }}</td>
                     <td>{{ item.nome_cliente }}</td>
                     <td>{{ item.data_cautela }}</td>
-                    <td><a href="{{ url_for('cautela', id_cautela=item.id_cautela) }}">🔍</a></td>
+                    <td><a href="{{ url_for('ver_cautela', id_cautela=item.id_cautela) }}">🔍</a></td>
                 </tr>
                 {% endfor %}
             </tbody>
         </table>
     </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+          const linhas = Array.from(document.querySelectorAll(".material-table tbody tr"));
+          const linhasPorPagina = 15; // Quantas linhas por página você quer?
+          let paginaAtual = 1;
+      
+          function mostrarPagina(pagina) {
+            const inicio = (pagina - 1) * linhasPorPagina;
+            const fim = inicio + linhasPorPagina;
+      
+            linhas.forEach((linha, index) => {
+              if (index >= inicio && index < fim) {
+                linha.style.display = "";
+              } else {
+                linha.style.display = "none";
+              }
+            });
+          }
+      
+          function criarPaginacao() {
+            const totalPaginas = Math.ceil(linhas.length / linhasPorPagina);
+            const paginacaoDiv = document.createElement("div");
+            paginacaoDiv.style.textAlign = "center";
+            paginacaoDiv.style.marginTop = "20px";
+      
+            for (let i = 1; i <= totalPaginas; i++) {
+              const botao = document.createElement("button");
+              botao.textContent = i;
+              botao.style.margin = "0 5px";
+              botao.style.padding = "8px 12px";
+              botao.style.border = "none";
+              botao.style.borderRadius = "5px";
+              botao.style.backgroundColor = "#007bff";
+              botao.style.color = "white";
+              botao.style.cursor = "pointer";
+      
+              if (i === paginaAtual) {
+                botao.style.backgroundColor = "#0056b3";
+              }
+      
+              botao.addEventListener("click", function () {
+                paginaAtual = i;
+                mostrarPagina(paginaAtual);
+                atualizarBotoes();
+              });
+      
+              paginacaoDiv.appendChild(botao);
+            }
+      
+            document.querySelector(".container").appendChild(paginacaoDiv);
+          }
+      
+          function atualizarBotoes() {
+            const botoes = document.querySelectorAll(".container button");
+            botoes.forEach((botao, index) => {
+              if (index + 1 === paginaAtual) {
+                botao.style.backgroundColor = "#0056b3";
+              } else {
+                botao.style.backgroundColor = "#007bff";
+              }
+            });
+          }
+      
+          mostrarPagina(paginaAtual);
+          criarPaginacao();
+        });
+      </script>
+
 </body>
 </html>
