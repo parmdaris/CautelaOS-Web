@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+    
+<meta charset="UTF-8"/>
+
+    <style>
+
+        table {
+                border-collapse: collapse;
+                width: 100%;
+                font-size: 10px;
+            } 
+
+        th {
+                font-family: monospace;
+                border: thin solid #6495ed;
+                padding: 5px;
+                background-color: #D0E3FA;
+                text-align: left;
+            }
+
+        td {
+                font-family: monospace;
+                border: thin solid #6495ed;
+                padding: 5px;
+                text-align: center;
+            }
+
+        img {
+                padding: 5px; 
+                border: solid; 
+                border-color: #dddddd #aaaaaa #aaaaaa #dddddd; 
+                border-width: 1px 2px 2px 1px; 
+                background-color: white;
+            }
+
+    </style>
+</head>
+
+<body onload="window.print()">
+    <table>
+        <tr>
+            <th colspan="4">
+                    <p>Cautela OS - Relatório de estoque
+                        <br>Data: 28/04/2025
+                        <br>Quantidade de itens: {{ qtd_artigos }}
+                        <br>Valor total: R$ {{ valor_estoque }}
+                    </p>
+            </th>
+        </tr>
+
+        <tr>
+            <th style="text-align: center;">Código</th>
+            <th style="text-align: center;">Descrição do item</th>
+            <th style="text-align: center;">Qtd</th>
+            <th style="text-align: center;">Valor</th>
+        </tr>
+
+        
+        {% for item in dados_estq %}
+
+            <tr>
+            <td>{{ item.codigo_item }}</td>
+            <td style="text-align: left">{{ item.descricao_item }}</td>
+            <td>{{ item.qtd_item }}</td>
+            <td>R$ {{ item.valor_item }}</td>
+            </tr>
+
+        {% endfor %}
+
+    </table>
+</body>
+</html>

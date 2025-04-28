@@ -184,9 +184,9 @@ def getEstoque():
     sql = '''select codigo, 
                     nome_item, 
                     qty, 
-                    valor_unitario 
+                    valor_unitario
                 from estoque.suprimentos 
-                order by codigo desc;'''
+                order by codigo asc;'''
     
     cursor.execute(sql) 
     stream = cursor.fetchall()
@@ -203,3 +203,144 @@ def getEstoque():
 
     connection.close() 
     return dados_estoque
+
+def getDadosItem(codigo_item):
+    infoDB = dadosDB()
+    connection = pg.connect(   
+        database= infoDB['db_name'], user= infoDB['db_user'], 
+        password= infoDB['db_password'], host= infoDB['host_db'], port= infoDB['port']
+    )
+    connection.autocommit = True
+    cursor = connection.cursor() 
+    
+    sql = '''
+            select codigo, 
+                    nome_item, 
+                    qty, 
+                    valor_unitario,
+                    ean_13
+            from estoque.suprimentos 
+            where codigo = %s
+        '''
+    
+    cursor.execute(sql, (codigo_item,)) 
+    stream = cursor.fetchone()
+
+    dados_item = {
+        "codigo_item": stream[0],
+        "descricao_item": stream[1],
+        "qtd_item": stream[2],
+        "valor_item": f"{float(stream[3]):.2f}".replace(".", ","), 
+        "ean_13": stream[4]
+    }
+
+    connection.close() 
+    return dados_item
+
+def valorEstoque():
+    infoDB = dadosDB()
+    connection = pg.connect(   
+        database= infoDB['db_name'], user= infoDB['db_user'], 
+        password= infoDB['db_password'], host= infoDB['host_db'], port= infoDB['port']
+    )
+
+    connection.autocommit = True
+    cursor = connection.cursor() 
+    
+    sql = '''select qty, valor_unitario  
+                from estoque.suprimentos;'''
+    
+    cursor.execute(sql) 
+    stream = cursor.fetchall()
+
+    valor = 0.0
+    for item in stream:
+        valor += item[0] * float(item[1])
+    
+    valor_total = f"{valor:,.2f}".replace(",", "X").replace(".", ",").replace("X", ".")
+    return valor_total
+
+
+def qtdArtigos():
+    infoDB = dadosDB()
+    connection = pg.connect(   
+        database= infoDB['db_name'], user= infoDB['db_user'], 
+        password= infoDB['db_password'], host= infoDB['host_db'], port= infoDB['port']
+    )
+
+    connection.autocommit = True
+    cursor = connection.cursor() 
+    
+    sql = '''select COUNT(*)  
+                from estoque.suprimentos;'''
+    
+    cursor.execute(sql) 
+    stream = cursor.fetchall()
+    qtd_artigos = int(stream[0][0])
+    return qtd_artigos
+
+def alterarItemDB(codigo_item, descricao, valor, quantidade):
+    try:
+        infoDB = dadosDB()
+        connection = pg.connect(   
+        database= infoDB['db_name'], user= infoDB['db_user'], 
+        password= infoDB['db_password'], host= infoDB['host_db'], port= infoDB['port']
+    )
+        valor_float = float(valor.replace(",", "."))
+        cursor = connection.cursor()
+        cursor.execute("""
+            UPDATE estoque.suprimentos
+            SET nome_item = %s,
+                valor_unitario = %s,
+                qty = %s
+            WHERE codigo = %s
+        """, (descricao, valor_float, quantidade, codigo_item))
+        connection.commit()
+        cursor.close()
+        connection.close()
+    except Exception as e:
+        print(f"Erro ao atualizar item: {e}")
+        return 1
+    return 0
+
+def adicionarItemDB(codigo, descricao, valor, quantidade, ean):
+    try:
+        infoDB = dadosDB()
+        connection = pg.connect(   
+        database= infoDB['db_name'], user= infoDB['db_user'], 
+        password= infoDB['db_password'], host= infoDB['host_db'], port= infoDB['port']
+    )
+        valor_float = float(valor.replace(",", "."))
+        cursor = connection.cursor()
+        cursor.execute("""
+            insert into estoque.suprimentos 
+                       (codigo, nome_item, qty, valor_unitario, ean_13) 
+                       values (%s, %s, %s, %s, %s)
+        """, (codigo, descricao, quantidade, valor_float, ean))
+        connection.commit()
+        cursor.close()
+        connection.close()
+    except Exception as e:
+        print(f"Erro ao atualizar item: {e}")
+        return 1
+    return 0
+
+def deletarItem(codigo_item):
+    try:
+        infoDB = dadosDB()
+        connection = pg.connect(   
+        database= infoDB['db_name'], user= infoDB['db_user'], 
+        password= infoDB['db_password'], host= infoDB['host_db'], port= infoDB['port']
+    )
+        cursor = connection.cursor()
+        cursor.execute("""
+            delete from estoque.suprimentos 
+                       where codigo = %s
+        """, (codigo_item,))
+        connection.commit()
+        cursor.close()
+        connection.close()
+    except Exception as e:
+        print(f"Erro ao atualizar item: {e}")
+        return 1
+    return 0

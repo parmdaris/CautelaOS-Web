@@ -14,17 +14,27 @@
         header {
             background-color: #007bff;
             color: white;
-            padding: 10px;
+            padding: 5px;
             text-align: center;
         }
         .container { /*Características do contêiner*/
-            padding: 30px;
+            padding: 20px;
             max-width: 1300px;
             margin: auto;
             background: white;
-            margin-top: 40px;
+            margin-top: 11px;
             border-radius: 10px;
             box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .button-container {
+            width: 250px;
+            margin: 10px auto;
+            height: 42px;;
+            padding: 10px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            text-align: center;
         }
         .menu-button {
             display: block;
@@ -52,14 +62,15 @@
         .material-table th, .material-table td {
             padding: 10px;
             border: 1px solid #ddd;
-            text-align: left;
         }
         .material-table th {
             background-color: #007bff;
             color: white;
+            text-align: center;
         }
         .material-table td {
             font-size: 15px;
+            text-align: center;
         }
         .data {
             text-align: center;
@@ -80,9 +91,65 @@
 
 <body>
     <header>
+        <p>Cautela OS</p>
         <h1>Listagem de estoque</h1>
+        <p style="font-size: 15px;">Artigos: {{ qtd_artigos }}, Valor total: R$ {{ valor_estoque }}</p>
     </header>
+
+    <div class="button-container">
+        <div style="text-align: center">
+          <a href="{{ url_for('cautelaos') }}" style="
+              display: inline;
+              padding: 10px 20px;
+              background-color: #007bff;
+              color: white;
+              text-decoration: none;
+              font-weight: bold;
+              border-radius: 5px;
+              font-family: 'Segoe UI', sans-serif;
+              float: left;
+          ">
+              Voltar
+          </a>
+        </div>
+
+        <div style="text-align: center">
+            <a href="{{ url_for('incluir_item') }}" style="
+                display: inline;
+                padding: 10px 20px;
+                background-color: #ff8800;
+                color: white;
+                text-decoration: none;
+                font-weight: bold;
+                border-radius: 5px;
+                font-family: 'Segoe UI', sans-serif;
+                float: left;
+                margin-left: 3.8px;
+                ">
+            +
+            </a>
+        </div> 
+        
+        
+        <div style="text-align: center">
+            <a href="{{ url_for('imprimir_estoque') }}" target="_blank" style="
+                display: inline;
+                padding: 10px 20px;
+                background-color: #ff8800;
+                color: white;
+                text-decoration: none;
+                font-weight: bold;
+                border-radius: 5px;
+                font-family: 'Segoe UI', sans-serif;
+                float: right;
+                ">
+            Imprimir
+            </a>
+        </div>          
+      </div>
+    
     <div class="container">
+
         <table class="material-table">
             <thead>
                 <tr>
@@ -97,41 +164,14 @@
                 {% for item in dados_estq %}
                 <tr>
                     <td>{{ item.codigo_item }}</td>
-                    <td>{{ item.descricao_item }}</td>
+                    <td style="text-align: left;">{{ item.descricao_item }}</td>
                     <td>{{ item.qtd_item }}</td>
                     <td>R$ {{ item.valor_item }}</td>
-                    <td><a href="{{ url_for('ver_item', codigo_item=item.codigo_item) }}">📝</a></td>
+                    <td><a href="{{ url_for('ver_item_estoque', codigo_item=item.codigo_item) }}">📝</a></td>
                 </tr>
                 {% endfor %}
             </tbody>
         </table>
-
-        <div style="text-align: center; margin-bottom: 10px; margin-top: 30px;">
-          <a href="{{ url_for('cautelaos') }}" style="
-              display: inline-block;
-              padding: 10px 20px;
-              background-color: #007bff;
-              color: white;
-              text-decoration: none;
-              font-weight: bold;
-              border-radius: 5px;
-              font-family: 'Segoe UI', sans-serif;
-          ">
-              Voltar
-          </a>
-          <a href="{{ url_for('cautelaos') }}" target="_blank" style="
-                display: inline-block;
-                padding: 10px 20px;
-                background-color: #007bff;
-                color: white;
-                text-decoration: none;
-                font-weight: bold;
-                border-radius: 5px;
-                font-family: 'Segoe UI', sans-serif;
-            ">
-                Imprimir
-            </a>
-        </div>
     </div>
 </body>
 </html>

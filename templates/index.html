@@ -26,6 +26,13 @@
             box-shadow: 0 0 10px rgba(0,0,0,0.1);
             text-align: center;
         }
+        .subcontainer {
+            max-width: 600px;
+            margin: 15px auto;
+            padding: 10px;
+            background: white;
+            text-align: center;
+        }
         .menu-button {
             display: block;
             width: 95%;
@@ -60,12 +67,19 @@
         <h1>Cautela OS</h1>
     </header>
     <div class="container">
-        <p>Estoque</p>
-        <a href="{{ url_for('ver_estoque') }}" class="menu-button">📦 Saída de material - WIP</a> 
-        <a href="{{ url_for('ver_estoque') }}" class="menu-button">🔎 Ver Estoque</a>
-        <p>Cautelas</p>
-        <a href="{{ url_for('listar_cautelas') }}" class="menu-button">📋 Ver Cautelas</a>
-        <a href="{{ url_for('nova_cautela') }}" class="menu-button">📝 Nova Cautela - WIP</a>
+        <div class="subcontainer">
+            <a href="{{ url_for('ver_estoque') }}" class="menu-button">🔎 Ver Estoque</a>
+            <a href="{{ url_for('cautelaos') }}" class="menu-button">📦 Saída de material - WIP</a> 
+        </div>
+
+        <div class="subcontainer">
+            <a href="{{ url_for('listar_cautelas') }}" class="menu-button">📋 Ver Cautelas</a>
+            <a href="{{ url_for('cautelaos') }}" class="menu-button">📝 Nova Cautela - WIP</a>
+        </div>
+
+        <div class="subcontainer">
+            <a href="{{ url_for('cautelaos') }}" class="menu-button">🔎 Gestão de clientes - WIP</a>
+        </div>
     </div>
 </body>
 </html>
