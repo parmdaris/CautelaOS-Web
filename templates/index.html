@@ -14,7 +14,7 @@
         header {
             background-color: #007bff;
             color: white;
-            padding: 10px;
+            padding: 5px;
             text-align: center;
         }
         .container {
@@ -65,6 +65,8 @@
 <body>
     <header>
         <h1>Cautela OS</h1>
+        <p style="font-size: 15px;">Sistema integrado de controle de estoque e movimentações de material</p>
+        <p style="font-size: 10px;">Versão 1.0</p>
     </header>
     <div class="container">
         <div class="subcontainer">
@@ -74,7 +76,7 @@
 
         <div class="subcontainer">
             <a href="{{ url_for('listar_cautelas') }}" class="menu-button">📋 Ver Cautelas</a>
-            <a href="{{ url_for('cautelaos') }}" class="menu-button">📝 Nova Cautela - WIP</a>
+            <a href="{{ url_for('nova_cautela') }}" class="menu-button">📝 Nova Cautela - WIP</a>
         </div>
 
         <div class="subcontainer">

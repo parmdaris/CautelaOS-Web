@@ -13,7 +13,8 @@ def iniciarIndex():
     @app.route("/cautelas/")
     def listar_cautelas():
         cautelas = db.listaCautelas()
-        return render_template('visualizar_lista_cautelas.html', dados=cautelas)
+        qtd_cautelas = db.qtdCautelas()
+        return render_template('visualizar_lista_cautelas.html', dados=cautelas, qtd=qtd_cautelas)
 
 
     @app.route('/cautelas/<id_cautela>')
@@ -53,7 +54,7 @@ def iniciarIndex():
 
     @app.route("/cautela/nova")
     def nova_cautela():
-        return "<h2>Nova Cautela</h2>"
+        return render_template('adicionar_cautela.html')
     
     @app.route('/estoque/editar_item/<codigo_item>', methods=['POST'])
     def alterarItem(codigo_item):

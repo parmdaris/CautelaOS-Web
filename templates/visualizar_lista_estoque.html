@@ -1,9 +1,14 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
     <meta charset="UTF-8">
     <title>Estoque - Cautela OS</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.min.css">
+    <script src="https://code.jquery.com/jquery-3.7.0.js"></script>
+    <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
+
     <style>
         body {
             font-family: 'Segoe UI', sans-serif;
@@ -17,76 +22,82 @@
             padding: 5px;
             text-align: center;
         }
-        .container { /*Características do contêiner*/
+        .container {
             padding: 20px;
             max-width: 1300px;
-            margin: auto;
+            margin: 11px auto 0;
             background: white;
-            margin-top: 11px;
             border-radius: 10px;
             box-shadow: 0 2px 10px rgba(0,0,0,0.1);
         }
         .button-container {
-            width: 250px;
+            display: flex;
+            justify-content: center;
+            gap: 10px;
             margin: 10px auto;
-            height: 42px;;
             padding: 10px;
             background: white;
             border-radius: 12px;
             box-shadow: 0 0 10px rgba(0,0,0,0.1);
-            text-align: center;
+            width: fit-content;
         }
-        .menu-button {
-            display: block;
-            width: 95%;
-            padding: 15px;
-            margin: 15px 0;
-            font-size: 18px;
-            border: none;
-            border-radius: 8px;
-            background-color: #007bff;
+        .button-container a {
+            padding: 10px 20px;
             color: white;
-            cursor: pointer;
-            transition: background-color 0.2s;
             text-decoration: none;
+            font-weight: bold;
+            border-radius: 5px;
+            font-family: 'Segoe UI', sans-serif;
+            background-color: #007bff;
+            transition: background-color 0.3s;
         }
-        .menu-button:hover {
+        .button-container a:hover {
             background-color: #0056b3;
         }
-        /* Estilo da tabela igual ao segundo código */
-        .material-table {
+        .button-container a.plus-button {
+            background-color: #0011ff;
+        }
+        .button-container a.print-button {
+            background-color: #ff8800;
+        }
+        .button-container a.plus-button:hover, 
+        .button-container a.print-button:hover {
+            background-color: #e67300;
+        }
+        .tabela-estoque {
             width: 100%;
             border-collapse: collapse;
             margin-top: 10px;
         }
-        .material-table th, .material-table td {
+        .tabela-estoque th, .tabela-estoque td {
             padding: 10px;
             border: 1px solid #ddd;
+            text-align: center;
+            font-size: 15px;
         }
-        .material-table th {
+        .tabela-estoque th {
             background-color: #007bff;
             color: white;
-            text-align: center;
-        }
-        .material-table td {
-            font-size: 15px;
-            text-align: center;
-        }
-        .data {
-            text-align: center;
         }
         @media (max-width: 500px) {
             .container {
                 margin: 20px;
                 padding: 20px;
             }
-            .menu-button {
-                font-size: 16px;
-                padding: 12px;
+            .button-container {
+                flex-direction: column;
+                align-items: center;
+            }
+            .button-container a {
+                width: 100%;
+                text-align: center;
             }
         }
+        .tabela-wrapper {
+            width: 100%;
+            overflow-x: auto;
+        }
     </style>
-
 </head>
 
 <body>
@@ -97,81 +108,56 @@
     </header>
 
     <div class="button-container">
-        <div style="text-align: center">
-          <a href="{{ url_for('cautelaos') }}" style="
-              display: inline;
-              padding: 10px 20px;
-              background-color: #007bff;
-              color: white;
-              text-decoration: none;
-              font-weight: bold;
-              border-radius: 5px;
-              font-family: 'Segoe UI', sans-serif;
-              float: left;
-          ">
-              Voltar
-          </a>
-        </div>
-
-        <div style="text-align: center">
-            <a href="{{ url_for('incluir_item') }}" style="
-                display: inline;
-                padding: 10px 20px;
-                background-color: #ff8800;
-                color: white;
-                text-decoration: none;
-                font-weight: bold;
-                border-radius: 5px;
-                font-family: 'Segoe UI', sans-serif;
-                float: left;
-                margin-left: 3.8px;
-                ">
-            +
-            </a>
-        </div> 
-        
-        
-        <div style="text-align: center">
-            <a href="{{ url_for('imprimir_estoque') }}" target="_blank" style="
-                display: inline;
-                padding: 10px 20px;
-                background-color: #ff8800;
-                color: white;
-                text-decoration: none;
-                font-weight: bold;
-                border-radius: 5px;
-                font-family: 'Segoe UI', sans-serif;
-                float: right;
-                ">
-            Imprimir
-            </a>
-        </div>          
-      </div>
-    
-    <div class="container">
-
-        <table class="material-table">
-            <thead>
-                <tr>
-                    <th>Código</th>
-                    <th>Descrição</th>
-                    <th>Qtd</th>
-                    <th>Valor</th>
-                    <th>Editar</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for item in dados_estq %}
-                <tr>
-                    <td>{{ item.codigo_item }}</td>
-                    <td style="text-align: left;">{{ item.descricao_item }}</td>
-                    <td>{{ item.qtd_item }}</td>
-                    <td>R$ {{ item.valor_item }}</td>
-                    <td><a href="{{ url_for('ver_item_estoque', codigo_item=item.codigo_item) }}">📝</a></td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+        <a href="{{ url_for('cautelaos') }}">Voltar</a>
+        <a href="{{ url_for('incluir_item') }}" class="plus-button">+</a>
+        <a href="{{ url_for('imprimir_estoque') }}" target="_blank" class="print-button">Imprimir</a>
     </div>
+
+    <div class="container">
+        <div class="tabela-wrapper">
+            <table id="tabela-estoque" class="tabela-estoque">
+                <thead>
+                    <tr>
+                        <th>Código</th>
+                        <th>Descrição</th>
+                        <th>Qtd</th>
+                        <th>Valor</th>
+                        <th>Editar</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in dados_estq %}
+                    <tr>
+                        <td>{{ item.codigo_item }}</td>
+                        <td style="text-align: left;">{{ item.descricao_item }}</td>
+                        <td>{{ item.qtd_item }}</td>
+                        <td>R$ {{ item.valor_item }}</td>
+                        <td><a href="{{ url_for('ver_item_estoque', codigo_item=item.codigo_item) }}">📝</a></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    
+
+    <script>
+        $(document).ready(function() {
+            $('#tabela-estoque').DataTable({
+                "language": {
+                    "lengthMenu": "Mostrar _MENU_ itens por página",
+                    "zeroRecords": "Nenhum resultado encontrado",
+                    "info": "Página _PAGE_ de _PAGES_",
+                    "infoEmpty": "Nenhum item disponível",
+                    "infoFiltered": "(filtrado de _MAX_ itens no total)",
+                    "search": "Buscar:",
+                    "paginate": {
+                        "next": "Próxima",
+                        "previous": "Anterior"
+                    }
+                }
+            });
+        });
+    </script>
 </body>
 </html>

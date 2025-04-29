@@ -171,6 +171,24 @@ def getItensCautela(id_cautela, qtd_itens): ####################################
     connection.close() 
     return itens_cautela
 
+def qtdCautelas():
+    infoDB = dadosDB()
+    connection = pg.connect(   
+        database= infoDB['db_name'], user= infoDB['db_user'], 
+        password= infoDB['db_password'], host= infoDB['host_db'], port= infoDB['port']
+    )
+
+    connection.autocommit = True
+    cursor = connection.cursor() 
+    
+    sql = '''select COUNT(*)  
+                from cautela.dados;'''
+    
+    cursor.execute(sql) 
+    stream = cursor.fetchone()
+    qtd_artigos = int(stream[0])
+    return qtd_artigos
+
 def getEstoque():
     infoDB = dadosDB()
     connection = pg.connect(   

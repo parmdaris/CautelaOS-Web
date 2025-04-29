@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.inputmask/5.0.8/jquery.inputmask.min.js"></script>
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -105,7 +106,7 @@
         
         
         <div style="text-align: center">
-            <a href="{{ url_for('deletarItem', codigo_item=dados_item.codigo_item) }}" style="
+            <a href="{{ url_for('deletarItem', codigo_item=dados_item.codigo_item) }}" onclick="return confirmarDelecao()" style="
                 display: inline;
                 padding: 10px 20px;
                 background-color: #ff0000;
@@ -116,9 +117,15 @@
                 font-family: 'Segoe UI', sans-serif;
                 float: right;
                 ">
-            Deletar
+            Deletar item
             </a>
         </div>
+
+        <script>
+            function confirmarDelecao() {
+                return confirm("Tem certeza que deseja excluir este item?");
+            }
+            </script>
         
         
         
@@ -167,5 +174,14 @@
         
         
     </div>
+
+
+    <script>
+        
+    </script>
 </body>
 </html>
+
+
+
+

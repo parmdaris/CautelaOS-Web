@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastrar Cautela - Cautela OS</title>
+
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f8f9fa;
+            margin: 0;
+            padding: 0;
+        }
+
+        header {
+            background-color: #007bff;
+            color: white;
+            padding: 10px;
+            text-align: center;
+        }
+
+        .container {
+            background: white;
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #555;
+            font-size: 14px;
+        }
+
+        .form-group input, .form-group select {
+            width: 80%;
+            max-width: 400px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+
+        .form-group input:focus, .form-group select:focus {
+            border-color: #007bff;
+            outline: none;
+            box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+        }
+
+        .button-container {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .button-container button {
+            padding: 10px 20px;
+            background-color: #0ed200;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-weight: bold;
+            font-family: 'Segoe UI', sans-serif;
+            cursor: pointer;
+            font-size: 15px;
+        }
+
+        .button-container button:hover {
+            background-color: #0bb200;
+        }
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <h1>Nova Cautela</h1>
+    </header>
+
+    <div class="container">
+        <form action="{{ url_for('cautelaos') }}" method="GET" class="form-group">
+            <div class="form-group">
+                <label for="destino">Destino (Cliente/Setor):</label>
+                <input type="text" id="destino" name="destino" required>
+            </div>
+
+            <div class="form-group">
+                <label for="data">Data de Emissão:</label>
+                <input type="date" id="data" name="data" required>
+            </div>
+
+            <div class="form-group">
+                <label for="responsavel">Responsável pela Emissão:</label>
+                <input type="text" id="responsavel" name="responsavel" required>
+            </div>
+
+            <div class="form-group">
+                <label for="observacoes">Observações:</label>
+                <input type="text" id="observacoes" name="observacoes">
+            </div>
+
+            <div class="button-container">
+                <button type="submit" onclick="desabilitarBotao(this)">Salvar</button>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        function desabilitarBotao(botao) {
+            botao.disabled = true;
+            botao.innerText = 'Salvando...';
+        }
+    </script>
+
+</body>
+
+</html>
