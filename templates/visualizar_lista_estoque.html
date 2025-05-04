@@ -120,6 +120,7 @@
                     <tr>
                         <th>Código</th>
                         <th>Descrição</th>
+                        <th style="display:none">Tipo</th>
                         <th>Qtd</th>
                         <th>Valor</th>
                         <th>Editar</th>
@@ -130,6 +131,7 @@
                     <tr>
                         <td>{{ item.codigo_item }}</td>
                         <td style="text-align: left;">{{ item.descricao_item }}</td>
+                        <td style="display:none;">{{ item.tipo }}</td>
                         <td>{{ item.qtd_item }}</td>
                         <td>R$ {{ item.valor_item }}</td>
                         <td><a href="{{ url_for('ver_item_estoque', codigo_item=item.codigo_item) }}">📝</a></td>
@@ -143,7 +145,16 @@
 
     <script>
         $(document).ready(function() {
-            $('#tabela-estoque').DataTable({
+            var table = $('#tabela-estoque').DataTable({
+                "pageLength": 25,
+                "autoWidth": false,
+                "columnDefs": [
+                    {
+                        "targets": 2, // índice da coluna "Tipo"
+                        "visible": false,
+                        "searchable": true
+                    }
+                ],
                 "language": {
                     "lengthMenu": "Mostrar _MENU_ itens por página",
                     "zeroRecords": "Nenhum resultado encontrado",
@@ -157,6 +168,26 @@
                     }
                 }
             });
+    
+            // Coletar valores únicos da coluna oculta "Tipo"
+            var tiposUnicos = [];
+            table.column(2).data().unique().sort().each(function(d) {
+                if (d) tiposUnicos.push(d);
+            });
+    
+            // Criar combobox
+            var select = $('<select style="padding:8px;border-radius:5px;border:1px solid #ccc;"><option value="">Tudo</option></select>')
+                .on('change', function () {
+                    var val = $.fn.dataTable.util.escapeRegex($(this).val());
+                    table.column(2).search(val ? '^' + val + '$' : '', true, false).draw();
+                });
+    
+            $.each(tiposUnicos, function(i, tipo) {
+                select.append('<option value="' + tipo + '">' + tipo + '</option>');
+            });
+    
+            // Adiciona ao container
+            $('.button-container').append(select);
         });
     </script>
 </body>

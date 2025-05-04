@@ -21,6 +21,7 @@
         }
         .container { /*Características do contêiner*/
             padding: 30px;
+            padding-top: 8px;
             max-width: 800px;
             height: 520px;
             margin: auto;
@@ -63,7 +64,7 @@
         color: #555;
         font-size: 14px;
     }
-    .form-group input {
+    .form-group input:not(#descricao) {
         width: 80%;
         max-width: 400px;
         padding: 10px;
@@ -73,6 +74,19 @@
         box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
         font-size: 14px;
         font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    #descricao {
+        width: 100%;
+        max-width: 700px;
+        padding: 10px;
+        margin-bottom: 20px;
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+        font-size: 14px;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        text-align: center;
     }
     .form-group input:focus {
         border-color: #007bff;
@@ -131,30 +145,57 @@
         
       </div>
 
-    <div class="container">
+      <div class="container">
         <div class="section">
-            <p><strong>Código (P/N):</strong> {{ dados_item.codigo_item }}</p>
-            <p><strong>EAN-13:</strong> {{ dados_item.ean_13 }}</p>
-            <p><strong>Quantidade:</strong> {{ dados_item.qtd_item }}</p>
-            <p><strong>Valor unitário: </strong> R$ {{ dados_item.valor_item }}</p>
+            <div style="display: flex; justify-content: space-between;">
+                <div>
+                    <p><strong>Código (P/N):</strong> {{ dados_item.codigo_item }}</p>
+                    <p><strong>EAN-13:</strong> {{ dados_item.ean_13 }}</p>
+                </div>
+                <div style="text-align: right;">
+                    <p><strong>Quantidade:</strong> {{ dados_item.qtd_item }}</p>
+                    <p><strong>Valor unitário: </strong> R$ {{ dados_item.valor_item }}</p>
+                </div>
+            </div>
         </div>
-
+    
         <div class="section">
             <div class="section-title">
                 <h2>Editar dados</h2>
             </div>
-        
-            <form action="{{ url_for('alterarItem', codigo_item=dados_item.codigo_item) }}" method="POST" class="form-group">
+    
+            <form action="{{ url_for('alterarItem', codigo_item=dados_item.codigo_item) }}" method="POST" class="form-group" style="width: 100%; max-width: 700px; margin: auto;">
+
+                <!-- CAMPO DESCRIÇÃO - agora ocupa 100% do espaço dos blocos abaixo -->
                 <label for="descricao">Descrição:</label>
-                <input id="descricao" name="descricao" type="text" value="{{dados_item.descricao_item}}">
-        
-                <label for="valor">Valor unitário:</label>
-                <input id="valor" name="valor" type="text" value="{{dados_item.valor_item}}" style="width: 10%; text-align: center;">
-        
-                <label for="quantidade">Quantidade:</label>
-                <input id="quantidade" name="quantidade" type="number" value="{{dados_item.qtd_item}}" style="width: 10%;">
-        
-                <div style="text-align: center; margin-top: 5px;">
+                <input id="descricao" name="descricao" type="text" value="{{dados_item.descricao_item}}" >
+            
+                <!-- CÓDIGO E EAN-13 LADO A LADO COM ESPAÇO -->
+                <div style="display: flex; gap: 30px; margin-bottom: 25px;">
+                    <div style="flex: 1;">
+                        <label for="novo_codigo">Código:</label>
+                        <input id="novo_codigo" name="novo_codigo" type="text" value="{{dados_item.codigo_item}}" style="width: 100%;">
+                    </div>
+                    <div style="flex: 1;">
+                        <label for="ean-13">EAN-13:</label>
+                        <input id="ean-13" name="ean_13" type="text" value="{{dados_item.ean_13}}" style="width: 100%;">
+                    </div>
+                </div>
+            
+                <!-- QUANTIDADE E VALOR UNITÁRIO LADO A LADO COM ESPAÇO -->
+                <div style="display: flex; gap: 30px; margin-bottom: 25px;">
+                    <div style="flex: 1;">
+                        <label for="quantidade">Quantidade:</label>
+                        <input id="quantidade" name="quantidade" type="number" value="{{dados_item.qtd_item}}" style="width: 100%;">
+                    </div>
+                    <div style="flex: 1;">
+                        <label for="valor">Valor unitário:</label>
+                        <input id="valor" name="valor" type="text" value="{{dados_item.valor_item}}" style="width: 100%; text-align: center;">
+                    </div>
+                </div>
+            
+                <!-- BOTÃO SALVAR -->
+                <div style="text-align: center;">
                     <button type="submit" style="
                         padding: 10px 20px;
                         background-color: #0ed200;
@@ -169,10 +210,9 @@
                     </button>
                 </div>
             </form>
+            
+            
         </div>
-
-        
-        
     </div>
 
 
@@ -181,7 +221,6 @@
     </script>
 </body>
 </html>
-
 
 
 

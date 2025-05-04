@@ -200,7 +200,8 @@ def getEstoque():
     cursor = connection.cursor() 
     
     sql = '''select codigo, 
-                    nome_item, 
+                    nome_item,
+                    tipo_suprimento, 
                     qty, 
                     valor_unitario
                 from estoque.suprimentos 
@@ -213,8 +214,9 @@ def getEstoque():
     {
         "codigo_item": row[0],
         "descricao_item": row[1],
-        "qtd_item": row[2],
-        "valor_item": f"{row[3]:.2f}".replace(".",",") #Armazenar row[3] (valor) como uma string literal, com precisão de 2 décimos e trocando ponto por vírgula
+        "tipo": row[2],
+        "qtd_item": row[3],
+        "valor_item": f"{row[4]:.2f}".replace(".",",") #Armazenar row[3] (valor) como uma string literal, com precisão de 2 décimos e trocando ponto por vírgula
     }
     for row in stream
     ]
@@ -297,7 +299,7 @@ def qtdArtigos():
     qtd_artigos = int(stream[0][0])
     return qtd_artigos
 
-def alterarItemDB(codigo_item, descricao, valor, quantidade):
+def alterarItemDB(codigo_item, descricao, valor, quantidade, ean_13, novo_codigo):
     try:
         infoDB = dadosDB()
         connection = pg.connect(   
@@ -308,11 +310,13 @@ def alterarItemDB(codigo_item, descricao, valor, quantidade):
         cursor = connection.cursor()
         cursor.execute("""
             UPDATE estoque.suprimentos
-            SET nome_item = %s,
+            SET codigo = %s,
+                nome_item = %s,
                 valor_unitario = %s,
-                qty = %s
+                qty = %s,
+                ean_13 = %s
             WHERE codigo = %s
-        """, (descricao, valor_float, quantidade, codigo_item))
+        """, (novo_codigo, descricao, valor_float, quantidade, ean_13, codigo_item))
         connection.commit()
         cursor.close()
         connection.close()
@@ -321,7 +325,7 @@ def alterarItemDB(codigo_item, descricao, valor, quantidade):
         return 1
     return 0
 
-def adicionarItemDB(codigo, descricao, valor, quantidade, ean):
+def adicionarItemDB(codigo, descricao, valor, quantidade, ean, tipo):
     try:
         infoDB = dadosDB()
         connection = pg.connect(   
@@ -329,12 +333,15 @@ def adicionarItemDB(codigo, descricao, valor, quantidade, ean):
         password= infoDB['db_password'], host= infoDB['host_db'], port= infoDB['port']
     )
         valor_float = float(valor.replace(",", "."))
-        cursor = connection.cursor()
-        cursor.execute("""
+
+        sql = """
             insert into estoque.suprimentos 
-                       (codigo, nome_item, qty, valor_unitario, ean_13) 
-                       values (%s, %s, %s, %s, %s)
-        """, (codigo, descricao, quantidade, valor_float, ean))
+                       (codigo, nome_item, qty, tipo_suprimento, valor_unitario, ean_13) 
+                       values (%s, %s, %s, %s, %s, %s)
+        """
+            
+        cursor = connection.cursor()
+        cursor.execute(sql, (codigo, descricao, quantidade, tipo, valor_float, ean))
         connection.commit()
         cursor.close()
         connection.close()

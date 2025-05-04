@@ -61,8 +61,10 @@ def iniciarIndex():
         descricao = request.form.get('descricao')
         valor = request.form.get('valor')
         quantidade = request.form.get('quantidade')
+        ean_13 = request.form.get('ean_13')
+        novo_codigo = request.form.get('novo_codigo')
 
-        db.alterarItemDB(codigo_item, descricao, valor, quantidade)
+        db.alterarItemDB(codigo_item, descricao, valor, quantidade, ean_13, novo_codigo)
         return redirect(url_for('ver_estoque'))
 
     @app.route('/estoque/adicionar')
@@ -76,8 +78,9 @@ def iniciarIndex():
         quantidade = request.form.get('quantidade')
         ean = request.form.get('ean_13')
         codigo = request.form.get('codigo')
+        tipo = request.form.get('tipo_material')
 
-        db.adicionarItemDB(codigo, descricao, valor, quantidade, ean)
+        db.adicionarItemDB(codigo, descricao, valor, quantidade, ean, tipo)
         return redirect(url_for('ver_estoque'))
     
     @app.route('/estoque/<codigo_item>/deletar')
