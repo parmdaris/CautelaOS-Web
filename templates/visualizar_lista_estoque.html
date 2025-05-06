@@ -107,11 +107,14 @@
         <p style="font-size: 15px;">Artigos: {{ qtd_artigos }}, Valor total: R$ {{ valor_estoque }}</p>
     </header>
 
-    <div class="button-container">
-        <a href="{{ url_for('cautelaos') }}">Voltar</a>
-        <a href="{{ url_for('incluir_item') }}" class="plus-button">+</a>
-        <a href="{{ url_for('imprimir_estoque') }}" target="_blank" class="print-button">Imprimir</a>
-    </div>
+    <form method="GET" action="{{ url_for('imprimir_estoque') }}" target="_blank" class="form-filtro">
+        <div class="button-container">
+            <a href="{{ url_for('cautelaos') }}">Voltar</a>
+            <a href="{{ url_for('incluir_item') }}" class="plus-button">+</a>
+            <button type="submit" class="print-button">Imprimir</button>
+            
+        </div>
+    </form>
 
     <div class="container">
         <div class="tabela-wrapper">
@@ -174,20 +177,21 @@
             table.column(2).data().unique().sort().each(function(d) {
                 if (d) tiposUnicos.push(d);
             });
-    
-            // Criar combobox
-            var select = $('<select style="padding:8px;border-radius:5px;border:1px solid #ccc;"><option value="">Tudo</option></select>')
+
+            // Criar combobox com atributo 'name' para o envio no formulário
+            var select = $('<select name="tipo_filtro" style="padding:8px;border-radius:5px;border:1px solid #ccc;"><option value="">Tudo</option></select>')
                 .on('change', function () {
                     var val = $.fn.dataTable.util.escapeRegex($(this).val());
                     table.column(2).search(val ? '^' + val + '$' : '', true, false).draw();
                 });
-    
+
+            // Preencher combobox com opções únicas
             $.each(tiposUnicos, function(i, tipo) {
                 select.append('<option value="' + tipo + '">' + tipo + '</option>');
             });
-    
-            // Adiciona ao container
-            $('.button-container').append(select);
+
+            // Adicionar o combobox dentro do form
+            $('.form-filtro .button-container').append(select);
         });
     </script>
 </body>

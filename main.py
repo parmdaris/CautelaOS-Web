@@ -47,14 +47,21 @@ def iniciarIndex():
     
     @app.route("/estoque/print")
     def imprimir_estoque():
-        dados_estoque = db.getEstoque()
-        valor_estoque = db.valorEstoque()
-        qtd_artigos = db.qtdArtigos()
-        return render_template('template_print_estoque.html', dados_estq=dados_estoque, valor_estoque=valor_estoque, qtd_artigos=qtd_artigos)
+        tipo = request.args.get("tipo_filtro", "")
+
+        dados_estoque = db.getEstoque(tipo)
+        valor_estoque = db.valorEstoque(tipo)
+        qtd_artigos = db.qtdArtigos(tipo)
+
+        if tipo == "":
+            tipo = "Tudo"
+            
+        return render_template('template_print_estoque.html', dados_estq=dados_estoque, valor_estoque=valor_estoque, qtd_artigos=qtd_artigos, categoria=tipo)
 
     @app.route("/cautela/nova")
     def nova_cautela():
         return render_template('adicionar_cautela.html')
+    
     
     @app.route('/estoque/editar_item/<codigo_item>', methods=['POST'])
     def alterarItem(codigo_item):

@@ -189,7 +189,7 @@ def qtdCautelas():
     qtd_artigos = int(stream[0])
     return qtd_artigos
 
-def getEstoque():
+def getEstoque(tipo_item = None):
     infoDB = dadosDB()
     connection = pg.connect(   
         database= infoDB['db_name'], user= infoDB['db_user'], 
@@ -198,16 +198,33 @@ def getEstoque():
 
     connection.autocommit = True
     cursor = connection.cursor() 
+
+    if tipo_item == "":
+            tipo_item = None
     
-    sql = '''select codigo, 
-                    nome_item,
-                    tipo_suprimento, 
-                    qty, 
-                    valor_unitario
-                from estoque.suprimentos 
-                order by codigo asc;'''
-    
-    cursor.execute(sql) 
+    if tipo_item is None:
+        
+        sql = '''select codigo, 
+                        nome_item,
+                        tipo_suprimento, 
+                        qty, 
+                        valor_unitario
+                    from estoque.suprimentos 
+                    order by codigo asc;'''
+        
+        cursor.execute(sql)
+    else:
+        sql = '''select codigo, 
+                        nome_item,
+                        tipo_suprimento, 
+                        qty, 
+                        valor_unitario
+                    from estoque.suprimentos where tipo_suprimento = %s 
+                    order by codigo asc;'''
+        
+        cursor.execute(sql, (tipo_item,))
+
+
     stream = cursor.fetchall()
 
     dados_estoque = [
@@ -257,7 +274,7 @@ def getDadosItem(codigo_item):
     connection.close() 
     return dados_item
 
-def valorEstoque():
+def valorEstoque(tipo_item = None):
     infoDB = dadosDB()
     connection = pg.connect(   
         database= infoDB['db_name'], user= infoDB['db_user'], 
@@ -266,11 +283,19 @@ def valorEstoque():
 
     connection.autocommit = True
     cursor = connection.cursor() 
-    
-    sql = '''select qty, valor_unitario  
-                from estoque.suprimentos;'''
-    
-    cursor.execute(sql) 
+
+    if tipo_item == "":
+            tipo_item = None
+
+    if tipo_item is None:
+        sql = '''select qty, valor_unitario  
+                    from estoque.suprimentos;'''
+        cursor.execute(sql) 
+    else:
+        sql = '''select qty, valor_unitario  
+                    from estoque.suprimentos where tipo_suprimento = %s;'''
+        cursor.execute(sql, (tipo_item,))
+
     stream = cursor.fetchall()
 
     valor = 0.0
@@ -281,7 +306,7 @@ def valorEstoque():
     return valor_total
 
 
-def qtdArtigos():
+def qtdArtigos(tipo_item = None):
     infoDB = dadosDB()
     connection = pg.connect(   
         database= infoDB['db_name'], user= infoDB['db_user'], 
@@ -290,11 +315,19 @@ def qtdArtigos():
 
     connection.autocommit = True
     cursor = connection.cursor() 
+
+    if tipo_item == "":
+            tipo_item = None
     
-    sql = '''select COUNT(*)  
+    if tipo_item is None:
+        sql = '''select COUNT(*)  
                 from estoque.suprimentos;'''
+        cursor.execute(sql)
+    else:
+        sql = '''select COUNT(*)  
+                    from estoque.suprimentos where tipo_suprimento = %s;'''
+        cursor.execute(sql, (tipo_item,))
     
-    cursor.execute(sql) 
     stream = cursor.fetchall()
     qtd_artigos = int(stream[0][0])
     return qtd_artigos
