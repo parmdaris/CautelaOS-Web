@@ -9,7 +9,11 @@
             font-family: 'Segoe UI', sans-serif;
             margin: 0;
             padding: 0;
-            background: #f4f6f8;
+            /*background: #f4f6f8;*/
+            background-image: url('{{ url_for("static", filename="resources/img/3.jpg") }}');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
         }
         header {
             background-color: #007bff;
@@ -71,7 +75,7 @@
     <div class="container">
         <div class="subcontainer">
             <a href="{{ url_for('ver_estoque') }}" class="menu-button">🔎 Ver Estoque</a>
-            <a href="{{ url_for('cautelaos') }}" class="menu-button">📦 Saída de material - WIP</a> 
+            <a href="{{ url_for('registrar_venda') }}" class="menu-button">📦 Registrar venda - WIP</a> 
         </div>
 
         <div class="subcontainer">
