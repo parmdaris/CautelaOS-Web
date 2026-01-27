@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Início - Cautela OS</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='index/css/index.css') }}">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+    <header style="display:grid;">
+        <div style="grid-column: 1; text-align: left;">
+            <h1>Cautela OS</h1>
+            <p style="font-size: 10px;">Versão 1.4</p>
+        </div>
+        
+        <div style="padding-left: 15px; padding-top: 20px; grid-column: 2;">
+            <p style="font-size: 15px;">Bem vindo, {{ session.usuario_nome }}!</p>
+            <hr>
+
+        </div>
+
+        <div style="grid-column: 3;">
+            <div style="margin-top: 20px;">
+                <span class="badge">{{ session["nivel"] }}</span>
+            </div>
+
+            <form action="{{ url_for('logout') }}" method="POST">
+                <button type="submit" class="logout-btn">
+                    <!-- ícone aqui -->
+                    Sair
+                </button>
+            </form>
+
+        </div>
+        
+    </header>
+
+    <div class="container">
+        <div class="subcontainer">
+            <a href="{{ url_for('ver_estoque') }}" class="menu-button">🔎 Ver Estoque</a>
+            <a href="{{ url_for('registrar_venda') }}" class="menu-button">📦 Registrar venda - WIP</a> 
+        </div>
+
+        <div class="subcontainer">
+            <a href="{{ url_for('listar_cautelas') }}" class="menu-button">📋 Ver Cautelas</a>
+            <a href="{{ url_for('nova_cautela') }}" class="menu-button">📝 Nova Cautela - WIP</a>
+        </div>
+
+        <div class="subcontainer">
+            <a href="{{ url_for('cautelaos') }}" class="menu-button">🔎 Gestão de clientes - WIP</a>
+        </div>
+    </div>
+</body>
+</html>

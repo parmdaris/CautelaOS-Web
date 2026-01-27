@@ -1,114 +1,81 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
+{% extends "base.html" %}
 
-<head>
-    <meta charset="UTF-8">
-    <title>Registrar Venda</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='venda/css/registrar_venda.css') }}">
-</head>
+{% block title %}Registrar Venda - Cautela OS{% endblock %}
 
-<body>
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='venda/css/registrar_venda.css') }}">
+{% endblock %}
 
-<header>
-    <h1>Registrar Venda</h1>
-    <p></p>
-</header>
+{% block content %}
 
-<div class="container">
-    
-        <div class="row" style="margin-left: 300px; margin-bottom: 40px;">
+<h2>💰 Registrar Venda</h2>
 
-            <label>
-                <input type="radio" name="modo" value="manual" checked onchange="alternarModo(this.value)" style="flex: 1;"> 
-                Inserção Manual
-            </label>
 
-            <label>
-                <input type="radio" name="modo" value="leitor" onchange="alternarModo(this.value)" style="flex: 2;"> 
-                Leitor de Código
-            </label>
 
-        </div>
+<form id="formulario" class="form-layout" method="POST" action="{{ url_for('salvarVenda') }}">
 
-    <!-- FORM PARA MODO MANUAL --><!-- FORM PARA MODO MANUAL --><!-- FORM PARA MODO MANUAL --><!-- FORM PARA MODO MANUAL -->
-    <form method="POST" action="/registrar_venda" id="form-manual">
+    <div class="table-card">
 
-        <div class="cliente-group row">
+        <div class="cliente-group">
 
             <div>
-                <label>
-                    Cliente (ID)
-                    <select name="id_cliente">
-                        <option></option>
-                    </select>
-                </label>
+                <label>ID</label>
+                <select name="id_cliente[]" oninput="atualizarNomeCliente(this)"></select>
             </div>
 
-            <div style="flex: 2">
-                <label>
-                    Nome do Cliente
-                    <input type="text" name="nome_cliente" readonly value="" style="width: 650px;">
-                </label>
+            <div>
+                <label>Nome do Cliente</label>
+                <select name="nome_cliente[]" oninput="atualizarIdCliente(this)"></select>
             </div>
 
         </div>
 
-        <div class="ext_id_venda">
-            <label>
-                Identificador da venda:
-                <input type="text" name="ext_id_venda" style="width: 300px;">
-            </label>
+    </div>
+
+    <div class="table-card">
+
+        <!-- LEITOR -->
+        <div id="div-leitora">
+            <label>Leitura de código de barras</label>
+            <input
+                type="text"
+                id="entrada-leitor"
+                class="input-leitor"
+                placeholder="Código do item"
+                onkeydown="adicionarLeitura(event)">
         </div>
 
-        <div class="items-container" id="modo-manual" style="margin-top: 25px;">
-
-            <strong>Listagem de itens</strong>
-            <hr>
-
-            <div id="itens-manual" style="margin-top: 15px;">
-
-                <div class="item-row">
-
-                    <div>
-                        <label>
-                            Código
-                            <select name="codigo[]" class="codigo-select" placeholder="Código do item" oninput="atualizarDescricaoValor(this)" style="width: 200px;">
-                                <option></option>
-                            </select>
-                        </label>
-                    </div>
-
-                    <div>
-                        <label>
-                            Descrição
-                            <select name="descricao[]" class="descricao-select" placeholder="Descrição do item" oninput="atualizarCodigoValor(this)" style="width: 500px;">
-                                <option></option>
-                            </select>
-                        </label>
-                    </div>
-
-                    <div>
-                        <label>
-                            Valor
-                            <input type="text" name="valor[]" placeholder="Valor (R$)" readonly style="width: 75px">
-                        </label>
-                    </div>
-
-                    <div>
-                        <label>
-                            Quantia
-                            <input type="number" name="quantidade[]" placeholder="Qtd" min="1" value="1" style="width: 35px">
-                        </label>
-                    </div>
-
-                </div>
-
-            </div>
-            
-            <button type="button" onclick="adicionarItemManual()" style="margin-top: 15px;">+ Adicionar Item</button>
-
+        <div style="text-align:center; margin-top:20px;">
+            <button
+                id="botao-additem"
+                type="button"
+                class="btn secondary"
+                onclick="acionarAdicaoManual()">
+                + Adicionar item manualmente
+            </button>
         </div>
 
+        <div id="div-item-manual"></div>
+
+        <hr style="margin: 24px 0;">
+
+        <strong>Itens da venda</strong>
+
+        <div class="item-row header">
+            <span>Código</span>
+            <span>Descrição</span>
+            <span>Unit.</span>
+            <span>Atacado</span>
+            <span>Qtd</span>
+        </div>
+
+        <div id="itens-carrinho"></div>
+
+    </div>
+
+    <div class="table-card">
+
+        <!-- OBSERVAÇÕES -->
         <div class="obs-group">
             <label>
                 Observações
@@ -116,129 +83,41 @@
             </label>
         </div>
 
-        <div class="footer row">
+        <hr style="margin: 24px 0;">
 
-            <div>
-                <label>Desconto (R$)
-                    <input type="text" name="desconto" value = 0>
-                </label>
-            </div>
-
-            <div style="padding-left: 500px;">
-                Valor Total:
-                <h2 name="valor_total">R$ 0,00</h2>
-            </div>
-
-        </div>
-
-        <div style="text-align: center; margin-top: 30px;">
-            <button type="submit">Salvar Venda</button>
-        </div>
-
-    </form>
-
-
-    <!-- FORM PARA MODO LEITOR --><!-- FORM PARA MODO LEITOR --><!-- FORM PARA MODO LEITOR --><!-- FORM PARA MODO LEITOR -->
-
-    <form method="POST" action="/registrar_venda" id="form-leitor" style="display: none;">
-        <div class="cliente-group row">
-
-            <div>
-                <label>
-                    Cliente (ID)
-                    <select name="id_cliente">
-                        <option></option>
-                    </select>
-                </label>
-            </div>
-
-            <div style="flex: 2">
-                <label>
-                    Nome do Cliente
-                    <input type="text" name="nome_cliente" readonly style="width: 650px;">
-                </label>
-            </div>
-
-        </div>
-
-        <div class="ext_id_venda">
-            <label>
-                Identificador da venda:
-                <input type="text" name="ext_id_venda" style="width: 300px;">
-            </label>
-        </div>
-
-        <div class="items-container" id="modo-leitor">
-            <br>
-
-            <div>
-                <label>
-                    Leitura de código de barras
-                    <input type="text" id="entrada-leitor" placeholder="Código do item" onkeydown="verificarEnterLeitor(event)">
-                </label>
-            </div>
-
-            <br>
-
-            <div class="row" style="margin-top: 10px;">
-                <p>Código</p>
-                <p style="margin-left: 150px;">Descrição</p>
-                <p style="margin-left: 455px;">Valor</p>
-                <p style="margin-left: 60px;">Quantia</p>
-            </div>
-            
-            <div id="itens-leitor">
-            </div>
-
-        </div>
-
-        <div class="obs-group">
-            <label>
-                Observações
-                <textarea name="observacoes"></textarea>
-            </label>
-        </div>
-
-
-        <div class="footer row">
+        <div class="footer">
 
             <div>
                 <label>
                     Desconto (R$)
-                    <input type="text" name="desconto" value=0>
+                    <input type="text" name="desconto" value="0">
                 </label>
             </div>
 
-            <div style="padding-left: 500px;">
-                Valor Total:
+            <div class="total">
+                <span>Valor Total</span>
                 <h2 name="valor_total">R$ 0,00</h2>
             </div>
 
         </div>
 
-
-        <div style="text-align: center; margin-top: 30px;">
-            <button type="submit">Salvar Venda</button>
+        <div style="text-align:center; margin-top:30px;">
+            <a href="{{ url_for('cautelaos') }}" class="btn secondary">← Voltar</a>
+            <button type="submit" class="btn primary">Salvar Venda</button>
         </div>
 
-    </form>
-</div>
+        
 
+    </div>
 
+</form>
 
-    <script id="dados-gerais" type="application/json">
-        {{ dados_gerais | safe }}
-    </script>
+<script id="dados-gerais" type="application/json">{{ dados_gerais | safe }}</script>
+<script id="dados-itens" type="application/json">{{ dados_itens | safe }}</script>
+<script id="dados-clientes" type="application/json">{{ dados_clientes | safe }}</script>
 
-    <script id="dados-itens" type="application/json">
-        {{ dados_itens | safe }}
-    </script>
+{% endblock %}
 
-    <script id="dados-clientes" type="application/json">
-        {{ dados_clientes | safe }}
-    </script>
-
-    <script src="{{ url_for('static', filename='venda/js/registrar_venda.js') }}"></script>
-
-</body>
-</html>
+{% block extra_js %}
+<script src="{{ url_for('static', filename='venda/js/registrar_venda.js') }}"></script>
+{% endblock %}

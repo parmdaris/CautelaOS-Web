@@ -1,226 +1,92 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.inputmask/5.0.8/jquery.inputmask.min.js"></script>
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{dados_item.codigo_item}} - Cautela OS</title>
-    <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: #f8f9fa;
-            color: #333;
-            margin: 0;
-            padding: 0;
-        }
-        header { /*Características do cabeçalho*/
-            background-color: #007bff;
-            color: white;
-            padding: 5px;
-            text-align: center;
-        }
-        .container { /*Características do contêiner*/
-            padding: 30px;
-            padding-top: 8px;
-            max-width: 800px;
-            height: 520px;
-            margin: auto;
-            background: white;
-            margin-top: 11px;
-            border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        }
-        .button-container {
-            width: 500px;
-            margin: 10px auto;
-            height: 42px;;
-            padding: 10px;
-            background: white;
-            border-radius: 12px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
-            text-align: center;
-        }
-        .section, .section-title { /**/
-            margin-bottom: 25px;
-            
-        }
-        .section-title { /**/
-            text-align: center;
-        }
-        .section h2 {
-            font-size: 18px;
-            border-bottom: 1px solid #ddd;
-            padding-bottom: 5px;
-            margin-bottom: 10px;
-        }
-        .form-group {
-        text-align: center;
-        margin-top: 20px;
-    }
-    .form-group label {
-        display: block;
-        margin-bottom: 5px;
-        font-weight: bold;
-        color: #555;
-        font-size: 14px;
-    }
-    .form-group input:not(#descricao) {
-        width: 80%;
-        max-width: 400px;
-        padding: 10px;
-        margin-bottom: 20px;
-        border: 1px solid #ccc;
-        border-radius: 8px;
-        box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
-        font-size: 14px;
-        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    }
+{% extends "base.html" %}
 
-    #descricao {
-        width: 100%;
-        max-width: 700px;
-        padding: 10px;
-        margin-bottom: 20px;
-        border: 1px solid #ccc;
-        border-radius: 8px;
-        box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
-        font-size: 14px;
-        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        text-align: center;
-    }
-    .form-group input:focus {
-        border-color: #007bff;
-        outline: none;
-        box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
-    }
-    </style>
-</head>
-<body>
-    <header>
-        <h1>{{ dados_item.descricao_item }}</h1>
-    </header>
+{% block title %}{{ dados_item.codigo }} • Estoque - CautelaOS{% endblock %}
 
-    <div class="button-container">
-        <div style="text-align: center">
-          <a href="{{ url_for('ver_estoque') }}" style="
-              display: inline;
-              padding: 10px 20px;
-              margin-right: 120px;
-              background-color: #007bff;
-              color: white;
-              text-decoration: none;
-              font-weight: bold;
-              border-radius: 5px;
-              font-family: 'Segoe UI', sans-serif;
-              float: left;
-          ">
-              Voltar
-          </a>
-        </div>
-        
-        
-        <div style="text-align: center">
-            <a href="{{ url_for('deletarItem', codigo_item=dados_item.codigo_item) }}" onclick="return confirmarDelecao()" style="
-                display: inline;
-                padding: 10px 20px;
-                background-color: #ff0000;
-                color: white;
-                text-decoration: none;
-                font-weight: bold;
-                border-radius: 5px;
-                font-family: 'Segoe UI', sans-serif;
-                float: right;
-                ">
-            Deletar item
-            </a>
-        </div>
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='estoque/css/ver_item_estoque.css') }}">
+{% endblock %}
 
-        <script>
-            function confirmarDelecao() {
-                return confirm("Tem certeza que deseja excluir este item?");
-            }
-            </script>
-        
-        
-        
-      </div>
+{% block content %}
 
-      <div class="container">
-        <div class="section">
-            <div style="display: flex; justify-content: space-between;">
-                <div>
-                    <p><strong>Código (P/N):</strong> {{ dados_item.codigo_item }}</p>
-                    <p><strong>EAN-13:</strong> {{ dados_item.ean_13 }}</p>
-                </div>
-                <div style="text-align: right;">
-                    <p><strong>Quantidade:</strong> {{ dados_item.qtd_item }}</p>
-                    <p><strong>Valor unitário: </strong> R$ {{ dados_item.valor_item }}</p>
-                </div>
+<h2 class="page-title">📦 Estoque - Detalhes do item: <strong>{{ dados_item.codigo }}</strong></h2>
+
+<div class="page-card">
+    <div class="campo">
+        <label>Descrição do item</label>
+        <input type="text" value="{{ dados_item.descricao }}" readonly>
+    </div>
+
+    <div class="seq-subdesc">
+
+        <div class="sku-ean-qty">
+            <div class="campo">
+                <label>Código SKU</label>
+                <input type="text" value="{{ dados_item.codigo }}" readonly>
+            </div>
+
+            <div class="campo">
+                <label>EAN-13</label>
+                <input type="text" value="{{ dados_item.ean_13 }}" readonly>
+            </div>
+
+            <div class="campo pequeno">
+                <label>Quantidade</label>
+                <input type="number" value="{{ dados_item.qtd }}" readonly>
             </div>
         </div>
-    
-        <div class="section">
-            <div class="section-title">
-                <h2>Editar dados</h2>
-            </div>
-    
-            <form action="{{ url_for('alterarItem', codigo_item=dados_item.codigo_item) }}" method="POST" class="form-group" style="width: 100%; max-width: 700px; margin: auto;">
 
-                <!-- CAMPO DESCRIÇÃO - agora ocupa 100% do espaço dos blocos abaixo -->
-                <label for="descricao">Descrição:</label>
-                <input id="descricao" name="descricao" type="text" value="{{dados_item.descricao_item}}" >
-            
-                <!-- CÓDIGO E EAN-13 LADO A LADO COM ESPAÇO -->
-                <div style="display: flex; gap: 30px; margin-bottom: 25px;">
-                    <div style="flex: 1;">
-                        <label for="novo_codigo">Código:</label>
-                        <input id="novo_codigo" name="novo_codigo" type="text" value="{{dados_item.codigo_item}}" style="width: 100%;">
-                    </div>
-                    <div style="flex: 1;">
-                        <label for="ean-13">EAN-13:</label>
-                        <input id="ean-13" name="ean_13" type="text" value="{{dados_item.ean_13}}" style="width: 100%;">
-                    </div>
+        <div class="coluna-direita">
+
+            <div class="campo full">
+                <label>Sub-descrição</label>
+                <input type="text" value="{{ dados_item.subdescricao }}" readonly>
+            </div>
+
+            <div class="tipo-subtipo">
+                <div class="campo">
+                    <label>Tipo</label>
+                    <input type="text" value="{{ dados_item.tipo_item }}" readonly>
                 </div>
-            
-                <!-- QUANTIDADE E VALOR UNITÁRIO LADO A LADO COM ESPAÇO -->
-                <div style="display: flex; gap: 30px; margin-bottom: 25px;">
-                    <div style="flex: 1;">
-                        <label for="quantidade">Quantidade:</label>
-                        <input id="quantidade" name="quantidade" type="number" value="{{dados_item.qtd_item}}" style="width: 100%;">
-                    </div>
-                    <div style="flex: 1;">
-                        <label for="valor">Valor unitário:</label>
-                        <input id="valor" name="valor" type="text" value="{{dados_item.valor_item}}" style="width: 100%; text-align: center;">
-                    </div>
+
+                <div class="campo">
+                    <label>Subtipo</label>
+                    <input type="text" value="{{ dados_item.subtipo }}" readonly>
                 </div>
-            
-                <!-- BOTÃO SALVAR -->
-                <div style="text-align: center;">
-                    <button type="submit" style="
-                        padding: 10px 20px;
-                        background-color: #0ed200;
-                        color: white;
-                        border: none;
-                        border-radius: 5px;
-                        font-weight: bold;
-                        font-family: 'Segoe UI', sans-serif;
-                        cursor: pointer;
-                    ">
-                        Salvar
-                    </button>
+            </div>
+
+            <div class="valores-qty-atac">
+                <div class="campo">
+                    <label>Valor unitário</label>
+                    <input type="text" value="R$ {{ dados_item.valor }}" readonly>
                 </div>
-            </form>
-            
-            
+
+                <div class="campo">
+                    <label>Valor atacado</label>
+                    <input type="text" value="R$ {{ dados_item.valor_atacado }}" readonly>
+                </div>
+
+                <div class="campo pequeno">
+                    <label>Qtd atacado</label>
+                    <input type="number" value="{{ dados_item.qty_atacado }}" readonly>
+                </div>
+            </div>
         </div>
     </div>
 
+    <div class="campo">
+        <label>Observações</label>
+        <textarea rows="4" readonly>{{ dados_item.obs }}</textarea>
+    </div>
 
-    <script>
-        
-    </script>
-</body>
-</html>
+    <div class="actions-bar">
+        <a href="{{ url_for('ver_estoque') }}" class="btn secondary">
+            ← Voltar
+        </a>
 
+        <a href="{{ url_for('editar_item_estoque', codigo_item=dados_item.codigo) }}" class="btn edit">✎</a>
 
+    </div>
 
+</div>
+
+{% endblock %}

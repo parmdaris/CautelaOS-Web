@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+    <head>
+        <meta charset="UTF-8">
+        <title>
+            {% block title %}Cautela OS{% endblock %}
+        </title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="{{ url_for('static', filename='index/css/base.css') }}">
+        {% block extra_css %}{% endblock %}
+    </head>
+
+    <body>
+        <div class="app">
+            <aside class="sidebar">
+                <div class="sidebar-brand">
+                    <a href="{{ url_for('cautelaos') }}" style="text-decoration: none; color: inherit;"><h1>Cautela OS</h1></a>
+                    <span>Versão 1.4</span>
+                </div>
+
+                <nav class="sidebar-menu">
+                    <a href="{{ url_for('cautelaos') }}">📈 Dashboard</a>
+                    <a href="{{ url_for('ver_estoque') }}">📦 Estoque</a>
+                    <a href="{{ url_for('visualizar_vendas') }}" style="color: red;">💰 Vendas</a>
+                    <a href="{{ url_for('listar_cautelas') }}" style="color: red;">📋 Cautelas</a>
+                    <a href="{{ url_for('visualizar_clientes') }}" style="color: red;">👥 Clientes</a>
+                    <a href="{{ url_for('visualizar_colaboradores') }}" style="color: red;">👥 Colaboradores</a>
+                </nav>
+                <div class="sidebar-divider"></div>
+                <nav class="sidebar-menu">
+                    <a href="{{ url_for('registrar_venda') }}" style="color: rgb(255, 187, 0);">💰 Registrar venda</a>
+                    <a href="{{ url_for('nova_cautela') }}" style="color: red;">📝 Registrar cautela</a>
+                </nav>
+            </aside>
+
+            <div class="main">
+                <header class="header">
+                    <div class="header-user">
+                        <p>Bem-vindo, <strong>{{ session.usuario_nome }}</strong></p>
+                        <hr>
+                        <div class="header-meta">
+                            <span class="badge">{{ session["nivel"] }}</span>
+
+                            <form action="{{ url_for('logout') }}" method="POST">
+                                <button type="submit" class="logout-btn">⎋ Sair</button>
+                            </form>
+                        </div>
+                    </div>
+                </header>
+
+                <main class="content">
+                    {% block content %}
+                    <h2>Dashboard</h2>
+                    <p>Selecione uma opção no menu lateral.</p>
+                    {% endblock %}
+                </main>
+
+            </div>
+
+        </div>
+
+        {% block extra_js %}{% endblock %}
+
+    </body>
+</html>

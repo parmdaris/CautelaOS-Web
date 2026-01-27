@@ -1,38 +1,32 @@
 {% extends "base.html" %}
 
-{% block title %}Estoque - Cautela OS{% endblock %}
+{% block title %}Colaboradores - Cautela OS{% endblock %}
 
 {% block extra_css %}
 <link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.min.css">
-<link rel="stylesheet" href="{{ url_for('static', filename='estoque/css/visualizar_lista_estoque.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='colaboradores/css/ver_lista_colaboradores.css') }}">
 {% endblock %}
 
 {% block content %}
 
-<h2>📦 Estoque</h2>
+<h2>👥 Colaboradores</h2>
 <p class="subtitle">
-    Artigos: {{ qtd_artigos }} · Valor total: <strong>R$ {{ valor_estoque }}</strong>
+    Colaboradores: {{ qtd_artigos }} · Ativos: <strong>{{ valor_estoque }}</strong>
 </p>
 
 <div class="actions-bar">
     <a href="{{ url_for('cautelaos') }}" class="btn secondary">← Voltar</a>
-    <a href="{{ url_for('incluir_item') }}" class="btn primary">＋ Novo item</a>
-
-    <form method="GET" action="{{ url_for('imprimir_estoque') }}" target="_blank">
-        <button type="submit" class="btn warning">🖨 Imprimir</button>
-    </form>
+    <a href="{{ url_for('incluir_item') }}" class="btn primary">＋ Novo cadastro</a>
 </div>
 
 <div class="table-card">
     <table id="tabela-estoque" class="display">
         <thead>
             <tr>
-                <th>Código</th>
-                <th>Descrição</th>
-                <th style="display:none">Tipo</th>
-                <th>Qtd</th>
-                <th>Valor</th>
-                <th>Atacado</th>
+                <th>ID</th>
+                <th>Nome</th>
+                <th>Privilégio</th>
+                <th>Ativo</th>
                 <th>🔍︎</th>
             </tr>
         </thead>
@@ -59,5 +53,5 @@
 {% block extra_js %}
 <script src="https://code.jquery.com/jquery-3.7.0.js"></script>
 <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
-<script src="{{ url_for('static', filename='estoque/js/visualizar_lista_estoque.js') }}"></script>
+<script src="{{ url_for('static', filename='colaboradores/js/ver_lista_colaboradores.js') }}"></script>
 {% endblock %}

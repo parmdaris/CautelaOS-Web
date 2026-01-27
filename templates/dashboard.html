@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - Cautela OS{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='index/css/dashboard.css') }}">
+{% endblock %}
+
+{% block content %}
+<h2>Dashboard</h2>
+
+<div class="cards">
+    <div class="card blue">
+        <h3>Itens em estoque</h3>
+        <strong>1.248</strong>
+    </div>
+
+    <div class="card green">
+        <h3>Valor total</h3>
+        <strong>R$ 87.450</strong>
+    </div>
+
+    <div class="card orange">
+        <h3>Cautelas ativas</h3>
+        <strong>32</strong>
+    </div>
+
+    <div class="card red">
+        <h3>Vendas hoje</h3>
+        <strong>R$ 3.200</strong>
+    </div>
+
+    <a href="{{ url_for('ver_estoque') }}" style="text-decoration: none; color: inherit;">
+    <div class="card red">
+        <h3>Itens críticos no estoque:</h3>
+        <strong>4 itens</strong>
+    </div>
+    </a>
+</div>
+{% endblock %}

@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Login - CautelaOS</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='index/css/login.css') }}">
+</head>
+<body>
+
+<header class="topbar">
+    <div class="topbar-content">
+        <h1>Cautela OS</h1>
+        <span class="version">v1.4</span>
+    </div>
+</header>
+
+<main class="login-wrapper">
+
+    <div class="login-card">
+
+        <h2>🔐 CautelaOS - Acesso</h2>
+        <p class="subtitle">Informe suas credenciais</p>
+
+        {% if erro %}
+            <div class="error">{{ erro }}</div>
+        {% endif %}
+
+        <form method="POST" class="login-form">
+
+            <div class="field">
+                <label for="usuario">Usuário</label>
+                <input type="text" id="usuario" name="usuario" required>
+            </div>
+
+            <div class="field">
+                <label for="senha">Senha</label>
+                <input type="password" id="senha" name="senha" required>
+            </div>
+
+            <button type="submit" class="btn primary">
+                Entrar
+            </button>
+
+        </form>
+
+    </div>
+
+</main>
+
+</body>
+</html>

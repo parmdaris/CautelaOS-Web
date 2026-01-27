@@ -1,17 +1,10 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-    <meta charset="UTF-8">
-    <title>Início - Cautela OS</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <style>
-        body {
+body {
             font-family: 'Segoe UI', sans-serif;
             margin: 0;
             padding: 0;
             /*background: #f4f6f8;*/
-            background-image: url('{{ url_for("static", filename="resources/img/3.jpg") }}');
-            background-size: cover;
+            background-image: url('../../resources/img/3.jpg');
+            background-size: auto;
             background-position: center;
             background-repeat: no-repeat;
         }
@@ -64,28 +57,3 @@
                 padding: 12px;
             }
         }
-    </style>
-</head>
-<body>
-    <header>
-        <h1>Cautela OS</h1>
-        <p style="font-size: 15px;">Sistema integrado de controle de estoque e movimentações de material</p>
-        <p style="font-size: 10px;">Versão 1.0</p>
-    </header>
-    <div class="container">
-        <div class="subcontainer">
-            <a href="{{ url_for('ver_estoque') }}" class="menu-button">🔎 Ver Estoque</a>
-            <a href="{{ url_for('registrar_venda') }}" class="menu-button">📦 Registrar venda - WIP</a> 
-        </div>
-
-        <div class="subcontainer">
-            <a href="{{ url_for('listar_cautelas') }}" class="menu-button">📋 Ver Cautelas</a>
-            <a href="{{ url_for('nova_cautela') }}" class="menu-button">📝 Nova Cautela - WIP</a>
-        </div>
-
-        <div class="subcontainer">
-            <a href="{{ url_for('cautelaos') }}" class="menu-button">🔎 Gestão de clientes - WIP</a>
-        </div>
-    </div>
-</body>
-</html>
