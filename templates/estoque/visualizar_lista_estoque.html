@@ -15,8 +15,8 @@
 </p>
 
 <div class="actions-bar">
-    <a href="{{ url_for('cautelaos') }}" class="btn secondary">← Voltar</a>
-    <a href="{{ url_for('incluir_item') }}" class="btn primary">＋ Novo item</a>
+    <a href="{{ url_for('dashboard') }}" class="btn secondary">← Voltar</a>
+    <a href="{{ url_for('adicionarItem') }}" class="btn primary">+ Novo item</a>
 
     <form method="GET" action="{{ url_for('imprimir_estoque') }}" target="_blank">
         <button type="submit" class="btn warning">🖨 Imprimir</button>

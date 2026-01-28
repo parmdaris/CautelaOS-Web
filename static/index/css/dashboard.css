@@ -31,6 +31,7 @@
 .card.green  { border-left: 6px solid #2e7d32; }
 .card.orange { border-left: 6px solid #ef6c00; }
 .card.red    { border-left: 6px solid #c62828; }
+.card.red strong   { color: #c62828; }
 
 @media (max-width: 1100px) {
     .cards {

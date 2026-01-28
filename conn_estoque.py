@@ -216,6 +216,23 @@ def qtdArtigos(dados_db, tipo_item = None):
     return qtd_artigos
 
 
+def countArtigosCriticos(dados_db):
+    connection = pg.connect(   
+        database= dados_db['db_name'], user= dados_db['db_user'], 
+        password= dados_db['db_password'], host= dados_db['host_db'], port= dados_db['port']
+    )
+
+    connection.autocommit = True
+    cursor = connection.cursor() 
+
+    sql = '''select COUNT(*)  
+                from estoque.suprimentos where qty < 10;'''
+    cursor.execute(sql)
+    
+    criticos = cursor.fetchone()[0]
+    
+    return criticos
+
 
 
 def alterarItemDB(dados_db, dados_item, codigo_item):
@@ -337,11 +354,16 @@ def adicionarItemDB(dados_db, dados_item):
 
         connection.commit()
 
+    except pg.errors.UniqueViolation:
+        if connection:
+            connection.rollback()
+        return "SKU_DUPLICADO"
+
     except Exception as e:
         if connection:
             connection.rollback()
         print(f"Erro ao atualizar item: {e}")
-        return 1
+        return False
     
     finally:
         if cursor:
@@ -349,7 +371,7 @@ def adicionarItemDB(dados_db, dados_item):
         if connection:
             connection.close()
 
-    return 0
+    return True
 
 
 

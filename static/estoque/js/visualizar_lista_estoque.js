@@ -3,7 +3,7 @@ $(document).ready(function () {
         pageLength: 25,
         autoWidth: false,
         responsive: true,
-        dom: 'lftrip', // MOSTRA: length, filter, table, info, pagination
+        dom: 'lftrip',
         columnDefs: [
             { targets: 2, visible: false, searchable: true }
         ],

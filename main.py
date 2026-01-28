@@ -18,15 +18,27 @@ dados_db = db.dados()
 def iniciarIndex():
 
     app = Flask(__name__)
-    app.secret_key = os.environ.get("SECRET_KEY", "cautelaos-secret")
-
+    app.secret_key = "cautelaos"
+    #app.secret_key = os.environ.get("SECRET_KEY", "cautelaos-secret")
 
 
 
     @app.route('/') ################################################################################################### Renderização de tela - principal (Dashboard)
     @login_required
-    def cautelaos():
-        return render_template('dashboard.html')
+    def dashboard():
+        valor_estoque = estoque.valorEstoque(dados_db)
+        qtd_itens = estoque.qtdArtigos(dados_db)
+        criticos = estoque.countArtigosCriticos(dados_db)
+        val_vendas = "1.500,00"
+        qtd_vendas_hj = 12
+
+        return render_template('dashboard.html', 
+                               valor_estoque=valor_estoque, 
+                               qtd_itens=qtd_itens, 
+                               criticos=criticos, 
+                               val_vendas=val_vendas,
+                               qtd_vendas_hj=qtd_vendas_hj
+                               )
     
 
 
@@ -43,7 +55,7 @@ def iniciarIndex():
                 session["usuario_id"] = user["id"]
                 session["usuario_nome"] = user["nome"]
                 session["nivel"] = user["nivel_acesso"]
-                return redirect(url_for("cautelaos"))
+                return redirect(url_for("dashboard"))
 
             return render_template("login.html", erro="Usuário ou senha inválidos")
 
@@ -116,12 +128,7 @@ def iniciarIndex():
 
 
 
-    @app.route("/estoque/<codigo_item>/editar") ################################################################################ Renderização de tela - editar item do estoque
-    @login_required
-    def editar_item_estoque(codigo_item):
-        tiposItens = estoque.getTiposItens(dados_db)
-        dados_item = estoque.getDadosItem(dados_db, codigo_item)
-        return render_template('estoque/editar_item_estoque.html', dados_item=dados_item, tiposItens=tiposItens)
+    
 
 
 
@@ -153,42 +160,54 @@ def iniciarIndex():
 
 
 
-    @app.route('/estoque/editar_item/<codigo_item>', methods=['POST', 'GET']) ###################################################### Função - alterar dados de item do estoque
-    def alterarItem(codigo_item):
-        dados_item = request.form.to_dict()
-
-        estoque.alterarItemDB(dados_db, dados_item, codigo_item=codigo_item)
-
-        codigo_item = dados_item.get('novo_codigo')
-        return redirect(url_for('ver_item_estoque', codigo_item=codigo_item))
 
 
 
 
 
-    @app.route('/estoque/adicionar') ############################################################################################# Renderização de tela - adicionar novo item no estoque
+
+    @app.route('/estoque/adicionar_item', methods=['GET', 'POST']) ###################################################################### Função - adicionar novo item no estoque
     @login_required
-    def incluir_item():
+    def adicionarItem():
+
+        if request.method == 'POST':
+            dados_item = request.form.to_dict()
+            acao = dados_item.get('acao')
+
+            salvar_item = estoque.adicionarItemDB(dados_db, dados_item)
+
+            if salvar_item == "SKU_DUPLICADO":
+                return redirect(url_for('incluir_item', erro='sku_existente'))
+            if salvar_item is False:
+                return redirect(url_for('incluir_item', erro='erro_geral'))
+            
+            if acao == 'salvar_outro':
+                return redirect(url_for('incluir_item'))
+            
+            return redirect(url_for('ver_estoque'))
+        
         tiposItens = estoque.getTiposItens(dados_db)
         return render_template('estoque/adicionar_item_estoque.html', tiposItens=tiposItens)
     
 
 
 
+    @app.route('/estoque/editar_item/<codigo_item>', methods=['POST', 'GET']) ###################################################### Função - alterar dados de item do estoque
+    def alterarItem(codigo_item):
+        if request.method == 'POST':
+            dados_item = request.form.to_dict()
+            estoque.alterarItemDB(dados_db, dados_item, codigo_item=codigo_item)
+            codigo_item = dados_item.get('novo_codigo')
+            return redirect(url_for('ver_item_estoque', codigo_item=codigo_item))
 
-    @app.route('/estoque/adicionar_item', methods=['POST']) ###################################################################### Função - adicionar novo item no estoque
-    def adicionarItem():
-        dados_item = request.form.to_dict()
-        acao = dados_item.get('acao')
-
-        estoque.adicionarItemDB(dados_db, dados_item)
-
-        if acao == 'salvar_outro':
-            flash('Item salvo! Você pode cadastrar outro.', 'success')
-            return redirect(url_for('incluir_item'))
-        
-        return redirect(url_for('ver_estoque'))
+        tiposItens = estoque.getTiposItens(dados_db)
+        dados_item = estoque.getDadosItem(dados_db, codigo_item)
+        return render_template('estoque/editar_item_estoque.html', dados_item=dados_item, tiposItens=tiposItens)
     
+
+
+    
+        
 
 
 
@@ -202,27 +221,17 @@ def iniciarIndex():
 
 
 
-    @app.route('/vendas/nova') ############################################################################################# Renderização de tela - registro de nova venda
+    @app.route('/vendas/nova', methods=['GET', 'POST']) ############################################################################################# Renderização de tela - registro de nova venda
     @login_required
     def registrar_venda():
+        if request.method == "POST":
+            #descricao = request.form.get('descricao')
+            return redirect(url_for('ver_estoque'))
+        
         itens = estoque.getEstoque(dados_db)
         dados_clientes = clientes.getClientesVenda(dados_db)
-
-        dados = [
-            {"data": data, "operador": session["usuario_nome"], "id_venda": "27"}
-        ]
-
+        dados = [{"data": data, "operador": session["usuario_nome"], "id_venda": "27"}]
         return render_template('venda/registrar_venda.html', dados_itens=json.dumps(itens), dados_gerais=json.dumps(dados), dados_clientes=json.dumps(dados_clientes))
-
-
-
-
-
-    @app.route('/vendas/salvar', methods=['POST']) ############################################################################################# Função - gravar venda
-    def salvarVenda():
-        #descricao = request.form.get('descricao')
-        
-        return redirect(url_for('ver_estoque'))
     
 
 
@@ -248,13 +257,29 @@ def iniciarIndex():
     @app.route('/colaboradores') ############################################################################################# Renderização de tela - listagem de colaboradores
     @login_required
     def visualizar_colaboradores():
-        return render_template('colaboradores/ver_lista_colaboradores.html')
+        qty_colabs = usuarios.getQtyColabs(dados_db)
+        dados_colabs = usuarios.getListaColaboradores(dados_db)
+
+        return render_template('colaboradores/ver_lista_colaboradores.html', dados_colabs=dados_colabs, qty_colabs=qty_colabs)
 
 
 
 
 
 
+    @app.route('/colaboradores') 
+    def ver_colaborador(id_colab):
+
+        return render_template('colaboradores/ver_lista_colaboradores.html') 
+
+
+    @app.route('/colaboradores/novo', methods = ['GET', 'POST']) 
+    @login_required
+    def cadastrar_colab():
+        if request.method == 'POST':
+            pass
+
+        return render_template('colaboradores/adicionar_colaborador.html', operador = session["usuario_nome"], data = data)
 
 
 

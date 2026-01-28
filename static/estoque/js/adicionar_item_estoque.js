@@ -11,6 +11,18 @@ function formatarMoedaBR(input) {
 
 
 document.addEventListener("DOMContentLoaded", function () {
+
+    const params = new URLSearchParams(window.location.search);
+
+    if (params.get("erro") === "sku_existente") {
+        alert("⚠️ Este SKU já está cadastrado no sistema.");
+    }
+
+    if (params.get("erro") === false) {
+        alert("⚠️ Falha na adição do item. Entre em contato com o administrador.");
+    }
+
+    
     const header = document.querySelector("header p");
     if (header && typeof nomeOperador !== "undefined") {
         header.textContent = `Operador: ${nomeOperador}`;

@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+{% block title %}Adicionar colaborador • CautelaOS{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='colaboradores/css/adicionar_colaborador.css') }}">
+{% endblock %}
+
+{% block content %}
+<h2 class="page-title">👤 Colaboradores - Adicionar</h2>
+
+<div class="page-card">
+    <form method="POST">
+
+        <div class="campo">
+            <label>Nome completo *</label>
+            <input type="text" name="nome_completo" required>
+        </div>
+
+        <div class="campo">
+            <label>Nome simples *</label>
+            <input type="text" name="nome_simples" required>
+        </div>
+
+        <div class="seq-subdesc">
+
+            <div class="campo">
+                <label>Usuário *</label>
+                <input type="text" name="usuario" required>
+            </div>
+
+            <div class="campo">
+                <label>Senha inicial *</label>
+                <input type="password" name="senha" required>
+            </div>
+
+            <div class="campo">
+                <label>CPF ou RG *</label>
+                <input type="text" name="identidade" required>
+            </div>
+
+        </div>
+
+        <div class="campo">
+            <label>Nível de acesso *</label>
+            <select name="nivel_acesso" required>
+                <option value="admin">Administrador</option>
+                <option value="operador">Operador</option>
+                <option value="visualizador">Visualizador</option>
+            </select>
+        </div>
+
+        <input type="hidden" name="operador" value="{{ operador }}">
+
+        <div class="actions-bar">
+            <a href="{{ url_for('visualizar_colaboradores') }}" class="btn secondary">Cancelar</a>
+            <button type="submit" class="btn save">✓ Salvar</button>
+        </div>
+
+    </form>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='colaboradores/js/adicionar_colaborador.js') }}"></script>
+{% endblock %}

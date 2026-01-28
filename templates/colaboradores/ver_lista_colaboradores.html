@@ -11,36 +11,34 @@
 
 <h2>👥 Colaboradores</h2>
 <p class="subtitle">
-    Colaboradores: {{ qtd_artigos }} · Ativos: <strong>{{ valor_estoque }}</strong>
+    Colaboradores: {{ qty_colabs.total }} · Ativos: <strong>{{ qty_colabs.ativos }}</strong>
 </p>
 
 <div class="actions-bar">
-    <a href="{{ url_for('cautelaos') }}" class="btn secondary">← Voltar</a>
-    <a href="{{ url_for('incluir_item') }}" class="btn primary">＋ Novo cadastro</a>
+    <a href="{{ url_for('dashboard') }}" class="btn secondary">← Voltar</a>
+    <a href="{{ url_for('cadastrar_colab') }}" class="btn primary">+ Novo cadastro</a>
 </div>
 
 <div class="table-card">
-    <table id="tabela-estoque" class="display">
+    <table id="tabela-colabs" class="display">
         <thead>
             <tr>
                 <th>ID</th>
                 <th>Nome</th>
-                <th>Privilégio</th>
+                <th>Nível</th>
                 <th>Ativo</th>
                 <th>🔍︎</th>
             </tr>
         </thead>
         <tbody>
-            {% for item in dados_estq %}
+            {% for colab in dados_colabs %}
             <tr>
-                <td>{{ item.codigo }}</td>
-                <td style="text-align:left">{{ item.descricao }}</td>
-                <td style="display:none">{{ item.tipo }}</td>
-                <td>{{ item.qtd }}</td>
-                <td>R$ {{ item.valor }}</td>
-                <td>R$ {{ item.valor_atacado }}</td>
-                <td>
-                    <a href="{{ url_for('ver_item_estoque', codigo_item=item.codigo) }}">🔍︎</a>
+                <td>{{ colab.id }}</td>
+                <td>{{ colab.nome_simples }}</td>
+                <td>{{ colab.nivel_acesso }}</td>
+                <td>{{ colab.ativo }}</td>
+                <td style="text-align: center;">
+                    <a href="{{ url_for('ver_colaborador', id_colab=colab.id) }}">🔍︎</a>
                 </td>
             </tr>
             {% endfor %}
