@@ -25,9 +25,10 @@
             <tr>
                 <th>ID</th>
                 <th>Nome</th>
-                <th>Nível</th>
-                <th>Ativo</th>
-                <th>🔍︎</th>
+                <th>Usuário</th>
+                <th style="text-align: center;">Acesso</th>
+                <th style="text-align: center;">Ativo</th>
+                <th style="text-align: center;">🔍︎</th>
             </tr>
         </thead>
         <tbody>
@@ -35,8 +36,15 @@
             <tr>
                 <td>{{ colab.id }}</td>
                 <td>{{ colab.nome_simples }}</td>
-                <td>{{ colab.nivel_acesso }}</td>
-                <td>{{ colab.ativo }}</td>
+                <td>{{ colab.usuario }}</td>
+                <td style="text-align: center;">{{ colab.cargo_acesso }}</td>
+
+                {% if colab.ativo %}
+                    <td style="text-align: center;">🟢</td>
+                {% else %}
+                    <td style="text-align: center;">🔴</td>
+                {% endif %}
+
                 <td style="text-align: center;">
                     <a href="{{ url_for('detalhes_colaborador', id_colab=colab.id) }}">🔍︎</a>
                 </td>

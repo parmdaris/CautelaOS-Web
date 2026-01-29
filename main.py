@@ -7,7 +7,7 @@ import conn_colaboradores as usuarios
 import db_configdata as db
 import datetime, json, os
 
-
+data_iso = datetime.datetime.now().date().strftime("%Y-%m-%d %H:%M:%S")
 data = datetime.datetime.now().date().strftime("%d/%m/%Y")
 hora = datetime.datetime.now().time().strftime("%H:%M:%S")
 
@@ -247,11 +247,19 @@ def iniciarIndex():
         return render_template('colaboradores/ver_lista_colaboradores.html', dados_colabs=dados_colabs, qty_colabs=qty_colabs)
 
 
-    @app.route('/colaboradores') 
+    @app.route('/colaboradores/<id_colab>', methods=['GET','POST'])
     @login_requerido
     @acesso_requerido(1)
     def detalhes_colaborador(id_colab):
+        dados_colab = usuarios.getDadosColaborador(dados_db, id_colab)
 
+        return render_template('colaboradores/detalhes_colaborador.html', dados_colab=dados_colab) 
+    
+    
+    @app.route('/colaboradores/<id_colab>') 
+    @login_requerido
+    @acesso_requerido(1)
+    def edit_dados_colaborador(id_colab):
         return render_template('colaboradores/ver_lista_colaboradores.html') 
     
 
@@ -259,10 +267,23 @@ def iniciarIndex():
     @login_requerido
     @acesso_requerido(1)
     def cadastrar_colab():
-        if request.method == 'POST':
-            pass
+        id_operador = session["usuario_id"]
 
-        return render_template('colaboradores/adicionar_colaborador.html', operador = session["usuario_nome"], data = data)
+        if request.method == 'POST':
+            dados_colab = request.form.to_dict()
+
+            salvar_colab = usuarios.novoColaborador(dados_db, dados_colab, data=data_iso, operador=id_operador)
+
+            if salvar_colab == "USERNAME_DUPLICADO":
+                return redirect(url_for('cadastrar_colab', erro='username_existente'))
+            if salvar_colab != True:
+                return redirect(url_for('cadastrar_colab', erro=True, stack_erro=salvar_colab))
+            
+            return redirect(url_for('visualizar_colaboradores'))
+
+        cargos = usuarios.getCargos(dados_db)
+
+        return render_template('colaboradores/adicionar_colaborador.html', data=data, cargos=cargos)
 
 
 

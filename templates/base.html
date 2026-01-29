@@ -27,12 +27,12 @@
                         <a href="{{ url_for('visualizar_clientes') }}" style="color: red;">👥 Clientes</a>
                     {% endif %}
                     {% if tem_acesso(1) %}
-                        <a href="{{ url_for('visualizar_colaboradores') }}" style="color: red;">👥 Colaboradores</a>
+                        <a href="{{ url_for('visualizar_colaboradores') }}" style="color: yellow;">👥 Colaboradores</a>
                     {% endif %}
                 </nav>
                 <div class="sidebar-divider"></div>
                 <nav class="sidebar-menu">
-                    <a href="{{ url_for('registrar_venda') }}" style="color: rgb(255, 187, 0);">💰 Registrar venda</a>
+                    <a href="{{ url_for('registrar_venda') }}" style="color: yellow;">💰 Registrar venda</a>
                     <a href="{{ url_for('nova_cautela') }}" style="color: red;">📝 Registrar cautela</a>
                 </nav>
             </aside>

@@ -9,47 +9,54 @@
 <h2 class="page-title">👤 Colaboradores - Adicionar</h2>
 
 <div class="page-card">
-    <form method="POST">
+    
+    <form action="{{ url_for('cadastrar_colab') }}" method="POST">
 
         <div class="campo">
-            <label>Nome completo *</label>
+            <label>Nome completo<label style="color:red">*</label></label>
             <input type="text" name="nome_completo" required>
-        </div>
-
-        <div class="campo">
-            <label>Nome simples *</label>
-            <input type="text" name="nome_simples" required>
         </div>
 
         <div class="seq-subdesc">
 
             <div class="campo">
-                <label>Usuário *</label>
+                <label>Nome simples<label style="color:red">*</label></label>
+                <input type="text" name="nome_simples" required>
+            </div>
+
+            <div class="campo">
+                <label>Usuário<label style="color:red">*</label></label>
                 <input type="text" name="usuario" required>
             </div>
 
             <div class="campo">
-                <label>Senha inicial *</label>
-                <input type="password" name="senha" required>
+                <label>Código de identidade<label style="color:red">*</label></label>
+                <input type="text" name="identidade" maxlength="11" required>
+            </div>
+
+        </div>
+
+        <div class="divisor"></div>
+
+        <div class="seq-subdesc">
+            <div class="campo">
+                <label>Senha inicial<label style="color:red">*</label></label>
+                <input type="password" id="senha" name="senha" required>
             </div>
 
             <div class="campo">
-                <label>CPF ou RG *</label>
-                <input type="text" name="identidade" required>
+                <label>Confirme a senha<label style="color:red">*</label></label>
+                <input type="password" id="confirma_senha" name="confirma_senha" required>
+            </div>
+
+            <div class="campo">
+                <label>Nível de acesso<label style="color:red">*</label></label>
+                <select name="nivel_acesso" required>
+                    <option value="">Selecione um nível</option>
+                </select>
             </div>
 
         </div>
-
-        <div class="campo">
-            <label>Nível de acesso *</label>
-            <select name="nivel_acesso" required>
-                <option value="admin">Administrador</option>
-                <option value="operador">Operador</option>
-                <option value="visualizador">Visualizador</option>
-            </select>
-        </div>
-
-        <input type="hidden" name="operador" value="{{ operador }}">
 
         <div class="actions-bar">
             <a href="{{ url_for('visualizar_colaboradores') }}" class="btn secondary">Cancelar</a>
@@ -61,5 +68,6 @@
 {% endblock %}
 
 {% block extra_js %}
+<script id="cargos-json" type="application/json">{{ cargos | tojson }}</script>
 <script src="{{ url_for('static', filename='colaboradores/js/adicionar_colaborador.js') }}"></script>
 {% endblock %}
