@@ -23,8 +23,12 @@
                     <a href="{{ url_for('ver_estoque') }}">📦 Estoque</a>
                     <a href="{{ url_for('visualizar_vendas') }}" style="color: red;">💰 Vendas</a>
                     <a href="{{ url_for('listar_cautelas') }}" style="color: red;">📋 Cautelas</a>
-                    <a href="{{ url_for('visualizar_clientes') }}" style="color: red;">👥 Clientes</a>
-                    <a href="{{ url_for('visualizar_colaboradores') }}" style="color: red;">👥 Colaboradores</a>
+                    {% if tem_acesso(1, 2) %}
+                        <a href="{{ url_for('visualizar_clientes') }}" style="color: red;">👥 Clientes</a>
+                    {% endif %}
+                    {% if tem_acesso(1) %}
+                        <a href="{{ url_for('visualizar_colaboradores') }}" style="color: red;">👥 Colaboradores</a>
+                    {% endif %}
                 </nav>
                 <div class="sidebar-divider"></div>
                 <nav class="sidebar-menu">
@@ -39,7 +43,7 @@
                         <p>Bem-vindo, <strong>{{ session.usuario_nome }}</strong></p>
                         <hr>
                         <div class="header-meta">
-                            <span class="badge">{{ session["nivel"] }}</span>
+                            <span class="badge-cargo" data-id-acesso="{{ session['nivel_acesso'] }}">{{ session['cargo'] }}</span>
 
                             <form action="{{ url_for('logout') }}" method="POST">
                                 <button type="submit" class="logout-btn">⎋ Sair</button>
@@ -59,6 +63,7 @@
 
         </div>
 
+        <script src="{{ url_for('static', filename='index/js/base.js') }}"></script>
         {% block extra_js %}{% endblock %}
 
     </body>

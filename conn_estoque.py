@@ -230,7 +230,6 @@ def countArtigosCriticos(dados_db):
     cursor.execute(sql)
     
     criticos = cursor.fetchone()[0]
-    
     return criticos
 
 

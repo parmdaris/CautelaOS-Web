@@ -8,7 +8,11 @@ function formatarMoedaBR(input) {
     input.value = 'R$ ' + valor;
 }
 
-
+document.getElementById("codigo").addEventListener("input", function () {
+    this.value = this.value
+        .toUpperCase()
+        .replace(/[^A-Z0-9-]/g, "");
+});
 
 document.addEventListener("DOMContentLoaded", function () {
 

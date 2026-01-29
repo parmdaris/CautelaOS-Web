@@ -23,7 +23,7 @@
             <div class="sku-ean-qty">
                 <div class="campo">
                     <label>Código SKU *</label>
-                    <input type="text" name="novo_codigo" value="{{ dados_item.codigo }}" required>
+                    <input type="text" name="novo_codigo" id="novo_codigo" value="{{ dados_item.codigo }}" required pattern="[A-Z0-9\-]+" maxlength="30">
                 </div>
 
                 <div class="campo">

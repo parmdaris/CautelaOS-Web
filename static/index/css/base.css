@@ -86,13 +86,36 @@ html, body {
     gap: 15px;
 }
 
-.badge {
-    background-color: #ffc107;
-    color: #000;
+.badge-cargo {
     padding: 4px 10px;
     border-radius: 12px;
     font-size: 0.75rem;
     font-weight: bold;
+}
+
+.badge-admin {
+    background-color: #00f7ff;
+    color: #000;
+}
+
+.badge-operador {
+    background-color: #66ff00;
+    color: #000;
+}
+
+.badge-tecnico {
+    background-color: #0400ff;
+    color: #000;
+}
+
+.badge-consulta {
+    background-color: #9c9c9c;
+    color: #000;
+}
+
+.badge-default {
+    background-color: #ff0000;
+    color: #000;
 }
 
 .logout-btn {

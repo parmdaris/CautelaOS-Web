@@ -38,7 +38,7 @@
                 <td>{{ colab.nivel_acesso }}</td>
                 <td>{{ colab.ativo }}</td>
                 <td style="text-align: center;">
-                    <a href="{{ url_for('ver_colaborador', id_colab=colab.id) }}">🔍︎</a>
+                    <a href="{{ url_for('detalhes_colaborador', id_colab=colab.id) }}">🔍︎</a>
                 </td>
             </tr>
             {% endfor %}

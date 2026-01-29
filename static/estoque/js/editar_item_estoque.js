@@ -43,4 +43,11 @@ document.addEventListener("DOMContentLoaded", function () {
 
         campo.addEventListener("input", () => formatarMoedaBR(campo));
     });
+
+
+    document.getElementById("novo_codigo").addEventListener("input", function () {
+    this.value = this.value
+        .toUpperCase()
+        .replace(/[^A-Z0-9-]/g, "");
+    });
 });

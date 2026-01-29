@@ -18,7 +18,7 @@
                 border: thin solid #6495ed;
                 padding: 5px;
                 background-color: #D0E3FA;
-                text-align: left;
+                text-align: center;
             }
 
         td {
@@ -42,21 +42,22 @@
 <body onload="window.print()">
     <table>
         <tr>
-            <th colspan="4">
+            <th colspan="4" style="text-align: left;">
                     <p>Cautela OS - Relatório de estoque
-                        <br>Data: {{data}}
+                        <br>Data: {{data}} - {{hora}}
                         <br>Categoria: {{categoria}}
                         <br>Quantidade de itens: {{ qtd_artigos }}
                         <br>Valor total: R$ {{ valor_estoque }}
+                        <br>Operador: {{id_operador}} - {{operador}}
                     </p>
             </th>
         </tr>
 
         <tr>
-            <th style="text-align: center;">Código</th>
-            <th style="text-align: center;">Descrição do item</th>
-            <th style="text-align: center;">Qtd</th>
-            <th style="text-align: center;">Valor</th>
+            <th>Código</th>
+            <th>Descrição do item</th>
+            <th>QTD</th>
+            <th>Valor</th>
         </tr>
 
         

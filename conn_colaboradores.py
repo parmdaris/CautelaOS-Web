@@ -1,38 +1,34 @@
 import psycopg2 as pg
-from werkzeug.security import check_password_hash
+from auth import gerarSenhaHash, checarSenhaHash
 
 def autenticar_usuario(dados_db, usuario, senha):
     conn = None
     cursor = None
 
     try:
-        conn = pg.connect(
-            database=dados_db['db_name'],
-            user=dados_db['db_user'],
-            password=dados_db['db_password'],
-            host=dados_db['host_db'],
-            port=dados_db['port']
-        )
-
+        conn = pg.connect(database = dados_db['db_name'], user=dados_db['db_user'], password=dados_db['db_password'], host=dados_db['host_db'], port=dados_db['port'])
         cursor = conn.cursor()
-        cursor.execute("""
-            SELECT id, nome_simples, senha_hash, nivel_acesso
-            FROM colaborador.dados
-            WHERE usuario = %s AND ativo = true
-        """, (usuario,))
+        query = """SELECT d.id, d.nome_simples, d.senha_hash, d.nivel_acesso, c.cargo
+                    FROM colaborador.dados d
+                    JOIN colaborador.cargos c
+                    ON d.nivel_acesso = c.id_cargo
+                    WHERE d.usuario = %s
+                    AND d.ativo = TRUE"""
+        
+        cursor.execute(query, (usuario,))
 
         resultado = cursor.fetchone()
 
         if not resultado:
             return None
 
-        if check_password_hash(resultado[2], senha):
+        if checarSenhaHash(resultado[2], senha):
             return {
                 "id": resultado[0],
                 "nome": resultado[1],
-                "nivel_acesso": resultado[3]
+                "id_acesso": resultado[3],
+                "cargo": resultado[4]
             }
-
         return None
 
     finally:

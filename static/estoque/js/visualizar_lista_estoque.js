@@ -1,12 +1,10 @@
 $(document).ready(function () {
-    $('#tabela-estoque').DataTable({
+
+    const tabela = $('#tabela-estoque').DataTable({
         pageLength: 25,
         autoWidth: false,
         responsive: true,
-        dom: 'lftrip',
-        columnDefs: [
-            { targets: 2, visible: false, searchable: true }
-        ],
+        dom: 'lftip',
         language: {
             lengthMenu: "Mostrar _MENU_ itens",
             zeroRecords: "Nenhum resultado encontrado",
@@ -20,4 +18,32 @@ $(document).ready(function () {
             }
         }
     });
+
+    const tipos = JSON.parse(
+        document.getElementById("tipos-itens").textContent
+    );
+
+    const filtroTipo = $('<select class="tipo-select" name="tipo-select">' +
+        '<option value="">Todos</option>' +
+    '</select>');
+
+    tipos.forEach(tipo => {
+        filtroTipo.append(`<option value="${tipo}">${tipo}</option>`);
+    });
+
+    filtroTipo.on('change', function () {
+        const valor = this.value;
+
+    tabela.column(2).search(valor).draw();
+
+    document.getElementById('tipo-filtro').value = valor;
+    });
+
+    const lengthLabel = $('.dataTables_length label');
+
+    lengthLabel.append(`
+        <span style="margin-left: 12px;">Tipo:</span>
+    `);
+
+    lengthLabel.append(filtroTipo);
 });

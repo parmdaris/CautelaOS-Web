@@ -18,7 +18,8 @@
     <a href="{{ url_for('dashboard') }}" class="btn secondary">← Voltar</a>
     <a href="{{ url_for('adicionarItem') }}" class="btn primary">+ Novo item</a>
 
-    <form method="GET" action="{{ url_for('imprimir_estoque') }}" target="_blank">
+    <form method="POST" action="{{ url_for('imprimir_estoque') }}" target="_blank">
+        <input type="hidden" name="tipo-filtro" id="tipo-filtro">
         <button type="submit" class="btn warning">🖨 Imprimir</button>
     </form>
 </div>
@@ -52,11 +53,15 @@
             {% endfor %}
         </tbody>
     </table>
+    
 </div>
 
 {% endblock %}
 
 {% block extra_js %}
+<script id="tipos-itens" type="application/json">
+    {{ tipos_itens | tojson }}
+</script>
 <script src="https://code.jquery.com/jquery-3.7.0.js"></script>
 <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
 <script src="{{ url_for('static', filename='estoque/js/visualizar_lista_estoque.js') }}"></script>
