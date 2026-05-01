@@ -402,9 +402,11 @@ def iniciarIndex():
 
 
 ######################################## Inicialização do app Flask
-    
+
+
+inicializarCfg()
+iniciarIndex() 
 
 if __name__ == "__main__":
     app.run(debug=True, host="0.0.0.0")
-    inicializarCfg()
-    iniciarIndex()
+
