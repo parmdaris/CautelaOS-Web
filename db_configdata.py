@@ -13,11 +13,11 @@ def conectarBanco():
     db = config['db-config']
 
     return pg.connect(
-                    database=db['database'], 
-                    user=db['user'], 
-                    password=db['password'], 
-                    host=db['host-db'], 
-                    port=db['port']
+                    database=os.environ.get("DB_NAME", db.get('database')),
+                    user=os.environ.get("DB_USER", db.get('user')),
+                    password=os.environ.get("DB_PASSWORD", db.get('password')),
+                    host=os.environ.get("DB_HOST", db.get('host-db')),
+                    port=os.environ.get("DB_PORT", db.get('port'))
                     )
 
 
