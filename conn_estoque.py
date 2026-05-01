@@ -26,7 +26,7 @@ def getEstoque(tipo_item = None, item_ativo = True, itens_criticos = False):
 
         else:
             sql = sql_start + sql_tipo + sql_end
-            cursor.execute(sql, (tipo_item, item_ativo))
+            cursor.execute(sql, (item_ativo, tipo_item))
 
 
         row = cursor.fetchall()
@@ -67,6 +67,7 @@ def getEstoque(tipo_item = None, item_ativo = True, itens_criticos = False):
         if connection:
             connection.rollback()
         print(f"Erro ao conectar!")
+        print(e)
         return []
 
     finally:
