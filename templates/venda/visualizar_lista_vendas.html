@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+
+{% block title %}Vendas - Cautela OS{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.min.css">
+<link rel="stylesheet" href="{{ url_for('static', filename='venda/css/visualizar_lista_vendas.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='index/css/common_contents.css') }}">
+{% endblock %}
+
+{% block content %}
+
+<h2>💰 Vendas - Listagem</h2>
+<p class="subtitle">
+    Vendas registradas: {{ qtd_vendas }} · Valor total: <strong>R$ {{ valor_vendas }}</strong> · Vendas (hoje): {{ qtd_vendas_hoje }} · Valor total (hoje): <strong>R$ {{ valor_vendas_hoje }}</strong>
+</p>
+
+<div class="actions-bar">
+    <a href="{{ url_for('dashboard') }}" class="btn navegar">← Voltar</a>
+    <a href="{{ url_for('registrar_venda') }}" class="btn adicionar">+ Nova venda</a> <!--alterar-->
+
+    <form method="POST" action="{{ url_for('dashboard') }}" target="_blank">
+        <button type="submit" class="btn acao">🖨 Imprimir</button>
+    </form>
+
+    <a href="{{ url_for('dashboard') }}" class="btn navegar">🔴 Vendas canceladas</a>
+</div>
+
+<div class="table-card">
+    <table id="tabela-vendas" class="display">
+        <thead>
+            <tr>
+                <th>Venda Nº</th>
+                <th>Destino</th>
+                <th>Qtd itens</th>
+                <th>Valor total</th>
+                <th>Data da venda</th>
+                <th>🔍︎</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for venda in dados_vendas %}
+            <tr>
+                <td>{{ venda.id_venda }}</td>
+                <td style="text-align:left">{{ venda.destino }}</td>
+                <td>{{ venda.qtd_total_itens }}</td>
+                <td>R$ {{ venda.valor_total }}</td>
+                <td>{{ venda.data_venda }}</td>
+                <td>
+                    <a href="{{ url_for('dashboard', id_venda=venda.id_venda) }}" class="a detalhes">🔍︎</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+
+<script src="https://code.jquery.com/jquery-3.7.0.js"></script>
+<script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
+<script src="{{ url_for('static', filename='venda/js/visualizar_lista_vendas.js') }}"></script>
+{% endblock %}

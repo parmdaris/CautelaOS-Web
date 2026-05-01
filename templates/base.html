@@ -20,27 +20,98 @@
 
                 <nav class="sidebar-menu">
                     <a href="{{ url_for('dashboard') }}">📈 Dashboard</a>
-                    <a href="{{ url_for('ver_estoque') }}">📦 Estoque</a>
-                    <a href="{{ url_for('visualizar_vendas') }}" style="color: red;">💰 Vendas</a>
-                    <a href="{{ url_for('listar_cautelas') }}" style="color: red;">📋 Cautelas</a>
+
+                    <div class="menu-item has-submenu">
+                        <button class="menu-toggle">
+                            <span>📦 Estoque</span>
+                            <span class="arrow">▸</span>
+                        </button>
+
+                        <div class="submenu">
+                            <a href="{{ url_for('ver_estoque') }}">📋 Ver estoque</a>
+                            <a href="{{ url_for('adicionarItem') }}">➕ Adicionar item</a>
+                            <a href="" style="color: red;">📊 Relatórios</a>
+                        </div>
+                    </div>
+
+
+                    <div class="menu-item has-submenu">
+                        <button class="menu-toggle">
+                            <span>💰 Vendas</span>
+                            <span class="arrow">▸</span>
+                        </button>
+
+                        <div class="submenu">
+                            <a href="{{ url_for('visualizar_vendas') }}">💰 Ver vendas</a>
+                            <a href="{{ url_for('registrar_venda') }}">➕ Registrar venda</a>
+                            <a href="" style="color: red;">📊 Relatórios</a>
+                        </div>
+                    </div>
+
+
+                    <div class="menu-item has-submenu">
+                        <button class="menu-toggle">
+                            <span style="color: red;">📦 Cautela</span>
+                            <span class="arrow">▸</span>
+                        </button>
+
+                        <div class="submenu">
+                            <a href="{{ url_for('listar_cautelas') }}" style="color: yellow;">📋 Ver cautelas</a>
+                            <a href="" style="color: red;">➕ Gerar cautela</a>
+                            <a href="" style="color: red;">📊 Relatórios</a>
+                        </div>
+                    </div>
+
+                    {% if tem_acesso(1, 2, 4) %}
+                    <div class="menu-item has-submenu">
+                        <button class="menu-toggle">
+                            <span style="color: red;">🛠️ Serviço</span>
+                            <span class="arrow">▸</span>
+                        </button>
+
+                        <div class="submenu">
+                            <a href="" style="color: red;">📋 Ver ordens</a>
+                            <a href="" style="color: red;">➕ Gerar ordem</a>
+                            <a href="" style="color: red;">📊 Relatórios</a>
+                        </div>
+                    </div>
+                    {% endif %}
+
                     {% if tem_acesso(1, 2) %}
-                        <a href="{{ url_for('visualizar_clientes') }}" style="color: red;">👥 Clientes</a>
+                    <div class="menu-item has-submenu">
+                            <button class="menu-toggle">
+                                <span style="color: yellow;">👥 Clientes</span>
+                                <span class="arrow">▸</span>
+                            </button>
+
+                            <div class="submenu">
+                                <a href="{{ url_for('visualizar_clientes') }}" style="color: yellow;">📋 Gerenciar</a>
+                            </div>
+                        </div>
                     {% endif %}
-                    {% if tem_acesso(1) %}
-                        <a href="{{ url_for('visualizar_colaboradores') }}" style="color: yellow;">👥 Colaboradores</a>
+
+                    {% if tem_acesso(1, 2) %}
+                        <div class="menu-item has-submenu">
+                            <button class="menu-toggle">
+                                <span style="color: yellow;">👥 Colaboradores</span>
+                                <span class="arrow">▸</span>
+                            </button>
+
+                            <div class="submenu">
+                                <a href="{{ url_for('visualizar_colaboradores') }}" style="color: yellow;">📋 Gerenciar</a>
+                                <a href="{{ url_for('cadastrar_colab') }}" style="color: yellow;">➕ Adicionar colaborador</a>
+                            </div>
+                        </div>
                     {% endif %}
-                </nav>
-                <div class="sidebar-divider"></div>
-                <nav class="sidebar-menu">
-                    <a href="{{ url_for('registrar_venda') }}" style="color: yellow;">💰 Registrar venda</a>
-                    <a href="{{ url_for('nova_cautela') }}" style="color: red;">📝 Registrar cautela</a>
+
+
                 </nav>
             </aside>
 
             <div class="main">
                 <header class="header">
                     <div class="header-user">
-                        <p>Bem-vindo, <strong>{{ session.usuario_nome }}</strong></p>
+                        <p>Bem-vindo, <strong>{{ session.u_apelido }}</strong></p>
                         <hr>
                         <div class="header-meta">
                             <span class="badge-cargo" data-id-acesso="{{ session['nivel_acesso'] }}">{{ session['cargo'] }}</span>

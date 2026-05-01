@@ -1,16 +1,14 @@
-import psycopg2 as pg
+from db_configdata import conectarBanco
+from psycopg2 import errors as pg_err
 
-def getClientes(dados_db):
+def getClientes():
 
-    connection = pg.connect(   
-        database= dados_db['db_name'], user= dados_db['db_user'], 
-        password= dados_db['db_password'], host= dados_db['host_db'], port= dados_db['port']
-    )
+    connection = conectarBanco()
     connection.autocommit = True
     cursor = connection.cursor() 
 
     
-    sql = '''
+    query = '''
         select id_cliente, 
         nome_cliente,
         nome_fantasia, 
@@ -23,7 +21,7 @@ def getClientes(dados_db):
         order by id_cliente asc;
         '''
         
-    cursor.execute(sql) 
+    cursor.execute(query) 
     dataset = cursor.fetchall()
     
     dados_clientes = []
@@ -45,16 +43,13 @@ def getClientes(dados_db):
 
 
 
-def getClientesVenda(dados_db):
+def getClientesVenda():
       
-    connection = pg.connect(   
-        database= dados_db['db_name'], user= dados_db['db_user'], 
-        password= dados_db['db_password'], host= dados_db['host_db'], port= dados_db['port']
-    )
+    connection = conectarBanco()
     connection.autocommit = True
     cursor = connection.cursor() 
 
-    sql = '''
+    query = '''
             select id_cliente, 
             nome_cliente,
             nome_fantasia, 
@@ -67,7 +62,7 @@ def getClientesVenda(dados_db):
             order by id_cliente asc;
         '''
     
-    cursor.execute(sql) 
+    cursor.execute(query) 
     dataset = cursor.fetchall()
     
     dados_clientes = []
@@ -86,16 +81,13 @@ def getClientesVenda(dados_db):
 
 
 
-def getClientesContrato(dados_db):
+def getClientesContrato():
       
-    connection = pg.connect(   
-        database= dados_db['db_name'], user= dados_db['db_user'], 
-        password= dados_db['db_password'], host= dados_db['host_db'], port= dados_db['port']
-    )
+    connection = conectarBanco()
     connection.autocommit = True
     cursor = connection.cursor() 
 
-    sql = '''
+    query = '''
             select id_cliente, 
             nome_cliente,
             nome_fantasia, 
@@ -108,7 +100,7 @@ def getClientesContrato(dados_db):
             order by id_cliente asc;
         '''
     
-    cursor.execute(sql) 
+    cursor.execute(query) 
     dataset = cursor.fetchall()
     
     dados_clientes = []

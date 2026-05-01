@@ -41,7 +41,7 @@
                 <td>R$ {{ item.valor }}</td>
                 <td>R$ {{ item.valor_atacado }}</td>
                 <td>
-                    <a href="{{ url_for('ver_item_estoque', codigo_item=item.codigo) }}">🔍︎</a>
+                    <a href="{{ url_for('ver_item_estoque', codigo_item=item.codigo) }}" style="text-decoration: none;">🔍︎</a>
                 </td>
             </tr>
             {% endfor %}

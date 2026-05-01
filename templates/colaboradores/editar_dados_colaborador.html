@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+{% block title %}Editar colaborador • CautelaOS{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='colaboradores/css/editar_dados_colaborador.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='index/css/common_contents.css') }}">
+{% endblock %}
+
+{% block content %}
+<h2 class="page-title">👤 Colaborador ID: {{dados_colab.id}} - Editar dados</h2>
+
+<div class="page-card">
+    
+    <form action="{{ url_for('edit_dados_colaborador', id_colab=dados_colab.id) }}" method="POST">
+
+        <div class="campo">
+            <label>Nome completo<label style="color:red">*</label></label>
+            <input type="text" name="nome_completo" class="input padrao" required value="{{dados_colab.nome_completo}}">
+        </div>
+
+        <div class="seq-subdesc">
+
+            <div class="campo">
+                <label>Apelido<label style="color:red">*</label></label>
+                <input type="text" name="apelido" class="input padrao" required value="{{dados_colab.apelido}}">
+            </div>
+
+            <div class="campo">
+                <label>Usuário<label style="color:red">*</label></label>
+                <input type="text" name="usuario" class="input padrao" required value="{{dados_colab.nome_usuario}}">
+            </div>
+
+            
+            {%if dados_colab.nivel_acesso > 1%}
+            <div class="campo">
+                <label>Nível de acesso<label style="color:red">*</label></label>
+                <select name="nivel_acesso" class="input padrao" required data-atual="{{ dados_colab.nivel_acesso }}"></select>
+            </div>
+
+            <div class="campo">
+                <label>Ativo<label style="color:red">*</label></label>
+                <select name="is_ativo" class="select padrao" required>
+                    <option value="True" {{ 'selected' if dados_colab.is_ativo else '' }}>🟢 SIM</option>
+                    <option value="False" {{ 'selected' if not dados_colab.is_ativo else '' }}>🔴 NÃO</option>
+                </select>
+            </div>
+            {%else%}
+            <div class="campo">
+                <label>Nível de acesso<label style="color:red">*</label></label>
+                <select name="nivel_acesso" class="input padrao" required disabled>
+                    <option value="1">Administrador</option>
+                </select>
+            </div>
+
+            <div class="campo">
+                <label>Ativo<label style="color:red">*</label></label>
+                <select name="is_ativo" class="select padrao" required disabled>
+                    <option value="True" {{ 'selected' if dados_colab.is_ativo else '' }}>🟢 SIM</option>
+                    <option value="False" {{ 'selected' if not dados_colab.is_ativo else '' }}>🔴 NÃO</option>
+                </select>
+            </div>
+            {%endif%}
+
+        </div>
+
+
+
+
+        <div class="actions-bar rodape">
+            <a href="{{ url_for('detalhes_colaborador', id_colab=dados_colab.id) }}" class="btn cancelar">🛇 Cancelar</a>
+            <button type="submit" class="btn salvar">✓ Salvar</button>
+        </div>
+
+    </form>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script id="cargos-json" type="application/json">{{ cargos | tojson }}</script>
+<script src="{{ url_for('static', filename='colaboradores/js/editar_dados_colaborador.js') }}"></script>
+{% endblock %}

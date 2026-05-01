@@ -51,8 +51,8 @@ table.dataTable tbody tr:hover {
     margin-bottom: 12px;
 }
 
-.dataTables_wrapper .dataTables_filter input,
-.dataTables_wrapper .dataTables_length select {
+.dataTables_filter input,
+.dataTables_length select {
     padding: 6px 10px;
     border-radius: 6px;
     border: 1px solid #ccc;
@@ -60,11 +60,11 @@ table.dataTable tbody tr:hover {
 }
 
 /* Paginação */
-.dataTables_wrapper .dataTables_paginate {
+.dataTables_paginate {
     margin-top: 12px;
 }
 
-.dataTables_wrapper .dataTables_paginate .paginate_button {
+.dataTables_paginate .paginate_button {
     padding: 6px 12px;
     margin: 0 2px;
     border-radius: 6px;
@@ -73,12 +73,12 @@ table.dataTable tbody tr:hover {
     cursor: pointer;
 }
 
-.dataTables_wrapper .dataTables_paginate .paginate_button.current {
+.dataTables_paginate .paginate_button.current {
     background: #1976d2;
     color: #fff !important;
 }
 
-.dataTables_wrapper .dataTables_paginate .paginate_button:hover {
+.dataTables_paginate .paginate_button:hover {
     background: #e3f2fd;
 }
 

@@ -6,8 +6,12 @@ from werkzeug.security import generate_password_hash, check_password_hash
 def login_requerido(f):
     @wraps(f)
     def decorated(*args, **kwargs):
-        if "usuario_id" not in session:
+        if "u_id" not in session:
             return redirect(url_for("login"))
+        
+        if "u_primeiro_acesso" == True:
+            return redirect(url_for("acesso_inicial"))
+        
         return f(*args, **kwargs)
     
     return decorated
@@ -46,3 +50,4 @@ def checarSenhaHash(hash, senha):
 def gerarSenhaHash(senha):
     senha_hash = generate_password_hash(senha)
     return senha_hash
+

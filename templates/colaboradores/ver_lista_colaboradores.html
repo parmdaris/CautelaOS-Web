@@ -5,6 +5,7 @@
 {% block extra_css %}
 <link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.min.css">
 <link rel="stylesheet" href="{{ url_for('static', filename='colaboradores/css/ver_lista_colaboradores.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='index/css/common_contents.css') }}">
 {% endblock %}
 
 {% block content %}
@@ -15,8 +16,8 @@
 </p>
 
 <div class="actions-bar">
-    <a href="{{ url_for('dashboard') }}" class="btn secondary">← Voltar</a>
-    <a href="{{ url_for('cadastrar_colab') }}" class="btn primary">+ Novo cadastro</a>
+    <a href="{{ url_for('dashboard') }}" class="btn navegar">← Voltar</a>
+    <a href="{{ url_for('cadastrar_colab') }}" class="btn adicionar">+ Novo cadastro</a>
 </div>
 
 <div class="table-card">
@@ -35,18 +36,18 @@
             {% for colab in dados_colabs %}
             <tr>
                 <td>{{ colab.id }}</td>
-                <td>{{ colab.nome_simples }}</td>
+                <td>{{ colab.apelido }}</td>
                 <td>{{ colab.usuario }}</td>
                 <td style="text-align: center;">{{ colab.cargo_acesso }}</td>
 
-                {% if colab.ativo %}
+                {% if colab.is_ativo %}
                     <td style="text-align: center;">🟢</td>
                 {% else %}
                     <td style="text-align: center;">🔴</td>
                 {% endif %}
 
                 <td style="text-align: center;">
-                    <a href="{{ url_for('detalhes_colaborador', id_colab=colab.id) }}">🔍︎</a>
+                    <a href="{{ url_for('detalhes_colaborador', id_colab=colab.id) }}" style="text-decoration: none;">🔍︎</a>
                 </td>
             </tr>
             {% endfor %}

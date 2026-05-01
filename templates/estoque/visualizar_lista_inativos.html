@@ -10,22 +10,13 @@
 
 {% block content %}
 
-<h2>📦 Estoque</h2>
+<h2>📦 Estoque - Itens inativos</h2>
 <p class="subtitle">
-    Itens ativos: {{ qtd_artigos }} · Valor total: <strong>R$ {{ valor_estoque }}</strong>
+    Artigos inativos: <strong>{{ qtd_artigos }}</strong>
 </p>
 
 <div class="actions-bar">
-    <a href="{{ url_for('dashboard') }}" class="btn navegar">← Voltar</a>
-    <a href="{{ url_for('adicionarItem') }}" class="btn adicionar">+ Novo item</a>
-
-    <form method="POST" action="{{ url_for('imprimir_estoque') }}" target="_blank">
-        <input type="hidden" name="tipo-filtro" id="tipo-filtro">
-        <input type="hidden" name="estado-filtro" id="estado-filtro">
-        <button type="submit" class="btn acao">🖨 Imprimir</button>
-    </form>
-
-    <a href="{{ url_for('ver_itens_inativos') }}" class="btn navegar">🔴 Itens inativos</a>
+    <a href="{{ url_for('ver_estoque') }}" class="btn navegar">← Voltar</a>
 </div>
 
 <div class="table-card">
@@ -35,10 +26,6 @@
                 <th>Código</th>
                 <th>Descrição</th>
                 <th style="display:none">Tipo</th>
-                <th style="display: none">Estado</th>
-                <th>Qtd</th>
-                <th>Valor</th>
-                <th>Atacado</th>
                 <th>🔍︎</th>
             </tr>
         </thead>
@@ -48,12 +35,8 @@
                 <td>{{ item.codigo }}</td>
                 <td style="text-align:left">{{ item.descricao }}</td>
                 <td style="display:none">{{ item.tipo }}</td>
-                <td style="display:none">{{ item.is_critico }}</td>
-                <td>{{ item.qtd }}</td>
-                <td>R$ {{ item.valor }}</td>
-                <td>R$ {{ item.valor_atacado }}</td>
                 <td>
-                    <a href="{{ url_for('ver_item_estoque', codigo_item=item.codigo) }}" class="a detalhes">🔍︎</a>
+                    <a href="{{ url_for('ver_item_estoque', codigo_item=item.codigo) }}" style="text-decoration: none;">🔍︎</a>
                 </td>
             </tr>
             {% endfor %}
@@ -70,5 +53,5 @@
 </script>
 <script src="https://code.jquery.com/jquery-3.7.0.js"></script>
 <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
-<script src="{{ url_for('static', filename='estoque/js/visualizar_lista_estoque.js') }}"></script>
+<script src="{{ url_for('static', filename='estoque/js/visualizar_lista_inativos.js') }}"></script>
 {% endblock %}

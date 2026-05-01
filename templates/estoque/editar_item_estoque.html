@@ -2,9 +2,11 @@
 {% block title %}{{ dados_item.codigo }} • Editar - CautelaOS{% endblock %}
 {% block extra_css %}
 <link rel="stylesheet" href="{{ url_for('static', filename='estoque/css/editar_item_estoque.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='index/css/common_contents.css') }}">
 {% endblock %}
 {% block content %}
-<h2 class="page-title">📦 Estoque - Editar item: <strong>{{ dados_item.codigo }}</strong></h2>
+<h2 class="page-title">📦 Estoque - Editar item: <strong>{{ dados_item.codigo }} - {%if dados_item.is_ativo%}<span style="color: Green;">🟢 Ativo</span>
+    {%else%}<span style="color: red;">🔴 Inativo</span>{%endif%}</strong></h2>
 
 <div class="page-card">
     <form class="form-group"
@@ -14,7 +16,7 @@
 
         <div class="campo">
             <label>Descrição do item *</label>
-            <input type="text" name="descricao" value="{{ dados_item.descricao }}" required>
+            <input type="text" class="input padrao" name="descricao" value="{{ dados_item.descricao }}" required>
         </div>
 
         
@@ -23,17 +25,23 @@
             <div class="sku-ean-qty">
                 <div class="campo">
                     <label>Código SKU *</label>
-                    <input type="text" name="novo_codigo" id="novo_codigo" value="{{ dados_item.codigo }}" required pattern="[A-Z0-9\-]+" maxlength="30">
+                    <input type="text" name="novo_codigo" class="input padrao" id="novo_codigo" value="{{ dados_item.codigo }}" required pattern="[A-Z0-9\-]+" maxlength="30">
                 </div>
 
                 <div class="campo">
                     <label>EAN-13</label>
-                    <input type="text" name="ean_13" value="{{ dados_item.ean_13 }}">
+                    <input type="text" name="ean_13" class="input padrao" value="{{ dados_item.ean_13 }}">
                 </div>
 
-                <div class="campo pequeno">
-                    <label>Quantidade *</label>
-                    <input type="number" name="quantidade" value="{{ dados_item.qtd }}" min="0" required>
+                <div class="campos-qty">
+                    <div class="campo pequeno">
+                        <label>Quantidade *</label>
+                        <input type="number" name="quantidade" class="input padrao" value="{{ dados_item.qtd }}" min="0" required>
+                    </div>
+                    <div class="campo pequeno">
+                        <label>Limiar de alerta</label>
+                        <input type="number" name="limiar_alerta" class="input padrao" value="{{ dados_item.limiar_alerta }}" min="1" required>
+                    </div>
                 </div>
             </div>
 
@@ -41,35 +49,35 @@
 
                 <div class="campo full">
                     <label>Sub-descrição</label>
-                    <input type="text" name="subdescricao" value="{{ dados_item.subdescricao }}">
+                    <input type="text" name="subdescricao" class="input padrao" value="{{ dados_item.subdescricao }}">
                 </div>
 
                 <div class="tipo-subtipo">
                     <div class="campo">
                         <label>Tipo</label>
-                        <select name="tipo_item" data-selected="{{ dados_item.tipo_item }}" required></select>
+                        <select name="tipo_item" class="select padrao" data-selected="{{ dados_item.tipo_item }}" required></select>
                     </div>
 
                     <div class="campo">
                         <label>Subtipo</label>
-                        <input type="text" name="subtipo" value="{{ dados_item.subtipo }}">
+                        <input type="text" name="subtipo" class="input padrao" value="{{ dados_item.subtipo }}">
                     </div>
                 </div>
 
                 <div class="valores-qty-atac">
                     <div class="campo">
                         <label>Valor unitário *</label>
-                        <input type="text" id="valor" name="valor" value="{{ dados_item.valor }}" required>
+                        <input type="text" id="valor" name="valor" class="input padrao" value="{{ dados_item.valor }}" required>
                     </div>
 
                     <div class="campo">
                         <label>Valor atacado</label>
-                        <input type="text" id="valor_atacado" name="valor_atacado" value="{{ dados_item.valor_atacado }}">
+                        <input type="text" id="valor_atacado" class="input padrao" name="valor_atacado" value="{{ dados_item.valor_atacado }}">
                     </div>
 
                     <div class="campo pequeno">
                         <label>Qtd atacado</label>
-                        <input type="number" name="qty_atacado" value="{{ dados_item.qty_atacado }}" min="2">
+                        <input type="number" name="qty_atacado" class="input padrao" value="{{ dados_item.qty_atacado }}" min="2">
                     </div>
                 </div>
             </div>
@@ -81,19 +89,35 @@
         </div>
 
     
-
-    <div class="actions-bar">
+    
+    <div class="actions-bar rodape">
+        {%if nivel_acesso|int == 1 %}
         <a href="{{ url_for('deletarItem', codigo_item=dados_item.codigo) }}"
-        class="btn warning"
+        class="btn remover"
         onclick="return confirm('Tem certeza que deseja excluir este item?')">
             🗑 Deletar item
         </a>
+        {%endif%}
 
-        <a href="{{ url_for('ver_item_estoque', codigo_item=dados_item.codigo) }}" class="btn secondary">
+        {% if dados_item.is_ativo %}
+            <a href="{{ url_for('definirAtivo', codigo_item=dados_item.codigo, ativar=False) }}"
+            class="btn remover"
+            onclick="return confirm('Tem certeza que deseja desativar este item?')">
+                🔴 Desativar item
+            </a>
+        {% else %}
+            <a href="{{ url_for('definirAtivo', codigo_item=dados_item.codigo, ativar=True) }}"
+            class="btn salvar"
+            onclick="return confirm('Tem certeza que deseja ativar este item?')">
+                🟢 Ativar item
+            </a>
+        {%endif%}
+
+        <a href="{{ url_for('ver_item_estoque', codigo_item=dados_item.codigo) }}" class="btn cancelar">
             🛇 Cancelar
         </a>
 
-        <button type="submit" class="btn save">
+        <button type="submit" class="btn salvar">
             ✓ Salvar
         </button>
     </form>

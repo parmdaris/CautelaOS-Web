@@ -1,55 +1,35 @@
-import psycopg2 as pg
+from db_configdata import conectarBanco
+from psycopg2 import errors as pg_err
 
-def getEstoque(dados_db, tipo_item = None):
+def getEstoque(tipo_item = None, item_ativo = True, itens_criticos = False):
     connection = None
     cursor = None
 
     try:
-        connection = pg.connect(   
-            database= dados_db['db_name'], user= dados_db['db_user'], 
-            password= dados_db['db_password'], host= dados_db['host_db'], port= dados_db['port']
-        )
+        connection = conectarBanco()
 
         connection.autocommit = True
         cursor = connection.cursor()
 
         if tipo_item == "":
                 tipo_item = None
+
+        sql_start = '''select codigo, nome_item, tipo_suprimento, qty, valor_unitario, valor_atacado, 
+                            is_ativo, limiar_alerta, qty_atacado
+                        from estoque.suprimentos where is_ativo = %s'''
+        sql_end = ''' order by codigo asc;''' 
+        sql_tipo = ''' and tipo_suprimento = %s'''
         
         if tipo_item is None:
-            
-            sql = '''select codigo, 
-                            nome_item,
-                            tipo_suprimento, 
-                            qty, 
-                            valor_unitario,
-                            valor_atacado,
-                            qty_atacado,
-                            subtipo,
-                            subdescricao,
-                            obs
-                        from estoque.suprimentos 
-                        order by codigo asc;'''
-            
-            cursor.execute(sql)
+            sql = sql_start + sql_end
+            cursor.execute(sql, (item_ativo,))
+
         else:
-            sql = '''select codigo, 
-                            nome_item,
-                            tipo_suprimento, 
-                            qty, 
-                            valor_unitario,
-                            valor_atacado,
-                            qty_atacado,
-                            subtipo, 
-                            subdescricao,
-                            obs
-                        from estoque.suprimentos where tipo_suprimento = %s 
-                        order by codigo asc;'''
-            
-            cursor.execute(sql, (tipo_item,))
+            sql = sql_start + sql_tipo + sql_end
+            cursor.execute(sql, (tipo_item, item_ativo))
 
 
-        stream = cursor.fetchall()
+        row = cursor.fetchall()
 
         itens_estoque = [
         {
@@ -59,21 +39,35 @@ def getEstoque(dados_db, tipo_item = None):
             "qtd": row[3],
             "valor": f"{row[4]:.2f}".replace(".",","),
             "valor_atacado": f"{row[5]:.2f}".replace(".",","),
-            "qty_atacado": row[6],
-            "subtipo": row[7],
-            "subdescricao": row[8],
-            "observacoes": row[9]
+            "is_ativo": row[6],
+            "limiar_alerta": row[7],
+            "is_critico": False,
+            "qtd_atacado": row[8]
         }
-        for row in stream
+        for row in row
         ]
+
+        for item in itens_estoque:
+            if item['qtd'] <= item['limiar_alerta']:
+                item['is_critico'] = True
+
+        if itens_criticos == True:
+            itens_criticos = []
+            for item in itens_estoque:
+                if item["is_critico"] == True:
+                    itens_criticos.append(item)
+
+            for item in itens_criticos:
+                print(item['codigo'])
+
+            return itens_criticos
+
 
     except Exception as e:
         if connection:
             connection.rollback()
         print(f"Erro ao conectar!")
-        
-        
-        return 1
+        return []
 
     finally:
         if cursor:
@@ -83,11 +77,8 @@ def getEstoque(dados_db, tipo_item = None):
 
     return itens_estoque
 
-def getTiposItens(dados_db):
-    connection = pg.connect(   
-        database= dados_db['db_name'], user= dados_db['db_user'], 
-        password= dados_db['db_password'], host= dados_db['host_db'], port= dados_db['port']
-    )
+def getTiposItens():
+    connection = conectarBanco()
     connection.autocommit = True
     cursor = connection.cursor() 
     
@@ -97,9 +88,9 @@ def getTiposItens(dados_db):
         '''
     
     cursor.execute(sql) 
-    stream = cursor.fetchall()
+    row = cursor.fetchall()
 
-    tipo_item = [row[0] for row in stream]
+    tipo_item = [row[0] for row in row]
 
     connection.close() 
 
@@ -108,11 +99,8 @@ def getTiposItens(dados_db):
 
 
 
-def getDadosItem(dados_db, codigo_item):
-    connection = pg.connect(   
-        database= dados_db['db_name'], user= dados_db['db_user'], 
-        password= dados_db['db_password'], host= dados_db['host_db'], port= dados_db['port']
-    )
+def getDadosItem(codigo_item):
+    connection = conectarBanco()
     connection.autocommit = True
     cursor = connection.cursor() 
     
@@ -127,27 +115,31 @@ def getDadosItem(dados_db, codigo_item):
                     tipo_suprimento,
                     subtipo,
                     subdescricao,
-                    obs
+                    obs,
+                    limiar_alerta,
+                    is_ativo
 
             from estoque.suprimentos 
             where codigo = %s
         '''
     
     cursor.execute(sql, (codigo_item,)) 
-    stream = cursor.fetchone()
+    row = cursor.fetchone()
 
     dados_item = {
-        "codigo": stream[0],
-        "descricao": stream[1],
-        "qtd": stream[2],
-        "valor": f"{float(stream[3]):.2f}".replace(".", ","), 
-        "ean_13": stream[4],
-        "valor_atacado": f"{stream[5]:.2f}".replace(".",","),
-        "qty_atacado": stream[6],
-        "tipo_item": stream[7],
-        "subtipo": stream[8],
-        "subdescricao": stream[9],
-        "obs": stream[10]
+        "codigo": row[0],
+        "descricao": row[1],
+        "qtd": row[2],
+        "valor": f"{float(row[3]):.2f}".replace(".", ","), 
+        "ean_13": row[4],
+        "valor_atacado": f"{row[5]:.2f}".replace(".",","),
+        "qty_atacado": row[6],
+        "tipo_item": row[7],
+        "subtipo": row[8],
+        "subdescricao": row[9],
+        "obs": row[10],
+        "limiar_alerta": row[11],
+        "is_ativo": row[12]
         
     }
 
@@ -156,12 +148,73 @@ def getDadosItem(dados_db, codigo_item):
 
 
 
+def decrementarItem(codigo_item, quantidade):
+    try:
+        connection = conectarBanco()
 
-def valorEstoque(dados_db, tipo_item = None):
-    connection = pg.connect(   
-        database= dados_db['db_name'], user= dados_db['db_user'], 
-        password= dados_db['db_password'], host= dados_db['host_db'], port= dados_db['port']
-    )
+        query_decremento = """
+            UPDATE estoque.suprimentos
+            SET qty = qty - %s
+            WHERE codigo = %s
+        """
+        cursor = connection.cursor()
+        
+        cursor.execute(query_decremento, (
+            quantidade,
+            codigo_item
+            )
+        )
+        connection.commit()
+
+    except Exception as e:
+        if connection:
+            connection.rollback()
+        print(f"Erro ao atualizar item: {e}")
+        return 1
+    
+    finally:
+        if cursor:
+            cursor.close()
+        if connection:
+            connection.close()
+
+    return 0
+
+def incrementarItem(codigo_item, quantidade):
+    try:
+        connection = conectarBanco()
+
+        query_incremento = """
+            UPDATE estoque.suprimentos
+            SET qty = qty + %s
+            WHERE codigo = %s
+        """
+        cursor = connection.cursor()
+        
+        cursor.execute(query_incremento, (
+            quantidade,
+            codigo_item
+            )
+        )
+        connection.commit()
+
+    except Exception as e:
+        if connection:
+            connection.rollback()
+        print(f"Erro ao atualizar item: {e}")
+        return 1
+    
+    finally:
+        if cursor:
+            cursor.close()
+        if connection:
+            connection.close()
+
+    return 0
+
+
+def valorEstoque(tipo_item = None):
+    connection = conectarBanco()
 
     connection.autocommit = True
     cursor = connection.cursor() 
@@ -175,13 +228,13 @@ def valorEstoque(dados_db, tipo_item = None):
         cursor.execute(sql) 
     else:
         sql = '''select qty, valor_unitario  
-                    from estoque.suprimentos where tipo_suprimento = %s;'''
+                    from estoque.suprimentos where tipo_suprimento = %s and is_ativo = True;'''
         cursor.execute(sql, (tipo_item,))
 
-    stream = cursor.fetchall()
+    row = cursor.fetchall()
 
     valor = 0.0
-    for item in stream:
+    for item in row:
         valor += item[0] * float(item[1])
     
     valor_total = f"{valor:,.2f}".replace(",", "X").replace(".", ",").replace("X", ".")
@@ -190,11 +243,8 @@ def valorEstoque(dados_db, tipo_item = None):
 
 
 
-def qtdArtigos(dados_db, tipo_item = None):
-    connection = pg.connect(   
-        database= dados_db['db_name'], user= dados_db['db_user'], 
-        password= dados_db['db_password'], host= dados_db['host_db'], port= dados_db['port']
-    )
+def qtdArtigos(tipo_item = None, criticos=False, ativos = True):
+    connection = conectarBanco()
 
     connection.autocommit = True
     cursor = connection.cursor() 
@@ -204,29 +254,28 @@ def qtdArtigos(dados_db, tipo_item = None):
     
     if tipo_item is None:
         sql = '''select COUNT(*)  
-                from estoque.suprimentos;'''
-        cursor.execute(sql)
+                from estoque.suprimentos where is_ativo = %s;'''
+        cursor.execute(sql, (ativos,))
     else:
         sql = '''select COUNT(*)  
-                    from estoque.suprimentos where tipo_suprimento = %s;'''
-        cursor.execute(sql, (tipo_item,))
+                    from estoque.suprimentos item where item.tipo_suprimento = %s and item.is_ativo = %s;'''
+        cursor.execute(sql, (tipo_item, ativos))
     
-    stream = cursor.fetchall()
-    qtd_artigos = int(stream[0][0])
+    row = cursor.fetchall()
+    qtd_artigos = int(row[0][0])
     return qtd_artigos
 
 
-def countArtigosCriticos(dados_db):
-    connection = pg.connect(   
-        database= dados_db['db_name'], user= dados_db['db_user'], 
-        password= dados_db['db_password'], host= dados_db['host_db'], port= dados_db['port']
-    )
+def countArtigosCriticos():
+    connection = conectarBanco()
 
     connection.autocommit = True
     cursor = connection.cursor() 
 
     sql = '''select COUNT(*)  
-                from estoque.suprimentos where qty < 10;'''
+                from estoque.suprimentos item where item.qty < item.limiar_alerta
+                and item.is_ativo = True
+                '''
     cursor.execute(sql)
     
     criticos = cursor.fetchone()[0]
@@ -234,13 +283,9 @@ def countArtigosCriticos(dados_db):
 
 
 
-def alterarItemDB(dados_db, dados_item, codigo_item):
+def alterarItemDB(dados_item, codigo_item, id_operador):
     try:
-        infoDB = dados_db
-        connection = pg.connect(   
-        database= infoDB['db_name'], user= infoDB['db_user'], 
-        password= infoDB['db_password'], host= infoDB['host_db'], port= infoDB['port']
-    )
+        connection = conectarBanco()
         valor_float = moeda_para_float(dados_item.get('valor'))
         valor_float_atac = moeda_para_float(dados_item.get('valor_atacado'))
 
@@ -256,11 +301,28 @@ def alterarItemDB(dados_db, dados_item, codigo_item):
                 qty_atacado = %s,
                 subtipo = %s,
                 subdescricao = %s,
-                obs = %s
+                obs = %s,
+                limiar_alerta = %s,
+                data_modificacao = NOW(),
+                operador_modificacao = %s
             WHERE codigo = %s
         """
 
         cursor = connection.cursor()
+
+        if dados_item.get('subtipo') is None:
+            subtipo = ""
+        else:
+            subtipo = dados_item.get('subtipo')
+
+        if dados_item.get('subdescricao') is None:
+            subdescricao = ""
+        else:
+            subdescricao = dados_item.get('subdescricao')
+        if dados_item.get('obs') is None:
+            obs = ""
+        else:
+            obs = dados_item.get('obs')
         
         cursor.execute(query_edit, (
             dados_item.get('novo_codigo'), 
@@ -271,9 +333,11 @@ def alterarItemDB(dados_db, dados_item, codigo_item):
             dados_item.get('ean_13'), 
             valor_float_atac, 
             dados_item.get('qty_atacado'), 
-            dados_item.get('subtipo'), 
-            dados_item.get('subdescricao'), 
-            dados_item.get('obs'), 
+            subtipo, 
+            subdescricao, 
+            obs,
+            dados_item.get('limiar_alerta'),
+            id_operador,
             codigo_item
             )
         )
@@ -306,15 +370,12 @@ def moeda_para_float(valor):
 
 
 
-def adicionarItemDB(dados_db, dados_item):
+def adicionarItemDB(dados_item, id_operador):
     connection = None
     cursor = None
 
     try:
-        connection = pg.connect(   
-        database= dados_db['db_name'], user= dados_db['db_user'], 
-        password= dados_db['db_password'], host= dados_db['host_db'], port= dados_db['port']
-    )
+        connection = conectarBanco()
         valor_float = moeda_para_float(dados_item.get('valor'))
         valor_float_atac = moeda_para_float(dados_item.get('valor_atacado'))
 
@@ -330,8 +391,10 @@ def adicionarItemDB(dados_db, dados_item):
                 qty_atacado, 
                 subtipo, 
                 subdescricao, 
-                obs
-                ) values (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+                obs,
+                limiar_alerta,
+                operador_cadastro
+                ) values (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
         """
             
         cursor = connection.cursor()
@@ -347,13 +410,15 @@ def adicionarItemDB(dados_db, dados_item):
             dados_item.get('qtd_atacado'), 
             dados_item.get('subtipo'), 
             dados_item.get('subdescricao'), 
-            dados_item.get('obs')
+            dados_item.get('obs'),
+            dados_item.get('limiar_alerta'),
+            id_operador
             )
         )
 
         connection.commit()
 
-    except pg.errors.UniqueViolation:
+    except pg_err.UniqueViolation:
         if connection:
             connection.rollback()
         return "SKU_DUPLICADO"
@@ -373,14 +438,32 @@ def adicionarItemDB(dados_db, dados_item):
     return True
 
 
-
-
-def deletarItem(dados_db, codigo_item):
+def definirAtivo(operador, codigo_item, ativar = bool):
     try:
-        connection = pg.connect(   
-        database= dados_db['db_name'], user= dados_db['db_user'], 
-        password= dados_db['db_password'], host= dados_db['host_db'], port= dados_db['port']
-    )
+        connection = conectarBanco()
+        cursor = connection.cursor()
+
+        cursor.execute("""
+            update estoque.suprimentos 
+                       set is_ativo = %s
+                       where codigo = %s
+        """, (ativar, codigo_item))
+        connection.commit()
+        cursor.close()
+        connection.close()
+
+        traceModificacao(operador, codigo_item)
+    except Exception as e:
+        print(f"Erro ao atualizar item: {e}")
+        return 1
+    return 0
+
+
+
+
+def deletarItem(codigo_item):
+    try:
+        connection = conectarBanco()
         cursor = connection.cursor()
         cursor.execute("""
             delete from estoque.suprimentos 
@@ -396,6 +479,15 @@ def deletarItem(dados_db, codigo_item):
 
 
 
-
+def traceModificacao(u_id, codigo_item):
+    try:
+        with conectarBanco() as connection:
+            with connection.cursor() as cursor:
+                cursor.execute(
+                    "UPDATE estoque.suprimentos SET data_modificacao = NOW(), operador_modificacao = %s WHERE codigo = %s",
+                    (u_id, codigo_item)
+                )
+    except Exception as e:
+        print(f"Erro ao atualizar traceback de modificações: {e}")
 
 

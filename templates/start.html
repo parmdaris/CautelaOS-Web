@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <title>Login - CautelaOS</title>
+    <title>Alterar senha - CautelaOS</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='index/css/login.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='index/css/common_contents.css') }}">
 </head>
@@ -19,8 +19,8 @@
 
     <div class="login-card">
 
-        <h2>🔐 CautelaOS - Acesso</h2>
-        <p class="subtitle">Informe suas credenciais</p>
+        <h2>🔐 Alterar senha</h2>
+        <p class="subtitle">Digite sua nova senha</p>
 
         {% if erro %}
             <div class="error">{{ erro }}</div>
@@ -30,7 +30,7 @@
 
             <div class="field">
                 <label for="usuario">Usuário</label>
-                <input type="text" id="usuario" name="usuario" required>
+                <input type="text" id="usuario" name="usuario" value= "{{usuario}}" disabled>
             </div>
 
             <div class="field">
@@ -38,8 +38,13 @@
                 <input type="password" id="senha" name="senha" required>
             </div>
 
+            <div class="field">
+                <label for="senha">Confirmar senha</label>
+                <input type="password" id="confirma_senha" name="confirma_senha" required>
+            </div>
+
             <button type="submit" class="btn entrar">
-                Entrar
+                Salvar
             </button>
 
         </form>

@@ -1,13 +1,3 @@
-* {
-    box-sizing: border-box;
-}
-
-.content {
-    width: 100%;
-    max-width: 100%;
-    overflow-x: hidden;
-}
-
 .page-title {
     margin-top: 0px;
     margin-bottom: 11px;
@@ -21,39 +11,6 @@
     display: flex;
     flex-direction: column;
     gap: 22px;
-}
-
-.campo {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-    margin-top: 12px;
-}
-
-label {
-    font-weight: 600;
-    color: #444;
-}
-
-input,
-textarea {
-    padding: 10px 12px;
-    border-radius: 8px;
-    border: 1px solid #ccc;
-    font-size: 14px;
-    background: #fdfdfd;
-    font-family: 'Segoe UI', sans-serif;
-}
-
-input[readonly],
-textarea[readonly] {
-    background: #f5f7fa;
-    color: #333;
-}
-
-textarea {
-    resize: vertical;
-    min-height: 90px;
 }
 
 .seq-subdesc {
@@ -81,47 +38,14 @@ textarea {
     gap: 14px;
 }
 
+.campos-qty {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+}
+
 .pequeno input {
     text-align: center;
-}
-
-.actions-bar {
-    display: flex;
-    gap: 12px;
-    justify-content: flex-end;
-    margin-top: 12px;
-}
-
-.btn {
-    padding: 8px 14px;
-    border-radius: 6px;
-    border: none;
-    cursor: pointer;
-    text-decoration: none;
-    font-weight: 500;
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    white-space: nowrap;
-}
-
-.btn.secondary {
-    background: #455a64;
-    color: #fff;
-}
-
-.btn.save {
-    background: #14d024;
-    color: #fff;
-}
-
-.btn.warning {
-    background: #ef6c00;
-    color: #fff;
-}
-
-.btn:hover {
-    opacity: 0.9;
 }
 
 @media (max-width: 900px) {
@@ -133,11 +57,4 @@ textarea {
         flex-direction: column;
         align-items: flex-start;
     }
-}
-
-select {
-    width: 100%;
-    padding: 10px 12px;
-    border-radius: 6px;
-    border: 1px solid #d1d5db;
 }

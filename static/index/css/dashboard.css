@@ -44,3 +44,9 @@
         grid-template-columns: 1fr;
     }
 }
+
+.card-divider {
+    height: 1px;
+    background: rgba(0, 0, 0, 0.478);
+    margin: 16px 0;
+}

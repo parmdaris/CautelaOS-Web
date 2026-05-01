@@ -45,10 +45,12 @@
             <th colspan="4" style="text-align: left;">
                     <p>Cautela OS - Relatório de estoque
                         <br>Data: {{data}} - {{hora}}
-                        <br>Categoria: {{categoria}}
+                        <br>Categoria: {{categoria}} {%if criticos == True%}- Em nível crítico{%endif%}
                         <br>Quantidade de itens: {{ qtd_artigos }}
+                        {%if criticos != True%}
                         <br>Valor total: R$ {{ valor_estoque }}
-                        <br>Operador: {{id_operador}} - {{operador}}
+                        {%endif%}
+                        <br>Emitido por: {{id_operador}} - {{operador}}
                     </p>
             </th>
         </tr>

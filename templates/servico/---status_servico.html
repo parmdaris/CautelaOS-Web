@@ -1,18 +1,18 @@
 {% extends "base.html" %}
 
-{% block title %}Registrar Venda - Cautela OS{% endblock %}
+{% block title %}Ordem de Serviço - Cautela OS{% endblock %}
 
 {% block extra_css %}
-<link rel="stylesheet" href="{{ url_for('static', filename='venda/css/registrar_venda.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='servico/css/registrar_servico.css') }}">
 {% endblock %}
 
 {% block content %}
 
-<h2>💰 Registrar Venda</h2>
+<h2>0 Registrar ordem de serviço</h2>
 
 
 
-<form id="formulario" class="form-layout" method="POST" action="{{ url_for('registrar_venda') }}" method="POST">
+<form id="formulario" class="form-layout" method="POST" action="{{ url_for('registrar_servico') }}" method="POST">
 
     <div class="table-card">
 
@@ -33,27 +33,6 @@
     </div>
 
     <div class="table-card">
-
-        <!-- LEITOR -->
-        <div id="div-leitora">
-            <label>Leitura de código de barras</label>
-            <input
-                type="text"
-                id="entrada-leitor"
-                class="input-leitor"
-                placeholder="Código do item"
-                onkeydown="adicionarLeitura(event)">
-        </div>
-
-        <div style="text-align:center; margin-top:20px;">
-            <button
-                id="botao-additem"
-                type="button"
-                class="btn secondary"
-                onclick="acionarAdicaoManual()">
-                + Adicionar item manualmente
-            </button>
-        </div>
 
         <div id="div-item-manual" style="display: none;"></div>
 

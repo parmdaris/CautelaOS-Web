@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Cautela de Materiais</title>
+  <title>Ordem de Serviço</title>
   <style>
     html, body {
       height: 100%;
@@ -51,14 +51,12 @@
       text-align: center;
       font-size: 14px;
       font-weight: bold;
-      margin-bottom: 8px;
-      margin-top: 15px;
+      margin: 15px 0 8px 0;
     }
-    .section h2 {
-      font-size: 14px;
-      border-bottom: 1px solid #ddd;
-      padding-bottom: 4px;
-      margin-bottom: 8px;
+    .info-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px 20px;
     }
     .material-table {
       width: 100%;
@@ -71,11 +69,7 @@
       text-align: left;
     }
     .material-table th {
-      background-color: #ffffff;
-      color: rgb(0, 0, 0);
-      font-size: 12px;
-    }
-    .material-table td {
+      background-color: #fff;
       font-size: 12px;
     }
     .signatures {
@@ -93,50 +87,29 @@
       margin-top: 30px;
       border-top: 1px solid #000;
       width: 100%;
-      height: 1px;
     }
     @page {
       size: A4;
       margin: 20mm 15mm;
     }
     @media print {
-      body, html {
-        background: white;
-      }
       .container {
-        box-shadow: none;
-        border: none;
-        margin: 0;
-        width: auto;
         padding: 0;
-      }
-      .header-box {
-        font-size: 11px;
-        padding: 10px;
-      }
-      .main-title {
-        font-size: 16px;
-        margin-bottom: 15px;
-      }
-      .material-table th, .material-table td {
-        padding: 5px;
-      }
-      .signatures {
-        padding-top: 20px;
       }
     }
   </style>
 </head>
+
 <body onload="window.print()">
 
 <div class="container">
 
-  <!-- Cabeçalho Superior: Logotipo + Empresa -->
+  <!-- Cabeçalho -->
   <div class="header-top">
-    <div class="header-box" style="align-content: center;">
-      <img src="{{ url_for('static', filename='resources/vortex-beta.png') }}"
-             alt="Logotipo da Empresa"
-             style="max-width: 100%; height: 35px; display: block; margin: 0 auto;">
+    <div class="header-box">
+      <img src="{{ url_for('static', filename='resources/logo.svg') }}"
+           alt="Logotipo da Empresa"
+           style="max-width: 100%; height: auto;">
     </div>
     <div class="header-box">
       <strong>Niitech da Amazônia</strong><br>
@@ -145,40 +118,68 @@
     </div>
   </div>
 
-  <!-- Título Principal -->
+  <!-- Título -->
   <div class="main-title">
-    Cautela de entrega de materiais
+    Ordem de Serviço
   </div>
 
-  <!-- Conteúdo Principal -->
   <div class="main-content">
 
-    <!-- Informações Gerais -->
-    <div class="section">
-      <p><strong>Documento nº:</strong> {{ id_cautela }}</p>
-      <p><strong>Destino:</strong> {{ nome_cliente }}</p>
-      <p><strong>Data:</strong> {{ data_cautela }}</p>
-      <p><strong>Volumes:</strong> {{ volumes }}</p>
+    <!-- Dados da OS -->
+    <div class="section info-grid">
+      <p><strong>OS nº:</strong> {{ id_os }}</p>
+      <p><strong>Data de Abertura:</strong> {{ data_abertura }}</p>
+      <p><strong>Status:</strong> {{ status_os }}</p>
+      <p><strong>Técnico Responsável:</strong> {{ tecnico }}</p>
     </div>
 
-    <!-- Relação de Materiais -->
+    <!-- Dados do Cliente -->
     <div class="section">
-      <div class="section-title">
-        Relação de Materiais
+      <div class="section-title">Dados do Cliente</div>
+      <p><strong>Cliente:</strong> {{ nome_cliente }}</p>
+      <p><strong>Endereço:</strong> {{ endereco_cliente }}</p>
+      <p><strong>Contato:</strong> {{ contato_cliente }}</p>
+    </div>
+
+    <!-- Dados do Equipamento -->
+    <div class="section">
+      <div class="section-title">Dados do Equipamento</div>
+      <div class="info-grid">
+        <p><strong>Equipamento:</strong> {{ equipamento }}</p>
+        <p><strong>Marca / Modelo:</strong> {{ modelo }}</p>
+        <p><strong>Nº de Série:</strong> {{ numero_serie }}</p>
+        <p><strong>Contador:</strong> {{ contador }}</p>
       </div>
+    </div>
+
+    <!-- Defeito Relatado -->
+    <div class="section">
+      <div class="section-title">Defeito Relatado</div>
+      <p>{{ defeito_relatado }}</p>
+    </div>
+
+    <!-- Serviço Executado -->
+    <div class="section">
+      <div class="section-title">Serviço Executado</div>
+      <p>{{ servico_executado }}</p>
+    </div>
+
+    <!-- Materiais Utilizados -->
+    <div class="section">
+      <div class="section-title">Materiais Utilizados</div>
       <table class="material-table">
         <thead>
           <tr>
             <th>Código</th>
-            <th>Nome do Item</th>
+            <th>Descrição</th>
             <th>Quantidade</th>
           </tr>
         </thead>
         <tbody>
-          {% for item in itens_cautela %}
+          {% for item in materiais_utilizados %}
           <tr>
             <td>{{ item.codigo }}</td>
-            <td>{{ item.nome }}</td>
+            <td>{{ item.descricao }}</td>
             <td>{{ item.quantidade }}</td>
           </tr>
           {% endfor %}
@@ -187,28 +188,22 @@
     </div>
 
     <!-- Observações -->
-    <div class="section" style="margin-top: 40px;">
-      <div class="section-title">
-        Observações
-      </div>
-      <p>{{ obs_cautela }}</p>
+    <div class="section">
+      <div class="section-title">Observações</div>
+      <p>{{ observacoes }}</p>
     </div>
 
   </div>
 
   <!-- Assinaturas -->
-  <div class="section signatures">
+  <div class="signatures">
     <div class="signature">
-      <p></p>
       <div class="signature-line"></div>
-      <p>Entregue por:</p>
-      
+      <p>Técnico Responsável</p>
     </div>
     <div class="signature">
-      <p></p>
       <div class="signature-line"></div>
-      <p>Recebido por:</p>
-      
+      <p>Cliente / Responsável</p>
     </div>
   </div>
 

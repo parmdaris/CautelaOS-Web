@@ -4,6 +4,7 @@
 
 {% block extra_css %}
 <link rel="stylesheet" href="{{ url_for('static', filename='estoque/css/adicionar_item_estoque.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='index/css/common_contents.css') }}">
 {% endblock %}
 
 {% block content %}
@@ -20,7 +21,7 @@
         <!-- Descrição -->
         <div class="campo">
             <label for="descricao">Descrição do item *</label>
-            <input id="descricao" name="descricao" type="text" required>
+            <input id="descricao" name="descricao" class="input padrao" type="text" required>
         </div>
 
         <!-- GRID -->
@@ -29,17 +30,24 @@
             <div class="sku-ean-qty">
                 <div class="campo">
                     <label for="codigo">Código SKU *</label>
-                    <input id="codigo" name="codigo" type="text" required pattern="[A-Z0-9\-]+" maxlength="30">
+                    <input id="codigo" name="codigo" class="input padrao" type="text" required pattern="[A-Z0-9\-]+" maxlength="30">
                 </div>
 
                 <div class="campo">
                     <label for="ean">EAN-13</label>
-                    <input id="ean" name="ean_13" type="text">
+                    <input id="ean" name="ean_13" class="input padrao" type="text">
                 </div>
 
-                <div class="campo pequeno">
-                    <label for="quantidade">Quantidade</label>
-                    <input id="quantidade" name="quantidade" type="number" min="0" value="1">
+                <div class="campos-qty">
+                    <div class="campo pequeno">
+                        <label for="quantidade">Quantidade</label>
+                        <input id="quantidade" name="quantidade" class="input padrao" type="number" min="0" value="1">
+                    </div>
+
+                    <div class="campo pequeno">
+                        <label for="limiar_alerta">Limiar de alerta</label>
+                        <input id="limiar_alerta" name="limiar_alerta" class="input padrao" type="number" min="1" value="10">
+                    </div>
                 </div>
             </div>
 
@@ -47,36 +55,36 @@
 
                 <div class="campo full">
                     <label for="subdescricao">Sub-descrição</label>
-                    <input id="subdescricao" name="subdescricao" type="text">
+                    <input id="subdescricao" name="subdescricao" class="input padrao" type="text">
                 </div>
 
                 <div class="tipo-subtipo">
                     <div class="campo">
                         <label for="tipo">Tipo *</label>
-                        <select name="tipo" required></select>
+                        <select name="tipo" class="select padrao" required></select>
                         <!--<input id="tipo" name="tipo_material" type="text">-->
                     </div>
 
                     <div class="campo">
                         <label for="subtipo">Subtipo</label>
-                        <input id="subtipo" name="subtipo" type="text">
+                        <input id="subtipo" name="subtipo" class="input padrao" type="text">
                     </div>
                 </div>
 
                 <div class="valores-qty-atac">
                     <div class="campo">
                         <label for="valor">Valor unitário *</label>
-                        <input id="valor" name="valor" required>
+                        <input id="valor" name="valor" class="input padrao" required>
                     </div>
 
                     <div class="campo">
                         <label for="valor_atacado">Valor atacado</label>
-                        <input id="valor_atacado" name="valor_atacado">
+                        <input id="valor_atacado"  class="input padrao" name="valor_atacado">
                     </div>
 
                     <div class="campo pequeno">
                         <label for="qtd_atacado">Qtd atacado</label>
-                        <input id="qtd_atacado" name="qtd_atacado" type="number" value="5">
+                        <input id="qtd_atacado" name="qtd_atacado"  class="input padrao" type="number" value="5">
                     </div>
                 </div>
 
@@ -88,9 +96,9 @@
             <textarea id="obs" name="obs" rows="5"></textarea>
         </div>
 
-        <div class="button-container">
-            <a href="{{ url_for('ver_estoque') }}" class="btn voltar">🛇 Cancelar</a>
-            <button type="submit" name="acao" value="salvar_outro" class="btn salvar outro">+ Salvar e adicionar outro</button>
+        <div class="actions-bar rodape">
+            <a href="{{ url_for('ver_estoque') }}" class="btn cancelar">🛇 Cancelar</a>
+            <button type="submit" name="acao" value="salvar_outro" class="btn adicionar">+ Salvar e adicionar outro</button>
             <button type="submit" name="acao" value="salvar" class="btn salvar">✓ Salvar</button>
         </div>
 

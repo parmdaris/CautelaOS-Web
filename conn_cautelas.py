@@ -1,15 +1,13 @@
-import psycopg2 as pg
+from db_configdata import conectarBanco
+from psycopg2 import errors as pg_err
 
-def listaCautelas(dados_db): #########################################################################################
-    connection = pg.connect(   
-        database= dados_db['db_name'], user= dados_db['db_user'], 
-        password= dados_db['db_password'], host= dados_db['host_db'], port= dados_db['port']
-    )
+def listaCautelas(): #########################################################################################
+    connection = conectarBanco()
 
     connection.autocommit = True
     cursor = connection.cursor() 
     
-    sql = '''select a.id_cautela, 
+    query = '''select a.id_cautela, 
                     b.nome_cliente, 
                     a.data_cautela, 
                     a.qtd_itens, 
@@ -19,7 +17,7 @@ def listaCautelas(dados_db): ###################################################
                     ON a.id_cliente = b.id_cliente 
                 order by id_cautela desc;'''
     
-    cursor.execute(sql) 
+    cursor.execute(query) 
     stream = cursor.fetchall()
 
     dados = [
@@ -38,16 +36,13 @@ def listaCautelas(dados_db): ###################################################
     
 
 
-def getDadosCautela(dados_db, id_cautela): #########################################################################################
-    connection = pg.connect(   
-        database= dados_db['db_name'], user= dados_db['db_user'], 
-        password= dados_db['db_password'], host= dados_db['host_db'], port= dados_db['port']
-    )
+def getDadosCautela(id_cautela): #########################################################################################
+    connection = conectarBanco()
 
     connection.autocommit = True
     cursor = connection.cursor() 
 
-    sql = '''select a.id_cautela,
+    query = '''select a.id_cautela,
                     b.nome_cliente, 
                     a.data_cautela, 
                     a.qtd_itens, 
@@ -60,7 +55,7 @@ def getDadosCautela(dados_db, id_cautela): #####################################
                 where a.id_cautela = %s 
                 order by id_cautela asc;'''
 
-    cursor.execute(sql, id_cautela) 
+    cursor.execute(query, id_cautela) 
     stream = cursor.fetchone()
 
     if stream:
@@ -81,18 +76,15 @@ def getDadosCautela(dados_db, id_cautela): #####################################
     return detalhe_dados_cautela
 
 
-def getItensCautela(dados_db, id_cautela, qtd_itens): #########################################################################################
-    connection = pg.connect(   
-        database= dados_db['db_name'], user= dados_db['db_user'], 
-        password= dados_db['db_password'], host= dados_db['host_db'], port= dados_db['port']
-    )
+def getItensCautela(id_cautela, qtd_itens): #########################################################################################
+    connection = conectarBanco()
 
     connection.autocommit = True
     cursor = connection.cursor() 
     itens_cautela = []
 
     for i in range(1, qtd_itens + 1):
-        sql = f'''
+        query = f'''
             select
                 i.cod_item_{i}, 
                 d.nome_item, 
@@ -102,7 +94,7 @@ def getItensCautela(dados_db, id_cautela, qtd_itens): ##########################
                 on i.cod_item_{i} = d.codigo 
             where i.id_cautela = %s
         '''
-        cursor.execute(sql, (id_cautela,))
+        cursor.execute(query, (id_cautela,))
         row = cursor.fetchone()
 
         if row:
@@ -115,19 +107,14 @@ def getItensCautela(dados_db, id_cautela, qtd_itens): ##########################
     connection.close() 
     return itens_cautela
 
-def qtdCautelas(dados_db):
-    connection = pg.connect(   
-        database= dados_db['db_name'], user= dados_db['db_user'], 
-        password= dados_db['db_password'], host= dados_db['host_db'], port= dados_db['port']
-    )
-
+def qtdCautelas():
+    connection = conectarBanco()
     connection.autocommit = True
     cursor = connection.cursor() 
     
-    sql = '''select COUNT(*)  
-                from cautela.dados;'''
+    query = '''select COUNT(*) from cautela.dados;'''
     
-    cursor.execute(sql) 
+    cursor.execute(query) 
     stream = cursor.fetchone()
     qtd_artigos = int(stream[0])
     return qtd_artigos

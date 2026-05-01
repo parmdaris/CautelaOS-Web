@@ -19,20 +19,6 @@ $(document).ready(function () {
         }
     });
 
-    function getParametroURL(nome) {
-    const params = new URLSearchParams(window.location.search);
-    return params.get(nome);
-}
-
-const status = getParametroURL('status');
-
-if (status) {
-    if (status === 'critico') {
-        tabela.column(3).search('Crítico').draw();
-    }
-}
-
-
     /*filtrar por tipo*/
 
     const tipos = JSON.parse(
@@ -56,41 +42,11 @@ if (status) {
         document.getElementById('tipo-filtro').value = valor;
     });
 
-    /*filtrar por estado*/
-
-    const filtroEstado = $(`
-        <select class="status-select" name="status-select">
-            <option value="">Todos</option>
-            <option value="True">Críticos</option>>
-        </select>
-    `);
-
-    filtroEstado.on('change', function () {
-        const valorEstado = this.value;
-
-        tabela.column(3).search(valorEstado).draw(); // coluna ESTADO
-        document.getElementById('estado-filtro').value = valorEstado;
-    });
-
-
-    
-const estado = getParametroURL('status');
-    
-
-if (estado === 'critico') {
-    tabela.column(3).search('True').draw();
-    filtroEstado.val('True').trigger('change'); // sincroniza o select
-}
-
-
     /*aplicar filtros*/
 
     const lengthLabel = $('.dataTables_length label');
 
     lengthLabel.append(`<span style="margin-left: 12px;">Tipo:</span>`);
     lengthLabel.append(filtroTipo);
-
-    lengthLabel.append(`<span style="margin-left: 12px;">Estado:</span>`);
-    lengthLabel.append(filtroEstado);
 
 });

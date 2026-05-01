@@ -35,12 +35,38 @@ document.addEventListener("DOMContentLoaded", () => {
     if (selectNivel && cargosScript) {
         const cargos = JSON.parse(cargosScript.textContent);
 
+        const nivelAtual = Number(selectNivel.dataset.atual);
+
         cargos.forEach(cargo => {
             const option = document.createElement("option");
             option.value = cargo.id_acesso;
             option.textContent = cargo.cargo;
+
+            if (cargo.id_acesso === nivelAtual) {
+                option.selected = true;
+            }
+
             selectNivel.appendChild(option);
-        });
+    });
+}
+
+
+    const senha = document.getElementById("senha");
+    const confirma = document.getElementById("confirma_senha");
+
+    function validarSenha() {
+        if (!senha || !confirma) return;
+
+        if (senha.value !== confirma.value) {
+            confirma.setCustomValidity("As senhas não conferem");
+        } else {
+            confirma.setCustomValidity("");
+        }
+    }
+
+    if (senha && confirma) {
+        senha.addEventListener("input", validarSenha);
+        confirma.addEventListener("input", validarSenha);
     }
 
 });

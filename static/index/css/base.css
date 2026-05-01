@@ -150,3 +150,147 @@ html, body {
     background: rgba(255, 255, 255, 0.15);
     margin: 16px 0;
 }
+
+/* ===== SUBMENU SIDEBAR ===== */
+
+.menu-item {
+    display: flex;
+    flex-direction: column;
+}
+
+/* botão principal */
+.menu-toggle {
+    background: none;
+    border: none;
+    color: #cfd8dc;
+    text-align: left;
+    padding: 12px 15px;
+    border-radius: 6px;
+    cursor: pointer;
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    font-size: 1rem;
+}
+
+.menu-toggle:hover {
+    background-color: #1c3d5a;
+    color: #fff;
+}
+
+/* seta */
+.arrow {
+    transition: transform 0.2s ease;
+}
+
+/* submenu */
+.submenu {
+    display: none;
+    flex-direction: column;
+    padding-left: 12px;
+}
+
+.submenu a {
+    padding: 10px 15px;
+    font-size: 0.9rem;
+    color: #b0bec5;
+    border-radius: 6px;
+}
+
+.submenu a:hover {
+    background-color: #1c3d5a;
+    color: #fff;
+}
+
+/* estado aberto */
+.menu-item.open .submenu {
+    display: flex;
+}
+
+.menu-item.open .arrow {
+    transform: rotate(90deg);
+}
+
+/* ===== LINK ATIVO ===== */
+.sidebar-menu a.active,
+.menu-toggle.active {
+    background-color: #1c3d5a;
+    color: #ffffff;
+    font-weight: 600;
+}
+
+/* ativo dentro do submenu */
+/* ===== SUBMENU SIDEBAR (com animação) ===== */
+
+.submenu {
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+
+    display: flex;
+    flex-direction: column;
+    padding-left: 12px;
+
+    transition:
+        max-height 0.3s ease,
+        opacity 0.2s ease;
+}
+
+/* links */
+.submenu a {
+    padding: 10px 15px;
+    font-size: 0.9rem;
+    color: #b0bec5;
+    border-radius: 6px;
+}
+
+.submenu a:hover {
+    background-color: #1c3d5a;
+    color: #fff;
+}
+
+/* estado aberto */
+.menu-item.open .submenu {
+    max-height: 500px; /* valor alto suficiente */
+    animation: fadeIn 0.2s ease forwards;
+    opacity: 1;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-4px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+
+
+
+
+
+
+/*fallback mobile*/
+@media (max-width: 768px) {
+    .sidebar {
+        position: fixed;
+        left: -260px;
+        top: 0;
+        height: 100%;
+        z-index: 1000;
+        transition: left 0.3s ease;
+    }
+
+    .sidebar.open {
+        left: 0;
+    }
+
+    .main {
+        width: 100%;
+    }
+}

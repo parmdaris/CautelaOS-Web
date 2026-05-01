@@ -4,16 +4,18 @@
 
 {% block extra_css %}
 <link rel="stylesheet" href="{{ url_for('static', filename='estoque/css/ver_item_estoque.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='index/css/common_contents.css') }}">
 {% endblock %}
 
 {% block content %}
 
-<h2 class="page-title">📦 Estoque - Detalhes do item: <strong>{{ dados_item.codigo }}</strong></h2>
+<h2 class="page-title">📦 Estoque - Detalhes do item: <strong>{{ dados_item.codigo }} - {%if dados_item.is_ativo%}<span style="color: Green;">🟢 Ativo</span>
+    {%else%}<span style="color: red;">🔴 Inativo</span>{%endif%}</strong></h2>
 
 <div class="page-card">
     <div class="campo">
         <label>Descrição do item</label>
-        <input type="text" value="{{ dados_item.descricao }}" readonly>
+        <input type="text" class="input padrao" value="{{ dados_item.descricao }}" readonly>
     </div>
 
     <div class="seq-subdesc">
@@ -21,17 +23,23 @@
         <div class="sku-ean-qty">
             <div class="campo">
                 <label>Código SKU</label>
-                <input type="text" value="{{ dados_item.codigo }}" readonly>
+                <input type="text" class="input padrao" value="{{ dados_item.codigo }}" readonly>
             </div>
 
             <div class="campo">
                 <label>EAN-13</label>
-                <input type="text" value="{{ dados_item.ean_13 }}" readonly>
+                <input type="text" class="input padrao" value="{{ dados_item.ean_13 }}" readonly>
             </div>
 
-            <div class="campo pequeno">
-                <label>Quantidade</label>
-                <input type="number" value="{{ dados_item.qtd }}" readonly>
+            <div class="campos-qty">
+                <div class="campo pequeno">
+                    <label>Quantidade</label>
+                    <input type="number" class="input padrao" value="{{ dados_item.qtd }}" readonly>
+                </div>
+                <div class="campo pequeno">
+                    <label>Limiar de alerta</label>
+                    <input type="number" class="input padrao" value="{{ dados_item.limiar_alerta }}" readonly>
+                </div>
             </div>
         </div>
 
@@ -39,35 +47,35 @@
 
             <div class="campo full">
                 <label>Sub-descrição</label>
-                <input type="text" value="{{ dados_item.subdescricao }}" readonly>
+                <input type="text" class="input padrao" value="{{ dados_item.subdescricao }}" readonly>
             </div>
 
             <div class="tipo-subtipo">
                 <div class="campo">
                     <label>Tipo</label>
-                    <input type="text" value="{{ dados_item.tipo_item }}" readonly>
+                    <input type="text" class="input padrao" value="{{ dados_item.tipo_item }}" readonly>
                 </div>
 
                 <div class="campo">
                     <label>Subtipo</label>
-                    <input type="text" value="{{ dados_item.subtipo }}" readonly>
+                    <input type="text" class="input padrao" value="{{ dados_item.subtipo }}" readonly>
                 </div>
             </div>
 
             <div class="valores-qty-atac">
                 <div class="campo">
                     <label>Valor unitário</label>
-                    <input type="text" value="R$ {{ dados_item.valor }}" readonly>
+                    <input type="text" class="input padrao" value="R$ {{ dados_item.valor }}" readonly>
                 </div>
 
                 <div class="campo">
                     <label>Valor atacado</label>
-                    <input type="text" value="R$ {{ dados_item.valor_atacado }}" readonly>
+                    <input type="text" class="input padrao" value="R$ {{ dados_item.valor_atacado }}" readonly>
                 </div>
 
                 <div class="campo pequeno">
                     <label>Qtd atacado</label>
-                    <input type="number" value="{{ dados_item.qty_atacado }}" readonly>
+                    <input type="number" class="input padrao" value="{{ dados_item.qty_atacado }}" readonly>
                 </div>
             </div>
         </div>
@@ -78,12 +86,12 @@
         <textarea rows="4" readonly>{{ dados_item.obs }}</textarea>
     </div>
 
-    <div class="actions-bar">
-        <a href="{{ url_for('ver_estoque') }}" class="btn secondary">
+    <div class="actions-bar rodape">
+        <a href="{{ url_for('ver_estoque') }}" class="btn navegar">
             ← Voltar
         </a>
 
-        <a href="{{ url_for('alterarItem', codigo_item=dados_item.codigo) }}" class="btn edit">✎</a>
+        <a href="{{ url_for('alterarItem', codigo_item=dados_item.codigo) }}" class="btn acao">✎</a>
 
     </div>
 

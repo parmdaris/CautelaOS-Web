@@ -103,24 +103,7 @@ body {
     box-shadow: 0 0 0 3px rgba(13,110,253,0.2);
 }
 
-.btn {
-    padding: 12px;
-    border-radius: 10px;
-    border: none;
-    font-weight: 600;
-    font-size: 15px;
-    cursor: pointer;
-    transition: 0.2s;
-}
 
-.btn.primary {
-    background: #18436b;
-    color: white;
-}
-
-.btn.primary:hover {
-    background: #0b5ed7;
-}
 
 @media (max-width: 480px) {
     .login-card {

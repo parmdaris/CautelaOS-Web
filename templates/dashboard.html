@@ -11,7 +11,7 @@
 
 <div class="cards">
     <div class="card blue">
-        <h3>Itens em estoque</h3>
+        <h3>Itens ativos em estoque</h3>
         <strong>{{ qtd_itens }} itens</strong>
     </div>
 
@@ -22,15 +22,15 @@
 
     <div class="card green">
         <h3>Vendas - hoje</h3>
-        <strong>{{ qtd_vendas_hj }}</strong>
+        <strong>{{ qtd_vendas_hoje }}</strong>
     </div>
 
     <div class="card green">
         <h3>Renda - hoje</h3>
-        <strong>R$ {{ val_vendas }}</strong>
+        <strong>R$ {{ valor_total_hoje }}</strong>
     </div>
 
-    <a href="{{ url_for('ver_estoque') }}" style="text-decoration: none; color: inherit;">
+    <a href="{{ url_for('ver_estoque') }}?status=critico" style="text-decoration: none; color: inherit;">
     <div class="card red">
         <h3>Itens críticos no estoque:</h3>
         <strong>{{ criticos }} itens</strong>

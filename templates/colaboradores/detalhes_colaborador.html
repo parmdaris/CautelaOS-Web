@@ -3,73 +3,85 @@
 
 {% block extra_css %}
 <link rel="stylesheet" href="{{ url_for('static', filename='colaboradores/css/detalhes_colaborador.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='index/css/common_contents.css') }}">
 {% endblock %}
 
 {% block content %}
-<h2 class="page-title">👤 Detalhes do colaborador - {{dados_colab.nome_simples}}</h2>
+<h2 class="page-title">👤 Detalhes do colaborador - <strong>{{dados_colab.apelido}}</strong> - Último login: {{dados_colab.data_ult_login}}{%if dados_colab.delta_dias != 0%} ({{dados_colab.delta_dias}} {%if dados_colab.delta_dias == 1%}dia{%else%}dias{%endif%} desde o último login){%endif%}</h2>
 
 <div class="page-card">
 
-        <div class="campo">
+        <div class="campo" style="margin-bottom: 15px;">
             <label>Nome completo</label>
-            <input type="text" name="nome_completo" disabled value="{{dados_colab.nome_completo}}">
+            <input type="text" class="input padrao" name="nome_completo" disabled value="{{dados_colab.nome_completo}}">
         </div>
 
         <div class="seq-subdesc">
 
             <div class="campo">
                 <label>ID</label>
-                <input type="text" name="id" disabled value="{{dados_colab.id}}">
+                <input type="text" class="input padrao" name="id" disabled value="{{dados_colab.id}}">
             </div>
 
             <div class="campo">
-                <label>Nome simples</label>
-                <input type="text" name="nome_simples" disabled value="{{dados_colab.nome_simples}}">
+                <label>Apelido</label>
+                <input type="text" class="input padrao" name="apelido" disabled value="{{dados_colab.apelido}}">
             </div>
 
             <div class="campo">
                 <label>Usuário</label>
-                <input type="text" name="usuario" disabled value="{{dados_colab.nome_usuario}}">
-            </div>
-
-            <div class="campo">
-                <label>Código de identidade</label>
-                <input type="text" name="identidade" disabled value="INSERIDO">
-            </div>
-
-        </div>
-
-            <div class="campo">
-                <label>Ativo</label>
-                <input name="is_ativo" disabled value="{% if dados_colab.is_ativo %} Sim {%else%} Não {%endif%}">
-            </div>
-
-            <div class="campo">
-                <label>Cargo</label>
-                <input name="cargo" disabled value="{{dados_colab.cargo}}">
+                <input type="text" class="input padrao" name="usuario" disabled value="{{dados_colab.nome_usuario}}">
             </div>
 
             <div class="campo">
                 <label>Nível de acesso</label>
-                <input name="nivelAcesso" disabled value="{{dados_colab.nivel_acesso}}">
+                <input name="nivelAcesso" class="input padrao" disabled value="{{dados_colab.cargo}}">
             </div>
 
             <div class="campo">
+                <label>Código de identidade</label>
+                <input type="text" class="input padrao" name="identidade" disabled value="INSERIDO">
+            </div>
+
+            <div class="campo">
+                <label>Ativo</label>
+                <input name="is_ativo" class="input padrao" disabled value="{% if dados_colab.is_ativo %} 🟢 Sim {%else%} 🔴 Não {%endif%}">
+            </div>
+
+        </div>
+
+
+        <div class="seq-cadastro">
+
+            <div class="campo">
                 <label>Data de cadastro</label>
-                <input name="dataCadastro" disabled value="{{dados_colab.data_inclusao}}">
+                <input name="dataCadastro" class="input padrao" disabled value="{{dados_colab.data_inclusao}}">
             </div>
 
             <div class="campo">
                 <label>Operador do cadastro</label>
-                <input name="operadorCadastro" disabled value="{{dados_colab.operador_inclusao}}">
+                <input name="operadorCadastro" class="input padrao" disabled value="{{dados_colab.operador_inclusao}}">
+            </div>
+
+            <div class="campo">
+                <label>Data de modificação</label>
+                <input name="dataModificacao" class="input padrao" disabled value="{% if dados_colab.data_modificacao == None %} - {%else%} {{dados_colab.data_modificacao}} {%endif%}">
+            </div>
+
+            <div class="campo">
+                <label>Operador de modificação</label>
+                <input name="operadorModificacao" class="input padrao" disabled value="{% if dados_colab.operador_modificacao == None %} - {%else%} {{dados_colab.operador_modificacao}} {%endif%}">
             </div>
 
         </div>
 
+    
+
         <div class="actions-bar">
-            <a href="{{ url_for('visualizar_colaboradores') }}" class="btn secondary">← Voltar</a>
-            <a href="{{ url_for('edit_dados_colaborador', id_colab=id_colab) }}" class="btn edit">✎</a>
+            <a href="{{ url_for('visualizar_colaboradores') }}" class="btn cancelar">← Voltar</a>
+            <a href="{{ url_for('edit_dados_colaborador', id_colab=dados_colab.id) }}" class="btn acao">✎ Editar dados</a>
         </div>
+
 </div>
 {% endblock %}
 

@@ -3,6 +3,7 @@
 
 {% block extra_css %}
 <link rel="stylesheet" href="{{ url_for('static', filename='colaboradores/css/adicionar_colaborador.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='index/css/common_contents.css') }}">
 {% endblock %}
 
 {% block content %}
@@ -14,24 +15,24 @@
 
         <div class="campo">
             <label>Nome completo<label style="color:red">*</label></label>
-            <input type="text" name="nome_completo" required>
+            <input type="text" name="nome_completo" class="input padrao" required>
         </div>
 
         <div class="seq-subdesc">
 
             <div class="campo">
                 <label>Nome simples<label style="color:red">*</label></label>
-                <input type="text" name="nome_simples" required>
+                <input type="text" name="apelido" class="input padrao" required>
             </div>
 
             <div class="campo">
                 <label>Usuário<label style="color:red">*</label></label>
-                <input type="text" name="usuario" required>
+                <input type="text" name="usuario" class="input padrao" required>
             </div>
 
             <div class="campo">
                 <label>Código de identidade<label style="color:red">*</label></label>
-                <input type="text" name="identidade" maxlength="11" required>
+                <input type="text" name="identidade" class="input padrao" maxlength="11" required>
             </div>
 
         </div>
@@ -39,28 +40,19 @@
         <div class="divisor"></div>
 
         <div class="seq-subdesc">
-            <div class="campo">
-                <label>Senha inicial<label style="color:red">*</label></label>
-                <input type="password" id="senha" name="senha" required>
-            </div>
-
-            <div class="campo">
-                <label>Confirme a senha<label style="color:red">*</label></label>
-                <input type="password" id="confirma_senha" name="confirma_senha" required>
-            </div>
 
             <div class="campo">
                 <label>Nível de acesso<label style="color:red">*</label></label>
-                <select name="nivel_acesso" required>
+                <select name="nivel_acesso" class="select padrao" required>
                     <option value="">Selecione um nível</option>
                 </select>
             </div>
 
         </div>
 
-        <div class="actions-bar">
-            <a href="{{ url_for('visualizar_colaboradores') }}" class="btn secondary">Cancelar</a>
-            <button type="submit" class="btn save">✓ Salvar</button>
+        <div class="actions-bar rodape">
+            <a href="{{ url_for('visualizar_colaboradores') }}" class="btn cancelar">🛇 Cancelar</a>
+            <button type="submit" class="btn salvar">✓ Salvar</button>
         </div>
 
     </form>

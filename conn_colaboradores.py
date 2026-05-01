@@ -1,20 +1,21 @@
-import psycopg2 as pg
-from psycopg2.extras import RealDictCursor
-from auth import gerarSenhaHash, checarSenhaHash
+from db_configdata import conectarBanco
+from conn_auth import gerarSenhaHash, checarSenhaHash
+from psycopg2 import errors as pg_err
+from datetime import datetime
 
-def autenticar_usuario(dados_db, usuario, senha):
-    conn = None
+def autenticar_usuario(usuario, senha):
+    connection = None
     cursor = None
 
     try:
-        conn = pg.connect(database = dados_db['db_name'], user=dados_db['db_user'], password=dados_db['db_password'], host=dados_db['host_db'], port=dados_db['port'])
-        cursor = conn.cursor()
-        query = """SELECT d.id, d.nome_simples, d.senha_hash, d.nivel_acesso, c.cargo
+        connection = conectarBanco()
+        cursor = connection.cursor()
+        query = """SELECT d.id, d.apelido, d.senha_hash, d.nivel_acesso, c.cargo, d.primeiro_acesso
                     FROM colaborador.dados d
                     JOIN colaborador.cargos c
-                    ON d.nivel_acesso = c.id_cargo
+                    ON d.nivel_acesso = c.id_acesso
                     WHERE d.usuario = %s
-                    AND d.ativo = TRUE"""
+                    AND d.is_ativo = TRUE"""
         
         cursor.execute(query, (usuario,))
 
@@ -26,37 +27,77 @@ def autenticar_usuario(dados_db, usuario, senha):
         if checarSenhaHash(resultado[2], senha):
             return {
                 "id": resultado[0],
-                "nome": resultado[1],
+                "apelido": resultado[1],
                 "id_acesso": resultado[3],
-                "cargo": resultado[4]
+                "cargo": resultado[4],
+                "primeiro_acesso": resultado[5]
             }
         return None
 
     finally:
         if cursor:
             cursor.close()
-        if conn:
-            conn.close()
+        if connection:
+            connection.close()
+
+def contaIniciada(usuario, senha_nova_hash):
+    try:
+        with conectarBanco() as connection:
+            with connection.cursor() as cursor:
+                cursor.execute(
+                    "UPDATE colaborador.dados SET senha_hash = %s, primeiro_acesso = false where id = %s",
+                    (senha_nova_hash, usuario)
+                )
+    except Exception as e:
+        print(f"Erro ao atualizar último login: {e}")
+        return False
+
+def compararSenhaHash(usuario, senha_inserida):
+    try:
+        with conectarBanco() as connection:
+            with connection.cursor() as cursor:
+                cursor.execute(
+                    "SELECT senha_hash from colaborador.dados where id = %s",
+                    (usuario,)
+                )
+                row = cursor.fetchone()
+                if not row:
+                    return False
+                senha_db_hash = row[0]
+                return checarSenhaHash(senha_db_hash, senha_inserida)
+
+    except Exception as e:
+        print(f"Erro ao atualizar último login: {e}")
+        return False
 
 
+def ultimoLogin(u_id):
+    try:
+        with conectarBanco() as connection:
+            with connection.cursor() as cursor:
+                cursor.execute(
+                    "UPDATE colaborador.dados SET data_ult_login = NOW() WHERE id = %s",
+                    (u_id,)
+                )
+    except Exception as e:
+        print(f"Erro ao atualizar último login: {e}")
 
 
-def getListaColaboradores(dados_db):
+def getListaColaboradores():
     connection = None
     cursor = None
     listaColabs = []
 
     try:
-        connection = pg.connect(database=dados_db['db_name'], user=dados_db['db_user'], password=dados_db['db_password'],
-            host=dados_db['host_db'],port=dados_db['port'])
+        connection = conectarBanco()
 
         cursor = connection.cursor()
         
         query = """
-            SELECT d.id, d.nome_simples, d.usuario, d.nivel_acesso, d.ativo, c.cargo
+            SELECT d.id, d.apelido, d.usuario, d.nivel_acesso, d.is_ativo, c.cargo
             FROM colaborador.dados d
             JOIN colaborador.cargos c
-            ON d.nivel_acesso = c.id_cargo
+            ON d.nivel_acesso = c.id_acesso
             """
         
         cursor.execute(query)
@@ -69,10 +110,10 @@ def getListaColaboradores(dados_db):
         listaColabs = [
         {
             "id": row[0],
-            "nome_simples": row[1],
+            "apelido": row[1],
             "usuario": row[2],
             "nivel_acesso": row[3],
-            "ativo": row[4],
+            "is_ativo": row[4],
             "cargo_acesso": row[5]
         }
         for row in resultado
@@ -93,60 +134,17 @@ def getListaColaboradores(dados_db):
     return listaColabs
 
 
-def getQtyColabs(dados_db):
+def getCargos():
     connection = None
     cursor = None
     
     try:
-        connection = pg.connect(database=dados_db['db_name'], user=dados_db['db_user'], password=dados_db['db_password'],
-            host=dados_db['host_db'],port=dados_db['port'])
+        connection = conectarBanco()
 
         cursor = connection.cursor()
         
-        query_total = """SELECT COUNT(*) FROM colaborador.dados"""
-        query_ativos = """SELECT COUNT(*) FROM colaborador.dados WHERE ativo = True"""
-        
-        cursor.execute(query_total)
-        total_colabs = cursor.fetchone()[0]
-
-        cursor.execute(query_ativos)
-        ativos = cursor.fetchone()[0]
-
-        if total_colabs is None or ativos is None:
-            return None
-        
-        resultado = {
-            "total": total_colabs,
-            "ativos": ativos
-        }
-        
-    except Exception as e:
-        if connection:
-            connection.rollback()
-            print(f"Falha: {e}")
-            return False
-
-    finally:
-        if cursor:
-            cursor.close()
-        if connection:
-            connection.close()
-
-    return resultado
-
-
-def getCargos(dados_db):
-    connection = None
-    cursor = None
-    
-    try:
-        connection = pg.connect(database=dados_db['db_name'], user=dados_db['db_user'], password=dados_db['db_password'],
-            host=dados_db['host_db'],port=dados_db['port'])
-
-        cursor = connection.cursor()
-        
-        query = """SELECT id_cargo, cargo 
-        FROM colaborador.cargos"""
+        query = """SELECT id_acesso, cargo 
+        FROM colaborador.cargos WHERE id_acesso <> 1 ORDER BY id_acesso ASC"""
         
         cursor.execute(query)
         cargos = cursor.fetchall()
@@ -158,7 +156,7 @@ def getCargos(dados_db):
 
         for id_cargo, cargo in cargos:
             lista_cargos.append({
-                "id_cargo": id_cargo,
+                "id_acesso": id_cargo,
                 "cargo": cargo
             })
 
@@ -178,18 +176,17 @@ def getCargos(dados_db):
     return lista_cargos
 
 
-def getQtyColabs(dados_db):
+def getQtyColabs():
     connection = None
     cursor = None
     
     try:
-        connection = pg.connect(database=dados_db['db_name'], user=dados_db['db_user'], password=dados_db['db_password'],
-            host=dados_db['host_db'],port=dados_db['port'])
+        connection = conectarBanco()
 
         cursor = connection.cursor()
         
         query_total = """SELECT COUNT(*) FROM colaborador.dados"""
-        query_ativos = """SELECT COUNT(*) FROM colaborador.dados WHERE ativo = True"""
+        query_ativos = """SELECT COUNT(*) FROM colaborador.dados WHERE is_ativo = True"""
         
         cursor.execute(query_total)
         total_colabs = cursor.fetchone()[0]
@@ -219,21 +216,20 @@ def getQtyColabs(dados_db):
 
     return resultado
 
-def novoColaborador(dados_db, dados_colab, data, operador):
+def setNovoColaborador(dados_colab, operador):
     connection = None
     cursor = None
     
     try:
-        connection = pg.connect(database=dados_db['db_name'], user=dados_db['db_user'], password=dados_db['db_password'],
-            host=dados_db['host_db'],port=dados_db['port'])
+        connection = conectarBanco()
 
         cursor = connection.cursor()
 
         nome_completo = dados_colab["nome_completo"]
         usuario = dados_colab["usuario"]
-        senha_hash = gerarSenhaHash(dados_colab["senha"])
+        senha_hash = gerarSenhaHash("1234")
         nivel_acesso = dados_colab["nivel_acesso"]
-        nome_simples = dados_colab["nome_simples"]
+        apelido = dados_colab["apelido"]
         operador_inclusao = operador
         identidade_hash = gerarSenhaHash(dados_colab["identidade"])
         
@@ -242,15 +238,15 @@ def novoColaborador(dados_db, dados_colab, data, operador):
             usuario, 
             senha_hash,
             nivel_acesso, 
-            nome_simples, 
+            apelido, 
             data_inclusao, 
             operador_inclusao, 
-            identidade_hash) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"""
+            identidade_hash) VALUES (%s, %s, %s, %s, %s, NOW(), %s, %s)"""
         
-        cursor.execute((query), (nome_completo, usuario, senha_hash, nivel_acesso, nome_simples, data, operador_inclusao, identidade_hash))
+        cursor.execute((query), (nome_completo, usuario, senha_hash, nivel_acesso, apelido, operador_inclusao, identidade_hash))
         connection.commit()
 
-    except pg.errors.UniqueViolation:
+    except pg_err.UniqueViolation:
         if connection:
             connection.rollback()
         return "USERNAME_DUPLICADO"
@@ -271,31 +267,38 @@ def novoColaborador(dados_db, dados_colab, data, operador):
 
 
 
-def getDadosColaborador(dados_db, id_colab):
+def getDadosColaborador(id_colab):
     connection = None
     cursor = None
     
     try:
-        connection = pg.connect(database=dados_db['db_name'], user=dados_db['db_user'], password=dados_db['db_password'],
-            host=dados_db['host_db'],port=dados_db['port'])
+        connection = conectarBanco()
 
         cursor = connection.cursor()
         
-        query = """SELECT d.id, 
-                        d.nome_simples, 
-                        d.nome_completo, 
-                        d.ativo, 
-                        d.nivel_acesso, 
-                        d.data_inclusao, 
-                        d.operador_inclusao, 
+        query = """SELECT
+                        d.id,
+                        d.apelido,
+                        d.nome_completo,
                         d.usuario,
+                        d.is_ativo,
+                        d.nivel_acesso,
+                        c.cargo,
+                        d.data_inclusao,
+
+                        inc.apelido AS operador_inclusao,
                         d.data_modificacao,
-                        d.operador_modificacao,
-                        c.cargo
+                        mod.apelido AS operador_modificacao,
+                        d.data_ult_login
                     FROM colaborador.dados d
                     JOIN colaborador.cargos c
-                    ON d.nivel_acesso = c.id_cargo
-                    WHERE d.id = %s"""
+                        ON c.id_acesso = d.nivel_acesso
+                    LEFT JOIN colaborador.dados inc
+                        ON inc.id = d.operador_inclusao
+                    LEFT JOIN colaborador.dados mod
+                        ON mod.id = d.operador_modificacao
+                    WHERE d.id = %s;
+                    """
         
         cursor.execute((query), (id_colab,))
         
@@ -304,32 +307,31 @@ def getDadosColaborador(dados_db, id_colab):
         if not resultado:
             return None
 
-        dados_colab = {
-            "id": resultado[0],
-            "nome_simples": resultado[1],
-            "nome_completo": resultado[2],
-            "nome_usuario": resultado[7],
-            "ativo": resultado[3],
-            "nivel_acesso": resultado[4],
-            "cargo": resultado[10],
-            "data_inclusao": resultado[5],
-            "operador_inclusao": resultado[6],
-            "data_modificacao": resultado[8],
-            "operador_modificacao": resultado[9],
-        }
+        colaborador = {
+                "id": resultado[0],
+                "apelido": resultado[1],
+                "nome_completo": resultado[2],
+                "nome_usuario": resultado[3],
+                "is_ativo": resultado[4],
+                "nivel_acesso": resultado[5],
+                "cargo": resultado[6],
+                "data_inclusao": resultado[7].strftime("%d/%m/%Y - %H:%M:%S")
+                    if resultado[7] else None,
+                "operador_inclusao": resultado[8],
+                "data_modificacao": resultado[9].strftime("%d/%m/%Y - %H:%M:%S")
+                    if resultado[9] else None,
+                "operador_modificacao": resultado[10],
+                "data_ult_login": resultado[11].strftime("%d/%m/%Y - %H:%M:%S"),
+                "delta_dias": (datetime.now().date() - resultado[11].date()).days if resultado[11] else None
+            }
 
-        return dados_colab
-
-    except pg.errors.UniqueViolation:
-        if connection:
-            connection.rollback()
-        return "USERNAME_DUPLICADO"
+        return colaborador
     
     except Exception as e:
         if connection:
             connection.rollback()
-            print(f"Falha: {e}")
-            return {e}
+            print(f"Falha ao consultar dados do colaborador: {e}")
+            return None
 
     finally:
         if cursor:
@@ -340,9 +342,66 @@ def getDadosColaborador(dados_db, id_colab):
     return True
 
 
+def setDadosColaborador(id, novos_dados_colab, operador):
+    connection = None
+    cursor = None
+    
+    try:
+        connection = conectarBanco()
+        cursor = connection.cursor()
 
-def alterarSenha(dados_db, pw_atual, pw_novo):
+        nome_completo = novos_dados_colab["nome_completo"]
+        usuario = novos_dados_colab["usuario"]
+        is_ativo = novos_dados_colab["is_ativo"]
+        nivel_acesso = novos_dados_colab["nivel_acesso"]
+        apelido = novos_dados_colab["apelido"]
+        operador_modificacao = operador
+
+        
+        
+        query = """UPDATE colaborador.dados SET
+            nome_completo = %s, 
+            usuario = %s,
+            is_ativo = %s,
+            nivel_acesso = %s, 
+            apelido = %s,
+            data_modificacao = NOW(), 
+            operador_modificacao = %s
+            WHERE id = %s"""
+        
+        cursor.execute((query), (nome_completo, usuario, is_ativo, nivel_acesso, apelido, operador_modificacao, id))
+        connection.commit()
+
+    except pg_err.UniqueViolation:
+        if connection:
+            connection.rollback()
+        return "USERNAME_DUPLICADO"
+    
+    except Exception as e:
+        if connection:
+            connection.rollback()
+            
+            print(f"Falha ao gravar alteração: {e}")
+            return None
+
+    finally:
+        if cursor:
+            cursor.close()
+        if connection:
+            connection.close()
+    
+    return True
+
+def alterarSenha(pw_atual, pw_novo):
     pass
 
-def recuperarSenha(dados_db, cpf):
+def recuperarSenha(cpf):
     pass
+
+
+
+
+
+
+
+
