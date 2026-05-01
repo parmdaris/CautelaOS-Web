@@ -7,3 +7,4 @@ templates/weather.html
 /__pycache__
 *.cfg
 config.cfg
+.venv/
