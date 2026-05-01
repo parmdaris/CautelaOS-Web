@@ -9,10 +9,10 @@ data_iso = datetime.datetime.now().date().strftime("%Y-%m-%d %H:%M:%S")
 data = datetime.datetime.now().date().strftime("%d/%m/%Y")
 hora = datetime.datetime.now().time().strftime("%H:%M:%S")
 
+app = Flask(__name__)
 
 def iniciarIndex():
 
-    app = Flask(__name__)
     app.secret_key = "cautelaos"
     app.jinja_env.globals.update(tem_acesso=tem_acesso)
 
@@ -402,9 +402,9 @@ def iniciarIndex():
 
 
 ######################################## Inicialização do app Flask
-    app.run(debug=True, host="0.0.0.0")
+    
 
 if __name__ == "__main__":
-    
+    app.run(debug=True, host="0.0.0.0")
     inicializarCfg()
     iniciarIndex()
