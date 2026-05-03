@@ -18,6 +18,7 @@
 <div class="actions-bar">
     <a href="{{ url_for('dashboard') }}" class="btn navegar">← Voltar</a>
     <a href="{{ url_for('adicionarItem') }}" class="btn adicionar">+ Novo item</a>
+    <a href="{{ url_for('adicionarItem') }}" class="btn adicionar">✎ Alteração em lote</a>
 
     <form method="POST" action="{{ url_for('imprimir_estoque') }}" target="_blank">
         <input type="hidden" name="tipo-filtro" id="tipo-filtro">

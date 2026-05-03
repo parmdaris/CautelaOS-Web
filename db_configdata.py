@@ -11,16 +11,21 @@ data_atual = datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
 def conectarBanco():
     config.read(configFilePath)
     db = config['db-config']
-
-    return pg.connect(
-                    database=os.environ.get("DB_NAME", db.get('database')),
-                    user=os.environ.get("DB_USER", db.get('user')),
-                    password=os.environ.get("DB_PASSWORD", db.get('password')),
-                    host=os.environ.get("DB_HOST", db.get('host-db')),
-                    port=os.environ.get("DB_PORT", db.get('port'))
-                    )
-
-
+    try:
+        connection = pg.connect(
+                        database=os.environ.get("DB_NAME", db.get('database')),
+                        user=os.environ.get("DB_USER", db.get('user')),
+                        password=os.environ.get("DB_PASSWORD", db.get('password')),
+                        host=os.environ.get("DB_HOST", db.get('host-db')),
+                        port=os.environ.get("DB_PORT", db.get('port'))
+                        )
+    except Exception as e:
+        print(e)
+        print("Falha na conexão! Contate o administrador do sistema.")
+        return None
+    
+    return connection
+        
    
 def inicializarCfg():
     if not os.path.exists(configFilePath):

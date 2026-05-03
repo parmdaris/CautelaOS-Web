@@ -87,9 +87,21 @@
         <div class="footer">
 
             <div>
-                <label>
-                    Desconto (R$)
-                    <input type="text" name="desconto" value="0">
+                
+                <label for="vendedor" name="vendedor">
+                    Vendedor/Operador
+
+                    {% if tem_acesso(1, 2) %}
+                        <select name="vendedor">
+                    {%else%}
+                        <select disabled>
+                    {% endif %}
+                    </select>
+
+                    {% if not tem_acesso(1, 2) %}
+                        <input type="hidden" name="vendedor" value="{{ session['u_id'] }}">
+                    {% endif %}
+
                 </label>
             </div>
 
@@ -114,6 +126,7 @@
 <script id="dados-gerais" type="application/json">{{ dados_gerais | safe }}</script>
 <script id="dados-itens" type="application/json">{{ dados_itens | safe }}</script>
 <script id="dados-clientes" type="application/json">{{ dados_clientes | safe }}</script>
+<script id="lista-vendedores" type="application/json">{{ lista_colaboradores | safe }}</script>
 
 {% endblock %}
 

@@ -12,20 +12,24 @@ def registrarDadosVenda(dados_venda, id_operador):
         query_dados_venda = """
             insert into venda.dados (
                 id_cliente, 
+                vendedor,
                 qtd_diversos, 
                 qtd_total_itens, 
                 valor_total, 
                 data_venda,
                 obs,
                 operador
-                ) values (%s, %s, %s, %s, NOW(), %s, %s)
+                ) values (%s, %s, %s, %s, %s, NOW(), %s, %s)
                 RETURNING id_venda;
         """
             
         cursor = connection.cursor()
 
+        print(dados_venda["vendedor"])
+
         cursor.execute(query_dados_venda, (
             dados_venda.get('id_cliente'), 
+            dados_venda.get('vendedor'),
             dados_venda.get('qtd_itens'), 
             dados_venda.get('qtd_total_itens'), 
             dados_venda.get('valor_total'), 
@@ -153,8 +157,10 @@ def getListaVendas():
         connection.autocommit = True
         cursor = connection.cursor()
 
-        sql = '''SELECT v.id_venda, c.nome_fantasia, v.qtd_total_itens, v.valor_total, v.data_venda
-                        FROM venda.dados v INNER JOIN cliente.dados c ON v.id_cliente = c.id_cliente ORDER BY v.id_venda DESC'''
+        sql = '''SELECT v.id_venda, c.nome_fantasia, v.qtd_total_itens, v.valor_total, v.data_venda, col.apelido as vendedor
+                        FROM venda.dados v INNER JOIN cliente.dados c ON v.id_cliente = c.id_cliente
+                        inner join colaborador.dados col on v.vendedor = col.id
+                        ORDER BY v.id_venda DESC'''
         
         cursor.execute(sql)
 
@@ -166,7 +172,8 @@ def getListaVendas():
             "destino": row[1],
             "qtd_total_itens": row[2],
             "valor_total": row[3],
-            "data_venda": row[4]
+            "data_venda": row[4],
+            "vendedor": row[5]
         }
         for row in row
         ]

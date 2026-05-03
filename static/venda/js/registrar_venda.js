@@ -1,6 +1,7 @@
 const dadosGerais = JSON.parse(document.getElementById('dados-gerais').textContent)[0]; // EXISTENTE
 const dadosClientes = JSON.parse(document.getElementById('dados-clientes').textContent); // ADICIONADO
 const dadosItens = JSON.parse(document.getElementById('dados-itens').textContent); // ADICIONADO
+const listaVendedores = JSON.parse(document.getElementById('lista-vendedores').textContent); // ADICIONADO
 
 function formatarMoeda(v) {
     return "R$ " + parseFloat(v).toFixed(2).replace(".", ",");
@@ -395,6 +396,17 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     });
 
+
+    document.querySelectorAll('select[name="vendedor"]').forEach(select => {
+        listaVendedores.forEach(vendedor => {
+            const option = document.createElement('option');
+            option.value = vendedor.id;
+            option.textContent = vendedor.apelido;
+            select.appendChild(option);
+        });
+    });
+
+    
     document.querySelectorAll('select[name="codigo[]"]').forEach(select => {
         dadosItens.forEach(item => {
             const option = document.createElement('option');

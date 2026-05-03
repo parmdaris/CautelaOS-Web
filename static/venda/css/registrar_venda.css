@@ -257,7 +257,8 @@ input.highlight {
     font-size: 0.85rem;
 }
 
-.footer input {
+.footer input,
+.footer select {
     margin-top: 6px;
     padding: 10px;
     max-width: 220px;

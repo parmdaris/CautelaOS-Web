@@ -83,7 +83,7 @@ def ultimoLogin(u_id):
         print(f"Erro ao atualizar último login: {e}")
 
 
-def getListaColaboradores():
+def getListaColaboradores(so_ativos=False):
     connection = None
     cursor = None
     listaColabs = []
@@ -99,6 +99,9 @@ def getListaColaboradores():
             JOIN colaborador.cargos c
             ON d.nivel_acesso = c.id_acesso
             """
+        
+        if so_ativos == True:
+            query = query + " where is_ativo = true"
         
         cursor.execute(query)
 

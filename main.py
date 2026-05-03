@@ -276,7 +276,8 @@ def iniciarIndex():
                 "qtd_itens": len(itens_venda),
                 "qtd_total_itens": qtd_total_itens,
                 "valor_total": valor_total,
-                "obs": request.form.get("observacoes")
+                "obs": request.form.get("observacoes"),
+                "vendedor": request.form.get("vendedor")
             }
 
             if not itens_venda:
@@ -289,11 +290,13 @@ def iniciarIndex():
                 print(itens_venda)  # debug
                 print("Valor total: ", valor_total)
                 return redirect(url_for('visualizar_vendas'))
-        
+            
+        ####################################################################### Fim if POST
         itens = estoque.getEstoque()
         dados_clientes = clientes.getClientesVenda()
         dados = [{"data": data, "operador": session["u_apelido"], "id_venda": "27"}]
-        return render_template('venda/registrar_venda.html', dados_itens=json.dumps(itens), dados_gerais=json.dumps(dados), dados_clientes=json.dumps(dados_clientes))
+        lista_colaboradores = usuarios.getListaColaboradores(True)
+        return render_template('venda/registrar_venda.html', dados_itens=json.dumps(itens), dados_gerais=json.dumps(dados), dados_clientes=json.dumps(dados_clientes), lista_colaboradores=json.dumps(lista_colaboradores))
     
     @app.route('/vendas')
     @login_requerido
