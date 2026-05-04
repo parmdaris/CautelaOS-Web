@@ -193,6 +193,71 @@ def getListaVendas():
     return lista_vendas
 
 
+def getDadosVenda(id_venda):
+    connection = conectarBanco()
+    connection.autocommit = True
+    cursor = connection.cursor()
+
+    sql = '''select v.id_venda, v.id_cliente, c.nome_fantasia as nome_cliente, v.qtd_diversos, v.qtd_total_itens,
+     v.valor_total, v.data_venda, v.receptor, v.obs, col_op.apelido as operador, col_opmod.apelido as operador_modificacao, v.data_modificacao, v.is_valida,
+      ven_mpg.descricao_meio as forma_pgto, col_vend.apelido as vendedor from venda.dados v 
+      inner join cliente.dados c on v.id_cliente = c.id_cliente
+      inner join colaborador.dados col_vend on v.vendedor = col_vend.id
+      inner join colaborador.dados col_op on v.operador = col_op.id
+      inner join venda.tipos_pgto ven_mpg on v.forma_pgto = ven_mpg.id_meio
+      left join colaborador.dados col_opmod on v.operador_modificacao = col_opmod.id
+      where id_venda = %s
+            '''
+    cursor.execute(sql, (id_venda,))
+
+    dados_venda = cursor.fetchone()
+
+    sql = '''select v.cod_item, v.qtd_item, v.valor_praticado, e.nome_item from venda.itens v
+                inner join estoque.suprimentos e on v.cod_item = e.codigo where id_venda = %s;
+            '''
+    cursor.execute(sql, (id_venda,))
+
+    itens_venda = cursor.fetchall()
+
+    if dados_venda[11]:
+        data_mod = dados_venda[11].strftime("%d/%m/%Y")
+    else:
+        data_mod = "-"
+
+    dados = {
+        "id_venda": dados_venda[0],
+        "id_cliente": dados_venda[1],
+        "nome_cliente": dados_venda[2],
+        "qtd_diversos": dados_venda[3],
+        "qtd_total_itens": dados_venda[4],
+        "valor_total": dados_venda[5],
+        "data_venda": dados_venda[6].strftime("%d/%m/%Y"),
+        "receptor": dados_venda[7],
+        "observacoes": dados_venda[8],
+        "operador": dados_venda[9],
+        "operador_modificacao": dados_venda[10],
+        "data_modificacao": data_mod,
+        "is_valida": dados_venda[12],
+        "forma_pgto": dados_venda[13],
+        "vendedor": dados_venda[14]
+    }
+
+    itens = []
+
+    for i in itens_venda:
+        itens.append(
+            {
+                "cod_item": i[0],
+                "qtd_item": i[1],
+                "valor_praticado": i[2],
+                "descricao": i[3]
+            }
+        )
+
+
+    return [dados, itens]
+
+
 
 
 def getValorVendas(dias = 0):

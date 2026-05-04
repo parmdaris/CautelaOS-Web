@@ -45,16 +45,18 @@ def iniciarIndex():
             senha = request.form["senha"]
 
             user = usuarios.autenticar_usuario(usuario, senha)
+            
 
             if user:
-                session["u_id"] = user["id"]
-                session["u_apelido"] = user["apelido"]
-                session["nivel_acesso"] = user["id_acesso"]
-                session["cargo"] = user["cargo"]
-                session["u_primeiro_acesso"] = user["primeiro_acesso"]
-                usuarios.ultimoLogin(user['id'])
+                session.update(user)
+                usuarios.ultimoLogin(user['u_id'])
+
+                acessos = usuarios.getAcessos(int(user["u_id"]))
+                session.update(acessos)
+
+                print(session["u_apelido"], " ", session["ver_estoque"])
                 
-                if user["primeiro_acesso"] == True:
+                if user["u_primeiro_acesso"] == True:
                     return redirect(url_for("acesso_inicial"))
                 else:
                     return redirect(url_for("dashboard"))
@@ -141,6 +143,23 @@ def iniciarIndex():
         dados_estoque = estoque.getEstoque(None, False)
         qtd_artigos_inativos = estoque.qtdArtigos(None, False)
         return render_template('estoque/visualizar_lista_inativos.html', 
+                               dados_estq=dados_estoque, 
+                               qtd_artigos=qtd_artigos_inativos,
+                               tipos_itens=tipos
+                               )
+    
+
+    
+    @app.route("/estoque/editar_item/lote")
+    @login_requerido
+    def editar_lote():
+        if request.method == 'POST': ####################################################################################
+            return None
+
+        tipos = estoque.getTiposItens()
+        dados_estoque = estoque.getEstoque(None, False)
+        qtd_artigos_inativos = estoque.qtdArtigos(None, False)
+        return render_template('estoque/editar_lote.html', 
                                dados_estq=dados_estoque, 
                                qtd_artigos=qtd_artigos_inativos,
                                tipos_itens=tipos
@@ -317,6 +336,13 @@ def iniciarIndex():
 
         return render_template('venda/visualizar_lista_vendas.html', dados_vendas=dados_vendas, qtd_vendas=qtd_vendas, valor_vendas=valor_vendas, valor_vendas_hoje=valor_vendas_hoje, qtd_vendas_hoje=qtd_vendas_hoje)
 
+
+    @app.route("/vendas/<id_venda>/ver")
+    @login_requerido
+    def ver_venda(id_venda):
+        dados_venda = vendas.getDadosVenda(id_venda)
+        #print(dados_venda[0]["id_venda"])
+        return render_template('venda/ver_venda.html', dados_venda=dados_venda)
 
 ################################################################################# Clientes
 

@@ -1,0 +1,145 @@
+{% extends "base.html" %}
+
+{% block title %} Venda nº {{ dados_venda[0]["id_venda"] }} - CautelaOS{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.min.css">
+<link rel="stylesheet" href="{{ url_for('static', filename='venda/css/ver_venda.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='index/css/common_contents.css') }}">
+{% endblock %}
+
+{% block content %}
+
+<h2 class="page-title">Venda nº: {{ dados_venda[0]["id_venda"] }} - <strong>{{ dados_venda[0]['nome_cliente'] }}</strong></h2>
+
+<div class="page-card">
+
+    <div class="seq-subdesc">
+        <div class="campo">
+            <label>Cliente de destino</label>
+            <input type="text" class="input padrao" value="{{ dados_venda[0]['nome_cliente'] }}" readonly>
+        </div>
+        <div class="campo">
+            <label>CPF/CNPJ</label>
+            <input type="text" class="input padrao" value="01234567890" readonly>
+        </div>
+        <div class="campo">
+            <label>Contato</label>
+            <input type="text" class="input padrao" value="(92) 99123-4567" readonly>
+        </div>
+        <div class="campo">
+            <label>Data da venda</label>
+            <input type="text" class="input padrao" value="{{ dados_venda[0]['data_venda'] }}" readonly>
+        </div>
+    </div>
+
+    <div class="seq-subdesc">
+
+        <div class="sku-ean-qty">
+
+            <div class="campo">
+                <label>Receptor</label>
+                <input type="text" class="input padrao" value="{{ dados_venda[0]['receptor'] or '-' }}" readonly>
+            </div>
+
+            <div class="campo">
+                <label>Operador de Registro</label>
+                <input type="text" class="input padrao" value="{{ dados_venda[0]['operador'] }}" readonly>
+            </div>
+
+            <div class="campo">
+                <label>Operador de modificação</label>
+                <input type="text" class="input padrao" value="{{ dados_venda[0]['operador_modificacao'] or '-' }}" readonly>
+            </div>
+
+            <div class="campos-qty">
+                <div class="campo pequeno">
+                    <label>Data modificação</label>
+                    <input type="text" class="input padrao" value="{{ dados_venda[0]['data_modificacao'] or '-' }}" readonly>
+                </div>
+
+                <div class="campo pequeno">
+                    <label>Status</label>
+                    <input type="text" class="input padrao"
+                        value="{{ 'Efetivada' if dados_venda[0]['is_valida'] else 'Anulada' }}"
+                        readonly>
+                </div>
+            </div>
+
+        </div>
+
+    <div class="coluna-direita">
+
+        <div class="campo">
+            <label>Valor pago</label>
+            <input type="text" id="valor_total" class="input padrao" value="{{ dados_venda[0]['valor_total'] }}" readonly>
+        </div>
+
+        <div class="campo">
+            <label>Forma de pagamento</label>
+            <input type="text" class="input padrao" value="{{ dados_venda[0]['forma_pgto'] }}" readonly>
+        </div>
+
+        <div class="campo">
+            <label>Vendedor</label>
+            <input type="text" class="input padrao" value="{{ dados_venda[0]['vendedor'] }}" readonly>
+        </div>
+
+        <div class="campo full">
+            <label>Observações</label>
+            <textarea rows="4" readonly>{{ dados_venda[0]['observacoes'] }}</textarea>
+        </div>
+
+    </div>
+
+</div>
+
+    <div style="margin-bottom: 10px;"></div>
+
+
+    <div class="table-card">
+    <table id="tabela-estoque" class="display">
+        <thead>
+            <tr>
+                <th>Código</th>
+                <th>Descrição</th>
+                <th>Qtd</th>
+                <th>Valor</th>
+                <th>🔍︎</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in dados_venda[1] %}
+            <tr>
+                <td>{{ item.cod_item }}</td>
+                <td style="text-align:left">{{ item.descricao }}</td>
+                <td>{{ item.qtd_item }}</td>
+                <td>R$ {{ item.valor_praticado }}</td>
+                <td>
+                    <a href="{{ url_for('ver_item_estoque', codigo_item=item.cod_item) }}" class="a detalhes">🔍︎</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    
+</div>
+
+    <div class="actions-bar rodape">
+        <a href="{{ url_for('visualizar_vendas') }}" class="btn navegar">
+            ← Voltar
+        </a>
+
+        <a href="{{ url_for('dashboard') }}" class="btn acao">✎</a>
+
+    </div>
+
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://code.jquery.com/jquery-3.7.0.js"></script>
+<script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
+<script src="{{ url_for('static', filename='venda/js/ver_venda.js') }}"></script>
+{% endblock %}

@@ -19,18 +19,18 @@ def autenticar_usuario(usuario, senha):
         
         cursor.execute(query, (usuario,))
 
-        resultado = cursor.fetchone()
+        dadosColab = cursor.fetchone()
 
-        if not resultado:
+        if not dadosColab:
             return None
 
-        if checarSenhaHash(resultado[2], senha):
+        if checarSenhaHash(dadosColab[2], senha):
             return {
-                "id": resultado[0],
-                "apelido": resultado[1],
-                "id_acesso": resultado[3],
-                "cargo": resultado[4],
-                "primeiro_acesso": resultado[5]
+                "u_id": dadosColab[0],
+                "u_apelido": dadosColab[1],
+                "nivel_acesso": dadosColab[3],
+                "cargo": dadosColab[4],
+                "u_primeiro_acesso": dadosColab[5]
             }
         return None
 
@@ -39,6 +39,43 @@ def autenticar_usuario(usuario, senha):
             cursor.close()
         if connection:
             connection.close()
+
+
+def getAcessos(id):
+    connection = None
+    cursor = None
+
+    try:
+        connection = conectarBanco()
+        cursor = connection.cursor()
+        query = """SELECT *
+                    FROM colaborador.acessos
+                    WHERE id_usuario = %s"""
+    
+        cursor.execute(query, (id,))
+        dadosAcessos = cursor.fetchone()
+        return {
+                    "ver_estoque": dadosAcessos[1],
+                    "editar_item_estoque": dadosAcessos[2],
+                    "ver_vendas": dadosAcessos[3],
+                    "registrar_vendas": dadosAcessos[4],
+                    "editar_vendas": dadosAcessos[5],
+                    "ver_os": dadosAcessos[6],
+                    "registrar_os": dadosAcessos[7],
+                    "editar_os": dadosAcessos[8],
+                    "ver_cautela": dadosAcessos[9],
+                    "registrar_cautela": dadosAcessos[10],
+                    "editar_cautela": dadosAcessos[11],
+                    "ver_relatorios": dadosAcessos[12],
+                    "apagar_dados": dadosAcessos[13]
+                }
+
+    finally:
+        if cursor:
+            cursor.close()
+        if connection:
+            connection.close()
+
 
 def contaIniciada(usuario, senha_nova_hash):
     try:

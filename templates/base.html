@@ -30,7 +30,7 @@
                         <div class="submenu">
                             <a href="{{ url_for('ver_estoque') }}">📋 Ver estoque</a>
                             <a href="{{ url_for('adicionarItem') }}">➕ Adicionar item</a>
-                            <a href="" style="color: red;">📊 Relatórios</a>
+                            <a href="{{ url_for('adicionarItem') }}">✏️ Alteração em lote</a>
                         </div>
                     </div>
 
@@ -44,7 +44,6 @@
                         <div class="submenu">
                             <a href="{{ url_for('visualizar_vendas') }}">💰 Ver vendas</a>
                             <a href="{{ url_for('registrar_venda') }}">➕ Registrar venda</a>
-                            <a href="" style="color: red;">📊 Relatórios</a>
                         </div>
                     </div>
 
@@ -58,7 +57,6 @@
                         <div class="submenu">
                             <a href="{{ url_for('listar_cautelas') }}" style="color: yellow;">📋 Ver cautelas</a>
                             <a href="" style="color: red;">➕ Gerar cautela</a>
-                            <a href="" style="color: red;">📊 Relatórios</a>
                         </div>
                     </div>
 
@@ -72,7 +70,7 @@
                         <div class="submenu">
                             <a href="" style="color: red;">📋 Ver ordens</a>
                             <a href="" style="color: red;">➕ Gerar ordem</a>
-                            <a href="" style="color: red;">📊 Relatórios</a>
+                            
                         </div>
                     </div>
                     {% endif %}
@@ -100,6 +98,22 @@
                             <div class="submenu">
                                 <a href="{{ url_for('visualizar_colaboradores') }}" style="color: yellow;">📋 Gerenciar</a>
                                 <a href="{{ url_for('cadastrar_colab') }}" style="color: yellow;">➕ Adicionar colaborador</a>
+                            </div>
+                        </div>
+                    {% endif %}
+                    
+                    {% if tem_acesso(1, 2) %}
+                        <div class="menu-item has-submenu">
+                            <button class="menu-toggle">
+                                <span style="color: red;">📊 Relatórios</span>
+                                <span class="arrow">▸</span>
+                            </button>
+
+                            <div class="submenu">
+                                <a href="" style="color: red;">📦 Estoque</a>
+                                <a href="" style="color: red;">💰 Vendas</a>
+                                <a href="" style="color: red;">📦 Cautelas</a>
+                                <a href="" style="color: red;">🛠️ Serviços</a>
                             </div>
                         </div>
                     {% endif %}
