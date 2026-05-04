@@ -313,7 +313,8 @@ def iniciarIndex():
         ####################################################################### Fim if POST
         itens = estoque.getEstoque()
         dados_clientes = clientes.getClientesVenda()
-        dados = [{"data": data, "operador": session["u_apelido"], "id_venda": "27"}]
+        id_atual = vendas.getQtyVendas(0, True) + 1
+        dados = [{"data": data, "operador": session["u_apelido"], "id_venda": id_atual}]
         lista_colaboradores = usuarios.getListaColaboradores(True)
         return render_template('venda/registrar_venda.html', dados_itens=json.dumps(itens), dados_gerais=json.dumps(dados), dados_clientes=json.dumps(dados_clientes), lista_colaboradores=json.dumps(lista_colaboradores))
     

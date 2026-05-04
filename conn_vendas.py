@@ -109,24 +109,32 @@ def registrarItensVenda(id_venda, itens_venda):
 
 
 
-def getQtyVendas(dias = 0):
+def getQtyVendas(dias = 0, absoluto = False):
     connection = None
     cursor = None
 
     try:
         connection = conectarBanco()
-
         connection.autocommit = True
         cursor = connection.cursor() 
+
+        validas = " where is_valida = true;"
 
         if dias != 0:
             sql = '''select COUNT(*)  
                 from venda.dados where is_valida = true and data_venda::date >= CURRENT_DATE - %s;'''
             cursor.execute(sql, (dias,))
         else: 
-            sql = '''select COUNT(*)  
-                    from venda.dados where is_valida = true;'''
+            if absoluto == True:
+                sql = '''select COUNT(*)  
+                    from venda.dados'''
+            else:
+                sql = '''select COUNT(*)  
+                    from venda.dados where is_valida = true'''
+            
             cursor.execute(sql)
+
+        
         
         row = cursor.fetchall()
         qtd_vendas = int(row[0][0])
