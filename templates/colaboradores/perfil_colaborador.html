@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+{% block title %}Perfil • CautelaOS{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='colaboradores/css/perfil_colaborador.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='index/css/common_contents.css') }}">
+{% endblock %}
+
+{% block content %}
+<h2 class="page-title">👤 <strong>{{dados_colab.apelido}}</strong></h2>
+
+<div class="page-card">
+
+        <div class="campo" style="margin-bottom: 15px;">
+            <label>Nome completo</label>
+            <input type="text" class="input padrao" name="nome_completo" disabled value="{{dados_colab.nome_completo}}">
+        </div>
+
+        <div class="seq-subdesc">
+
+            <div class="campo">
+                <label>ID</label>
+                <input type="text" class="input padrao" name="id" disabled value="{{dados_colab.id}}">
+            </div>
+
+            <div class="campo">
+                <label>Apelido</label>
+                <input type="text" class="input padrao" name="apelido" disabled value="{{dados_colab.apelido}}">
+            </div>
+
+            <div class="campo">
+                <label>Usuário</label>
+                <input type="text" class="input padrao" name="usuario" disabled value="{{dados_colab.nome_usuario}}">
+            </div>
+
+            <div class="campo">
+                <label>Cargo</label>
+                <input name="nivelAcesso" class="input padrao" disabled value="{{dados_colab.cargo}}">
+            </div>
+
+            <div class="campo">
+                <label>Código de identidade</label>
+                <input type="text" class="input padrao" name="identidade" disabled value="INSERIDO">
+            </div>
+
+        </div>
+
+
+        <div class="seq-cadastro">
+
+            <div class="campo">
+                <label>Data de cadastro</label>
+                <input name="dataCadastro" class="input padrao" disabled value="{{dados_colab.data_inclusao}}">
+            </div>
+
+            <div class="campo">
+                <label>Operador do cadastro</label>
+                <input name="operadorCadastro" class="input padrao" disabled value="{{dados_colab.operador_inclusao}}">
+            </div>
+
+        </div>
+
+    
+
+        <div class="actions-bar">
+            <a href="{{ url_for('dashboard') }}" class="btn cancelar">← Voltar</a>
+            <a href="{{ url_for('alterar_senha_colab') }}" class="btn acao">🔐 Alterar senha</a>
+        </div>
+
+</div>
+{% endblock %}
+
+{% block extra_js %}
+{% endblock %}

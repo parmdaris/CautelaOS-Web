@@ -1,0 +1,25 @@
+/* GRID PRINCIPAL (usuário / senha / doc) */
+.seq-subdesc {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+}
+
+.seq-cadastro {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+    margin-top: 16px;
+}
+
+/* RESPONSIVO */
+@media (max-width: 900px) {
+    .seq-subdesc {
+        grid-template-columns: 1fr;
+    }
+
+    .actions-bar {
+        flex-direction: column;
+        align-items: stretch;
+    }
+}

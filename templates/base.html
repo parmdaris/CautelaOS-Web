@@ -125,7 +125,12 @@
             <div class="main">
                 <header class="header">
                     <div class="header-user">
-                        <p>Bem-vindo, <strong>{{ session.u_apelido }}</strong></p>
+                        <p>
+                            Bem-vindo, 
+                            <a href="{{ url_for('perfil_colaborador') }}" class="link-reset">
+                                <strong>{{ session.get('u_apelido', 'Usuário') }}</strong>
+                            </a>
+                        </p>
                         <hr>
                         <div class="header-meta">
                             <span class="badge-cargo" data-id-acesso="{{ session['nivel_acesso'] }}">{{ session['cargo'] }}</span>

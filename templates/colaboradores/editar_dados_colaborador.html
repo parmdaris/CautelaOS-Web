@@ -46,7 +46,7 @@
             </div>
             {%else%}
             <div class="campo">
-                <label>Nível de acesso<label style="color:red">*</label></label>
+                <label>Cargo<label style="color:red">*</label></label>
                 <select name="nivel_acesso" class="input padrao" required disabled>
                     <option value="1">Administrador</option>
                 </select>
@@ -60,6 +60,80 @@
                 </select>
             </div>
             {%endif%}
+
+            <div class="permissoes-wrapper">
+                <p class="permissoes-title">Permissões<label style="color:red">*</label></p>
+                <div class="grupos-grid">
+
+                    <div class="grupo">
+                        <div class="grupo-header">
+                            <div class="grupo-icon ico-estoque">📦</div>
+                            <span class="grupo-nome">Estoque</span>
+                        </div>
+                        <div class="grupo-items">
+                            <label class="perm-item"><input type="checkbox" name="perm_estoque_ver"><span>Ver</span></label>
+                            <label class="perm-item"><input type="checkbox" name="perm_estoque_editar"><span>Editar</span></label>
+                        </div>
+                    </div>
+
+                    <div class="grupo">
+                        <div class="grupo-header">
+                            <div class="grupo-icon ico-vendas">🛒</div>
+                            <span class="grupo-nome">Vendas</span>
+                        </div>
+                        <div class="grupo-items">
+                            <label class="perm-item"><input type="checkbox" name="perm_vendas_ver"><span>Ver</span></label>
+                            <label class="perm-item"><input type="checkbox" name="perm_vendas_editar"><span>Editar</span></label>
+                            <label class="perm-item"><input type="checkbox" name="perm_vendas_registrar"><span>Registrar</span></label>
+                        </div>
+                    </div>
+
+                    <div class="grupo">
+                        <div class="grupo-header">
+                            <div class="grupo-icon ico-servico">🔧</div>
+                            <span class="grupo-nome">Serviço</span>
+                        </div>
+                        <div class="grupo-items">
+                            <label class="perm-item"><input type="checkbox" name="perm_servico_ver"><span>Ver</span></label>
+                            <label class="perm-item"><input type="checkbox" name="perm_servico_editar"><span>Editar</span></label>
+                            <label class="perm-item"><input type="checkbox" name="perm_servico_registrar"><span>Registrar</span></label>
+                        </div>
+                    </div>
+
+                    <div class="grupo">
+                        <div class="grupo-header">
+                            <div class="grupo-icon ico-cautela">📋</div>
+                            <span class="grupo-nome">Cautela</span>
+                        </div>
+                        <div class="grupo-items">
+                            <label class="perm-item"><input type="checkbox" name="perm_cautela_ver"><span>Ver</span></label>
+                            <label class="perm-item"><input type="checkbox" name="perm_cautela_editar"><span>Editar</span></label>
+                            <label class="perm-item"><input type="checkbox" name="perm_cautela_registrar"><span>Registrar</span></label>
+                        </div>
+                    </div>
+
+                    <div class="grupo">
+                        <div class="grupo-header">
+                            <div class="grupo-icon ico-relat">📊</div>
+                            <span class="grupo-nome">Relatórios</span>
+                        </div>
+                        <div class="grupo-items">
+                            <label class="perm-item"><input type="checkbox" name="perm_relatorios"><span>Acessar</span></label>
+                        </div>
+                    </div>
+
+                    <div class="grupo">
+                        <div class="grupo-header">
+                            <div class="grupo-icon ico-dados">🗑</div>
+                            <span class="grupo-nome">Dados</span>
+                        </div>
+                        <div class="grupo-items">
+                            <label class="perm-item"><input type="checkbox" name="perm_dados_apagar"><span>Apagar</span></label>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
 
         </div>
 

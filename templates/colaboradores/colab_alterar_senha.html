@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block title %}Alterar senha • CautelaOS{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='index/css/common_contents.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='colaboradores/css/alterar_senha.css') }}">
+{% endblock %}
+
+{% block content %}
+<h2 class="page-title">🔑 Alterar senha</h2>
+
+<div class="page-card">
+    <form action="{{ url_for('alterar_senha_colab') }}" method="POST" id="form-senha">
+
+        <div class="campo">
+            <label>Senha atual <label style="color:red">*</label></label>
+            <input type="password" name="senha_atual" class="input padrao" required placeholder="Digite sua senha atual">
+        </div>
+
+        <hr class="divider">
+
+        <div class="campo">
+            <label>Nova senha <label style="color:red">*</label></label>
+            <input type="password" name="nova_senha" id="nova-senha" class="input padrao" required placeholder="Digite a nova senha">
+        </div>
+
+        <div class="campo">
+            <label>Confirmar nova senha <label style="color:red">*</label></label>
+            <input type="password" name="confirmar_senha" id="confirmar-senha" class="input padrao" required placeholder="Repita a nova senha">
+            <span class="erro" id="erro-confirmacao">As senhas não coincidem.</span>
+        </div>
+
+        <div class="actions-bar rodape">
+            <a href="{{ url_for('perfil_colaborador') }}" class="btn cancelar">← Voltar</a>
+            <button type="submit" class="btn salvar" id="btn-salvar">✓ Salvar</button>
+        </div>
+
+    </form>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='colaboradores/js/colab_alterar_senha.js') }}"></script>
+{% endblock %}

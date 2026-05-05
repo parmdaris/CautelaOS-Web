@@ -432,8 +432,17 @@ def setDadosColaborador(id, novos_dados_colab, operador):
     
     return True
 
-def alterarSenha(pw_atual, pw_novo):
-    pass
+def alterarSenha(id, novo_pw):
+    try:
+        with conectarBanco() as connection:
+            with connection.cursor() as cursor:
+                cursor.execute(
+                    "UPDATE colaborador.dados SET senha_hash = %s where id = %s",
+                    (gerarSenhaHash(novo_pw), id)
+                )
+    except Exception as e:
+        print(f"Erro ao alterar senha: {e}")
+        return False
 
 def recuperarSenha(cpf):
     pass

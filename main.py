@@ -388,6 +388,14 @@ def iniciarIndex():
         dados_colab = usuarios.getDadosColaborador(id_colab)
         return render_template('colaboradores/detalhes_colaborador.html', dados_colab=dados_colab) 
     
+
+    @app.route('/perfil', methods=['GET','POST'])
+    @login_requerido
+    def perfil_colaborador():
+        id_colab = session["u_id"]
+        dados_colab = usuarios.getDadosColaborador(id_colab)
+        return render_template('colaboradores/perfil_colaborador.html', dados_colab=dados_colab) 
+    
     
     @app.route('/colaboradores/<id_colab>/editar', methods=['GET', 'POST'])
     @login_requerido
@@ -429,6 +437,26 @@ def iniciarIndex():
         return render_template('colaboradores/adicionar_colaborador.html', data=data, cargos=cargos)
 
 
+@app.route('/perfil/alterar/senha', methods = ['GET', 'POST'])
+@login_requerido
+def alterar_senha_colab():
+    if request.method == 'POST':
+        pw_atual = request.form.get("senha_atual")
+        novo_pw = request.form.get("nova_senha")
+        
+        if usuarios.compararSenhaHash(session["u_id"], pw_atual):
+            usuarios.alterarSenha(session["u_id"], novo_pw)
+            print("Senha alterada com sucesso para o usuário ", session["u_id"])
+            return redirect(url_for('perfil_colaborador'))
+        
+        else:
+            print("Senha INCORRETA para o usuário", session["u_id"],"! ###########################")
+            pass #######################Lidar com senha incorreta
+
+
+
+
+    return render_template('colaboradores/colab_alterar_senha.html', id=session["u_id"])
 
 
 ######################################## Inicialização do app Flask
