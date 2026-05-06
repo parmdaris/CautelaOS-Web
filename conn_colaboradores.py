@@ -395,21 +395,16 @@ def setDadosColaborador(id, novos_dados_colab, operador):
         is_ativo = novos_dados_colab["is_ativo"]
         nivel_acesso = novos_dados_colab["nivel_acesso"]
         apelido = novos_dados_colab["apelido"]
-        operador_modificacao = operador
 
-        
-        
         query = """UPDATE colaborador.dados SET
             nome_completo = %s, 
             usuario = %s,
             is_ativo = %s,
             nivel_acesso = %s, 
-            apelido = %s,
-            data_modificacao = NOW(), 
-            operador_modificacao = %s
+            apelido = %s
             WHERE id = %s"""
         
-        cursor.execute((query), (nome_completo, usuario, is_ativo, nivel_acesso, apelido, operador_modificacao, id))
+        cursor.execute((query), (nome_completo, usuario, is_ativo, nivel_acesso, apelido, id))
         connection.commit()
 
     except pg_err.UniqueViolation:
@@ -430,9 +425,11 @@ def setDadosColaborador(id, novos_dados_colab, operador):
         if connection:
             connection.close()
     
-    return True
 
-def alterarSenha(id, novo_pw):
+    return registrar_modificacao(operador, id)
+
+
+def alterarSenha(id, novo_pw, id_operador):
     try:
         with conectarBanco() as connection:
             with connection.cursor() as cursor:
@@ -440,6 +437,7 @@ def alterarSenha(id, novo_pw):
                     "UPDATE colaborador.dados SET senha_hash = %s where id = %s",
                     (gerarSenhaHash(novo_pw), id)
                 )
+                return True
     except Exception as e:
         print(f"Erro ao alterar senha: {e}")
         return False
@@ -447,6 +445,28 @@ def alterarSenha(id, novo_pw):
 def recuperarSenha(cpf):
     pass
 
+
+
+def registrar_modificacao(operador, id):
+    try:
+        with conectarBanco() as connection:
+            with connection.cursor() as cursor:
+                cursor.execute(
+                    """
+                    UPDATE colaborador.dados 
+                    SET data_modificacao = NOW(), 
+                        operador_modificacao = %s 
+                    WHERE id = %s
+                    """,
+                    (operador, id)
+                )
+            connection.commit()
+        return True
+    
+    except Exception as e:
+        connection.rollback()
+        print(f"Erro ao registrar modificação: {e}")
+        return False
 
 
 

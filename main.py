@@ -406,6 +406,7 @@ def iniciarIndex():
         if request.method == 'POST':
             novos_dados_colab = request.form.to_dict()
             usuarios.setDadosColaborador(id_colab, novos_dados_colab, session["u_id"])
+            print(novos_dados_colab)
 
             return redirect(url_for('detalhes_colaborador', id_colab=id_colab, cargos=cargos, dados_colab=novos_dados_colab))
         
@@ -445,7 +446,8 @@ def alterar_senha_colab():
         novo_pw = request.form.get("nova_senha")
         
         if usuarios.compararSenhaHash(session["u_id"], pw_atual):
-            usuarios.alterarSenha(session["u_id"], novo_pw)
+            usuarios.alterarSenha(session["u_id"], novo_pw, session["u_id"])
+            usuarios.registrar_modificacao(session["u_id"], session["u_id"])
             print("Senha alterada com sucesso para o usuário ", session["u_id"])
             return redirect(url_for('perfil_colaborador'))
         
