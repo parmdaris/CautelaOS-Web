@@ -91,13 +91,13 @@
                     {% if tem_acesso(1, 2) %}
                         <div class="menu-item has-submenu">
                             <button class="menu-toggle">
-                                <span style="color: yellow;">👥 Colaboradores</span>
+                                <span>👥 Colaboradores</span>
                                 <span class="arrow">▸</span>
                             </button>
 
                             <div class="submenu">
-                                <a href="{{ url_for('visualizar_colaboradores') }}" style="color: yellow;">📋 Gerenciar</a>
-                                <a href="{{ url_for('cadastrar_colab') }}" style="color: yellow;">➕ Adicionar colaborador</a>
+                                <a href="{{ url_for('visualizar_colaboradores') }}">📋 Gerenciar</a>
+                                <a href="{{ url_for('cadastrar_colab') }}">➕ Adicionar colaborador</a>
                             </div>
                         </div>
                     {% endif %}

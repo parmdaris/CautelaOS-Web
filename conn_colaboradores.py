@@ -442,10 +442,34 @@ def alterarSenha(id, novo_pw, id_operador):
         print(f"Erro ao alterar senha: {e}")
         return False
 
-def recuperarSenha(cpf):
-    pass
+def recuperarSenha(id, cpf, op_id):
+    pw_padrao = 1234
 
+    try:
+        connection = conectarBanco()
+        cursor = connection.cursor()
+        
+        cursor.execute(
+            "SELECT identidade_hash FROM colaborador.dados WHERE id = %s", id
+        )
 
+        identidade_hash = cursor.fetchone()
+
+        if checarSenhaHash(identidade_hash, cpf):
+            cursor.execute(
+                    "UPDATE colaborador.dados SET senha_hash = %s, primeiro_acesso = true where id = %s",
+                    (gerarSenhaHash(pw_padrao), id)
+                )
+        connection.commit()
+
+        return registrar_modificacao(op_id, id)
+
+    except Exception as e:
+        if connection:
+            connection.rollback()
+        print(f"Erro ao redefinir senha: {e}")
+        return False
+    
 
 def registrar_modificacao(operador, id):
     try:
@@ -464,7 +488,8 @@ def registrar_modificacao(operador, id):
         return True
     
     except Exception as e:
-        connection.rollback()
+        if connection:
+            connection.rollback()
         print(f"Erro ao registrar modificação: {e}")
         return False
 
