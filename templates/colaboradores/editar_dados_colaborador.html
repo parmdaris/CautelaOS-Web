@@ -33,7 +33,7 @@
             
             {%if dados_colab.nivel_acesso > 1%}
             <div class="campo">
-                <label>Nível de acesso<label style="color:red">*</label></label>
+                <label>Cargo<label style="color:red">*</label></label>
                 <select name="nivel_acesso" class="input padrao" required data-atual="{{ dados_colab.nivel_acesso }}"></select>
             </div>
 
@@ -141,7 +141,9 @@
 
 
         <div class="actions-bar rodape">
-            <a href="{{ url_for('dashboard') }}" class="btn cancelar">Redefinir senha</a>
+            {% if dados_colab.is_ativo and pendente == False%}
+            <a href="{{ url_for('redefinir_senha_colab', id_colab=dados_colab.id) }}" class="btn cancelar">Redefinir senha</a>
+            {%endif%}
             <a href="{{ url_for('detalhes_colaborador', id_colab=dados_colab.id) }}" class="btn cancelar">🛇 Cancelar</a>
             <button type="submit" class="btn salvar">✓ Salvar</button>
         </div>

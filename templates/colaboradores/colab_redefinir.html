@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block title %}Redefinir senha • CautelaOS{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='index/css/common_contents.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='colaboradores/css/redefinir_senha.css') }}">
+{% endblock %}
+
+{% block content %}
+<h2 class="page-title">🔑 Redefinir senha - Registro ID: {{id_colab}} - <strong>{{login_colab}}</strong></h2>
+
+<div class="page-card">
+    <form action="{{ url_for('redefinir_senha_colab', id_colab=id_colab) }}" method="POST" id="form-senha">
+
+        <div class="campo">
+            <label>CPF do colaborador<label style="color:red">*</label></label>
+            <input type="password" name="cpf_colaborador" class="input padrao" required placeholder="Digite o CPF">
+        </div>
+
+        <hr class="divider">
+
+        <div class="campo">
+            <label>Digite sua senha<label style="color:red">*</label></label>
+            <input type="password" name="senha_admin" id="senha-admin" class="input padrao" required placeholder="Digite sua senha">
+        </div>
+
+        <div class="campo">
+            <label>Confirmar sua senha<label style="color:red">*</label></label>
+            <input type="password" name="confirmar_senha" id="confirmar-senha" class="input padrao" required placeholder="Repita a senha">
+            <span class="erro" id="erro-confirmacao">As senhas não coincidem.</span>
+        </div>
+
+        <div class="actions-bar rodape">
+            <a href="{{ url_for('detalhes_colaborador', id_colab=id_colab) }}" class="btn cancelar">← Voltar</a>
+            <button type="submit" class="btn salvar" id="btn-salvar">✓ Redefinir</button>
+        </div>
+
+    </form>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='colaboradores/js/colab_redefinir_senha.js') }}"></script>
+{% endblock %}

@@ -23,7 +23,6 @@ def iniciarIndex():
     @app.route('/')
     @login_requerido
     def dashboard():
-
         valor_estoque = estoque.valorEstoque()
         qtd_itens = estoque.qtdArtigos()
         criticos = estoque.countArtigosCriticos()
@@ -410,9 +409,10 @@ def iniciarIndex():
 
             return redirect(url_for('detalhes_colaborador', id_colab=id_colab, cargos=cargos, dados_colab=novos_dados_colab))
         
+        pendente = usuarios.checkContaIniciada(id_colab)
         dados_colab = usuarios.getDadosColaborador(id_colab)
 
-        return render_template('colaboradores/editar_dados_colaborador.html', id_colab=id_colab, dados_colab=dados_colab, cargos=cargos)
+        return render_template('colaboradores/editar_dados_colaborador.html', id_colab=id_colab, dados_colab=dados_colab, cargos=cargos, pendente = pendente)
     
 
     @app.route('/colaboradores/novo', methods = ['GET', 'POST'])
@@ -455,10 +455,23 @@ def alterar_senha_colab():
             print("Senha INCORRETA para o usuário", session["u_id"],"! ###########################")
             pass #######################Lidar com senha incorreta
 
-
-
-
     return render_template('colaboradores/colab_alterar_senha.html', id=session["u_id"])
+
+
+@app.route('/colaboradores/<id_colab>/editar/redefinirsenha', methods = ['GET', 'POST'])
+@login_requerido
+@acesso_requerido(1)
+def redefinir_senha_colab(id_colab):
+    if request.method == 'POST':
+        cpf_informado = request.form.get("cpf_colaborador")
+        red = usuarios.recuperarSenha(id_colab, cpf_informado, session["u_id"])
+        print("FUNÇÃO DE REDEFINIÇÃO DE SENHA EXECUTADA! Resultado:", red)
+        return redirect(url_for("detalhes_colaborador", id_colab = id_colab))
+    
+    dados_colab = usuarios.getDadosColaborador(id_colab)
+    login_colab = dados_colab['nome_usuario']
+    print(id_colab, login_colab)
+    return render_template('colaboradores/colab_redefinir.html', id_colab=id_colab, login_colab=login_colab)
 
 
 ######################################## Inicialização do app Flask

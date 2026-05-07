@@ -2,6 +2,7 @@ from db_configdata import conectarBanco
 from conn_auth import gerarSenhaHash, checarSenhaHash
 from psycopg2 import errors as pg_err
 from datetime import datetime
+import traceback
 
 def autenticar_usuario(usuario, senha):
     connection = None
@@ -87,6 +88,22 @@ def contaIniciada(usuario, senha_nova_hash):
                 )
     except Exception as e:
         print(f"Erro ao atualizar último login: {e}")
+        return False
+    
+def checkContaIniciada(usuario):
+    try:
+        with conectarBanco() as connection:
+            with connection.cursor() as cursor:
+                cursor.execute(
+                    "SELECT primeiro_acesso from colaborador.dados where id = %s",
+                    (usuario,)
+                )
+                primeiro_acesso = cursor.fetchone()[0]
+                return primeiro_acesso
+            
+    except Exception as e:
+        print(f"Erro ao ler status do colaborador: {e}")
+        traceback.print_exc()
         return False
 
 def compararSenhaHash(usuario, senha_inserida):
@@ -283,7 +300,7 @@ def setNovoColaborador(dados_colab, operador):
             operador_inclusao, 
             identidade_hash) VALUES (%s, %s, %s, %s, %s, NOW(), %s, %s)"""
         
-        cursor.execute((query), (nome_completo, usuario, senha_hash, nivel_acesso, apelido, operador_inclusao, identidade_hash))
+        cursor.execute((query), (nome_completo, usuario, senha_hash, nivel_acesso, apelido, operador_inclusao, str(identidade_hash)))
         connection.commit()
 
     except pg_err.UniqueViolation:
@@ -442,8 +459,8 @@ def alterarSenha(id, novo_pw, id_operador):
         print(f"Erro ao alterar senha: {e}")
         return False
 
-def recuperarSenha(id, cpf, op_id):
-    pw_padrao = 1234
+def recuperarSenha(id = int, cpf = int, op_id = int):
+    pw_padrao = "1234"
 
     try:
         connection = conectarBanco()
@@ -453,9 +470,9 @@ def recuperarSenha(id, cpf, op_id):
             "SELECT identidade_hash FROM colaborador.dados WHERE id = %s", id
         )
 
-        identidade_hash = cursor.fetchone()
+        identidade_hash = cursor.fetchone()[0]
 
-        if checarSenhaHash(identidade_hash, cpf):
+        if checarSenhaHash(identidade_hash, str(cpf)):
             cursor.execute(
                     "UPDATE colaborador.dados SET senha_hash = %s, primeiro_acesso = true where id = %s",
                     (gerarSenhaHash(pw_padrao), id)
@@ -468,6 +485,7 @@ def recuperarSenha(id, cpf, op_id):
         if connection:
             connection.rollback()
         print(f"Erro ao redefinir senha: {e}")
+        traceback.print_exc()
         return False
     
 
