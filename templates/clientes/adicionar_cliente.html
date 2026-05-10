@@ -1,0 +1,140 @@
+{% extends "base.html" %}
+{% block title %}Adicionar colaborador • CautelaOS{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='clientes/css/adicionar_cliente.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='index/css/common_contents.css') }}">
+{% endblock %}
+
+{% block content %}
+<h2 class="page-title">👤 Colaboradores - Adicionar</h2>
+
+<div class="page-card">
+    
+    <form action="{{ url_for('cadastrar_colab') }}" method="POST">
+
+        <div class="campo">
+            <label>Nome completo<label style="color:red">*</label></label>
+            <input type="text" name="nome_completo" class="input padrao" required>
+        </div>
+
+        <div class="seq-subdesc">
+
+            <div class="campo">
+                <label>Nome simples<label style="color:red">*</label></label>
+                <input type="text" name="apelido" class="input padrao" required>
+            </div>
+
+            <div class="campo">
+                <label>Usuário<label style="color:red">*</label></label>
+                <input type="text" name="usuario" class="input padrao" required>
+            </div>
+
+            <div class="campo">
+                <label>Código de identidade<label style="color:red">*</label></label>
+                <input type="text" name="identidade" class="input padrao" maxlength="11" required>
+            </div>
+
+        </div>
+        
+        <div class="seq-subdesc">
+
+            <div class="campo">
+                <label>Cargo<label style="color:red">*</label></label>
+                <select name="nivel_acesso" class="select padrao" required>
+                    <option value="">Selecione um nível</option>
+                </select>
+            </div>
+
+        </div>
+
+        <div class="permissoes-wrapper">
+                <p class="permissoes-title">Permissões<label style="color:red">*</label></p>
+                <div class="grupos-grid">
+
+                    <div class="grupo">
+                        <div class="grupo-header">
+                            <div class="grupo-icon ico-estoque">📦</div>
+                            <span class="grupo-nome">Estoque</span>
+                        </div>
+                        <div class="grupo-items">
+                            <label class="perm-item"><input type="checkbox" name="perm_estoque_ver"><span>Ver</span></label>
+                            <label class="perm-item"><input type="checkbox" name="perm_estoque_editar"><span>Editar</span></label>
+                        </div>
+                    </div>
+
+                    <div class="grupo">
+                        <div class="grupo-header">
+                            <div class="grupo-icon ico-vendas">🛒</div>
+                            <span class="grupo-nome">Vendas</span>
+                        </div>
+                        <div class="grupo-items">
+                            <label class="perm-item"><input type="checkbox" name="perm_vendas_ver"><span>Ver</span></label>
+                            <label class="perm-item"><input type="checkbox" name="perm_vendas_editar"><span>Editar</span></label>
+                            <label class="perm-item"><input type="checkbox" name="perm_vendas_registrar"><span>Registrar</span></label>
+                        </div>
+                    </div>
+
+                    <div class="grupo">
+                        <div class="grupo-header">
+                            <div class="grupo-icon ico-servico">🔧</div>
+                            <span class="grupo-nome">Serviço</span>
+                        </div>
+                        <div class="grupo-items">
+                            <label class="perm-item"><input type="checkbox" name="perm_servico_ver"><span>Ver</span></label>
+                            <label class="perm-item"><input type="checkbox" name="perm_servico_editar"><span>Editar</span></label>
+                            <label class="perm-item"><input type="checkbox" name="perm_servico_registrar"><span>Registrar</span></label>
+                        </div>
+                    </div>
+
+                    <div class="grupo">
+                        <div class="grupo-header">
+                            <div class="grupo-icon ico-cautela">📋</div>
+                            <span class="grupo-nome">Cautela</span>
+                        </div>
+                        <div class="grupo-items">
+                            <label class="perm-item"><input type="checkbox" name="perm_cautela_ver"><span>Ver</span></label>
+                            <label class="perm-item"><input type="checkbox" name="perm_cautela_editar"><span>Editar</span></label>
+                            <label class="perm-item"><input type="checkbox" name="perm_cautela_registrar"><span>Registrar</span></label>
+                        </div>
+                    </div>
+
+                    <div class="grupo">
+                        <div class="grupo-header">
+                            <div class="grupo-icon ico-relat">📊</div>
+                            <span class="grupo-nome">Relatórios</span>
+                        </div>
+                        <div class="grupo-items">
+                            <label class="perm-item"><input type="checkbox" name="perm_relatorios"><span>Acessar</span></label>
+                        </div>
+                    </div>
+
+                    <div class="grupo">
+                        <div class="grupo-header">
+                            <div class="grupo-icon ico-dados">🗑</div>
+                            <span class="grupo-nome">Dados</span>
+                        </div>
+                        <div class="grupo-items">
+                            <label class="perm-item"><input type="checkbox" name="perm_dados_apagar"><span>Apagar</span></label>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+        
+
+        <div class="actions-bar rodape">
+            <a href="{{ url_for('visualizar_colaboradores') }}" class="btn cancelar">🛇 Cancelar</a>
+            <button type="submit" class="btn salvar">✓ Salvar</button>
+        </div>
+        </div>
+
+    </form>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script id="cargos-json" type="application/json">{{ cargos | tojson }}</script>
+<script src="{{ url_for('static', filename='clientes/js/adicionar_cliente.js') }}"></script>
+{% endblock %}

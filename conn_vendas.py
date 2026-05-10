@@ -109,7 +109,7 @@ def registrarItensVenda(id_venda, itens_venda):
 
 
 
-def getQtyVendas(dias = 0, absoluto = False):
+def getQtyVendas(intervalo_dias = 0, todas = False):
     connection = None
     cursor = None
 
@@ -118,20 +118,18 @@ def getQtyVendas(dias = 0, absoluto = False):
         connection.autocommit = True
         cursor = connection.cursor() 
 
-        validas = " where is_valida = true;"
+        query_base = "SELECT COUNT(*) from venda.dados"
+        validas = " where is_valida = true"
+        intervalo = " and data_venda >= CURRENT_DATE - %s"
 
-        if dias != 0:
-            sql = '''select COUNT(*)  
-                from venda.dados where is_valida = true and data_venda::date >= CURRENT_DATE - %s;'''
-            cursor.execute(sql, (dias,))
+        if intervalo_dias > -1:
+            sql = query_base + validas + intervalo
+            cursor.execute(sql, (intervalo_dias,))
         else: 
-            if absoluto == True:
-                sql = '''select COUNT(*)  
-                    from venda.dados'''
+            if todas:
+                sql = query_base
             else:
-                sql = '''select COUNT(*)  
-                    from venda.dados where is_valida = true'''
-            
+                sql = query_base + validas
             cursor.execute(sql)
 
         
@@ -268,26 +266,27 @@ def getDadosVenda(id_venda):
 
 
 
-def getValorVendas(dias = 0):
+def getValorVendas(intervalo_dias = 0, vendas_validas = True):
     connection = conectarBanco()
 
     connection.autocommit = True
     cursor = connection.cursor()
 
-    if dias != 0:
-        sql = '''select valor_total 
-                    from venda.dados where is_valida = True and data_venda::date >= CURRENT_DATE - %s;'''
-        cursor.execute(sql, (dias,))
-    else:
-        sql = '''select valor_total 
-                    from venda.dados where is_valida = True;'''
+    query_base = "SELECT SUM(valor_total) from venda.dados"
+    validas = " where is_valida = true"
+    intervalo = " and data_venda >= CURRENT_DATE - %s"
+
+    if intervalo_dias > -1:
+        sql = query_base + validas + intervalo
+        cursor.execute(sql, (intervalo_dias,))
+    else: 
+        if vendas_validas:
+            sql = query_base + validas
+        else:
+            sql = query_base
         cursor.execute(sql)
 
-    row = cursor.fetchall()
-
-    valor = 0.0
-    for item in row:
-        valor += item[0]
+    valor = cursor.fetchone()[0]
     
     valor_total = f"{valor:,.2f}".replace(",", "X").replace(".", ",").replace("X", ".")
     return valor_total

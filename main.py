@@ -1,6 +1,6 @@
 from flask import Flask, url_for, render_template, request, redirect, session
 from conn_auth import login_requerido, acesso_requerido, gerarSenhaHash, tem_acesso, checarSenhaHash
-from db_configdata import inicializarCfg
+from db_configdata import inicializarCfg, getVersao
 from conn_estoque import moeda_para_float
 import conn_cautelas as cautelas, conn_clientes as clientes, conn_estoque as estoque, conn_vendas as vendas
 import conn_colaboradores as usuarios, datetime, json
@@ -15,6 +15,7 @@ def iniciarIndex():
 
     app.secret_key = "cautelaos"
     app.jinja_env.globals.update(tem_acesso=tem_acesso)
+    
 
     #app.secret_key = os.environ.get("SECRET_KEY", "cautelaos-secret")
 
@@ -26,8 +27,8 @@ def iniciarIndex():
         valor_estoque = estoque.valorEstoque()
         qtd_itens = estoque.qtdArtigos()
         criticos = estoque.countArtigosCriticos()
-        valor_total_hoje = vendas.getValorVendas(1)
-        qtd_vendas_hoje = vendas.getQtyVendas(1)
+        valor_total_hoje = vendas.getValorVendas(0)
+        qtd_vendas_hoje = vendas.getQtyVendas(0)
 
         return render_template('dashboard.html', 
                                valor_estoque=valor_estoque, 
@@ -39,6 +40,7 @@ def iniciarIndex():
     
     @app.route("/login", methods=["GET", "POST"])
     def login():
+        session["versao_sistema"] = getVersao()
         if request.method == "POST":
             usuario = request.form["usuario"]
             senha = request.form["senha"]
@@ -69,6 +71,11 @@ def iniciarIndex():
     def logout():
         session.clear()
         return redirect(url_for("login"))
+    
+    @app.route("/modulos")
+    @login_requerido
+    def selecionar_modulo():
+        return render_template("selecao_modulo.html")
     
 
     @app.route("/start", methods=["POST", "GET"])
@@ -323,11 +330,11 @@ def iniciarIndex():
         if request.method == "POST":
             pass
 
-        valor_vendas = vendas.getValorVendas()
-        valor_vendas_hoje = vendas.getValorVendas(1)
+        valor_vendas = vendas.getValorVendas(-1)
+        valor_vendas_hoje = vendas.getValorVendas(0)
 
-        qtd_vendas = vendas.getQtyVendas()
-        qtd_vendas_hoje = vendas.getQtyVendas(1)
+        qtd_vendas = vendas.getQtyVendas(-1)
+        qtd_vendas_hoje = vendas.getQtyVendas(0)
 
         dados_vendas = vendas.getListaVendas()
 
@@ -351,21 +358,47 @@ def iniciarIndex():
     @login_requerido
     @acesso_requerido(1, 2)
     def visualizar_clientes():
-        return render_template('clientes/ver_lista_clientes.html')
-    
+        lista_clientes = clientes.getClientes()
+        qtd_clientes = {
+            "total": int(clientes.getQtyClientes(0)),
+            "ativos": int(clientes.getQtyClientes()),
+            "inativos": int(clientes.getQtyClientes(-1))
+        }
 
-    @app.route('/clientes/ver')
+        return render_template('clientes/ver_lista_clientes.html', lista_clientes = lista_clientes, qtd_clientes = qtd_clientes, ativos = True)
+    
+    @app.route('/clientes/inativos')
     @login_requerido
     @acesso_requerido(1, 2)
-    def detalhes_cliente():
-        return render_template('clientes/ver_lista_clientes.html')
+    def visualizar_clientes_inativos():
+        lista_clientes = clientes.getClientes(-1)
+        qtd_clientes = {
+            "total": int(clientes.getQtyClientes(0)),
+            "ativos": int(clientes.getQtyClientes()),
+            "inativos": int(clientes.getQtyClientes(-1))
+        }
+
+        return render_template('clientes/ver_lista_clientes.html', lista_clientes = lista_clientes, qtd_clientes = qtd_clientes, ativos = False)
+
+    @app.route('/clientes/<id_cliente>')
+    @login_requerido
+    @acesso_requerido(1, 2)
+    def detalhes_cliente(id_cliente):
+        dados_cliente = clientes.getDadosCliente(id_cliente)
+        return render_template('clientes/detalhes_cliente.html', cliente=dados_cliente)
     
 
-    @app.route('/clientes/editar')
+    @app.route('/clientes/editar/<id_cliente>')
     @login_requerido
     @acesso_requerido(1)
-    def editar_cliente():
-        return render_template('clientes/ver_lista_clientes.html')
+    def editar_cliente(id_cliente):
+        modulos = [
+            {"nome": "Vortex Filamentos", "apelido": "vortex"},
+            {"nome": "Mimiso Arena Card Games", "apelido": "mimiso"},
+            {"nome": "Niitech Outsourcing", "apelido": "niitech"}
+        ]
+        dados_cliente = clientes.getDadosCliente(id_cliente)
+        return render_template('clientes/editar_dados_cliente.html', cliente=dados_cliente, modulos=modulos)
     
 ################################################################################# Colaboradores
 

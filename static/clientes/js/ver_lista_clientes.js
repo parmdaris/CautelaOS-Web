@@ -4,9 +4,6 @@ $(document).ready(function () {
         autoWidth: false,
         responsive: true,
         dom: 'lftrip',
-        columnDefs: [
-            { targets: 2, visible: false, searchable: true }
-        ],
         language: {
             lengthMenu: "Mostrar _MENU_ itens",
             zeroRecords: "Nenhum resultado encontrado",

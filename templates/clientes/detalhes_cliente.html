@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+{% block title %}Detalhes do colaborador • CautelaOS{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='clientes/css/detalhes_cliente.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='index/css/common_contents.css') }}">
+{% endblock %}
+
+{% block content %}
+<h2 class="page-title">👤 Detalhes do cliente: <strong>{{cliente.id}} - {{cliente.nome}}</strong></h2>
+
+<div class="page-card">
+
+        <div class="campo" style="margin-bottom: 15px;">
+            <label>Nome completo/Razão social</label>
+            <input type="text" class="input padrao" name="nome_completo" disabled value="{{cliente.rsoc}}">
+        </div>
+
+        <div class="seq-subdesc">
+
+            <div class="campo">
+                <label>ID</label>
+                <input type="text" class="input padrao" name="id" disabled value="{{cliente.id}}">
+            </div>
+
+            <div class="campo">
+                <label>Nome simplificado</label>
+                <input type="text" class="input padrao" name="apelido" disabled value="{{cliente.nome}}">
+            </div>
+
+            <div class="campo">
+                <label>Ativo</label>
+                <input name="is_ativo" class="input padrao" disabled value="{% if cliente.is_ativo %} 🟢 Sim {%else%} 🔴 Não {%endif%}">
+            </div>
+
+        </div>
+
+
+        <div class="seq-cadastro">
+
+            <div class="campo">
+                <label>Data de cadastro</label>
+                <input name="dataCadastro" class="input padrao" disabled value="{{cliente.data_inclusao}}">
+            </div>
+
+            <div class="campo">
+                <label>Operador do cadastro</label>
+                <input name="operadorCadastro" class="input padrao" disabled value="{{cliente.operador_inclusao}}">
+            </div>
+
+            <div class="campo">
+                <label>Data de modificação</label>
+                <input name="dataModificacao" class="input padrao" disabled value="{% if cliente.data_modificacao == None %} - {%else%} {{dados_colab.data_modificacao}} {%endif%}">
+            </div>
+
+            <div class="campo">
+                <label>Operador de modificação</label>
+                <input name="operadorModificacao" class="input padrao" disabled value="{% if cliente.operador_modificacao == None %} - {%else%} {{dados_colab.operador_modificacao}} {%endif%}">
+            </div>
+
+        </div>
+
+    
+
+        <div class="actions-bar">
+            <a href="{{ url_for('visualizar_clientes') }}" class="btn cancelar">← Voltar</a>
+            <a href="{{ url_for('editar_cliente', id_cliente=cliente.id) }}" class="btn acao">✎ Editar dados</a>
+        </div>
+
+</div>
+{% endblock %}
+
+{% block extra_js %}
+{% endblock %}

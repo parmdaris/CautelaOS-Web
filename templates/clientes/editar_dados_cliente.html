@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+{% block title %}Editar cliente • CautelaOS{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='clientes/css/editar_dados_cliente.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='index/css/common_contents.css') }}">
+{% endblock %}
+
+{% block content %}
+<h2 class="page-title">👤 Cliente: {{cliente.id}} - Editar dados</h2>
+
+<div class="page-card">
+    
+    <form action="{{ url_for('editar_cliente', id_cliente=cliente.id) }}" method="POST">
+
+        <div class="campo">
+            <label>Nome completo/Razão social<label style="color:red">*</label></label>
+            <input type="text" name="nome_completo" class="input padrao" required value="{{cliente.rsoc}}">
+        </div>
+
+        <div class="seq-subdesc">
+
+            <div class="campo">
+                <label>Nome simplificado<label style="color:red">*</label></label>
+                <input type="text" name="apelido" class="input padrao" required value="{{cliente.nome}}">
+            </div>
+
+            <div class="campo">
+                <label>Ativo<label style="color:red">*</label></label>
+                <select name="is_ativo" class="select padrao" required>
+                    <option value="True" {{ 'selected' if cliente.is_ativo else '' }}>🟢 SIM</option>
+                    <option value="False" {{ 'selected' if not cliente.is_ativo else '' }}>🔴 NÃO</option>
+                </select>
+            </div>
+
+            <div class="permissoes-wrapper">
+                <p class="permissoes-title">Vinculações<label style="color:red">*</label></p>
+                <div class="grupos-grid">
+
+                    {% for modulo in modulos %}
+                    <div class="grupo">
+                        <div class="grupo-header">
+                            <div class="grupo-icon ico-estoque"><input type="checkbox" name="vinculo_{{modulo.apelido}}"></div>
+                            <span class="grupo-nome">{{modulo.nome}}</span>
+                        </div>
+                        <div class="grupo-items">
+                                <label class="perm-item"><input type="checkbox" name="hasVendas"><span>Vendas</span></label>
+                                <label class="perm-item"><input type="checkbox" name="hasCautelas"><span>Cautelas</span></label>
+                                <label class="perm-item"><input type="checkbox" name="hasServico"><span>Ordens de serviço</span></label>
+                        </div>
+                    </div>
+                    {% endfor %}
+
+                    
+
+                </div>
+            </div>
+
+        </div>
+
+
+
+
+        <div class="actions-bar rodape">
+            <a href="{{ url_for('detalhes_cliente', id_cliente=cliente.id) }}" class="btn cancelar">🛇 Cancelar</a>
+            <button type="submit" class="btn salvar">✓ Salvar</button>
+        </div>
+
+    </form>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='clientes/js/editar_dados_cliente.js') }}"></script>
+{% endblock %}

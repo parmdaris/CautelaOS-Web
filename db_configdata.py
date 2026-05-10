@@ -25,7 +25,20 @@ def conectarBanco():
         return None
     
     return connection
-        
+
+def getVersao():
+    connection = None
+    cursor = None
+
+    connection = conectarBanco()
+    connection.autocommit = True
+    cursor = connection.cursor()
+    cursor.execute("select versao, tipo from sistema.dados")
+    dados = cursor.fetchone()
+    versao = str(dados[0])
+    tipo = dados[1]
+
+    return tipo + " " + versao
    
 def inicializarCfg():
     if not os.path.exists(configFilePath):

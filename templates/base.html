@@ -15,7 +15,8 @@
             <aside class="sidebar">
                 <div class="sidebar-brand">
                     <a href="{{ url_for('dashboard') }}" style="text-decoration: none; color: inherit;"><h1>Cautela OS</h1></a>
-                    <span>Versão 1.4</span>
+                    <span>Versão {{session["versao_sistema"]}} -</span>
+                    <a href="{{ url_for('selecionar_modulo') }}" style="text-decoration: none; color: inherit;"><span>Trocar módulo</span></a>
                 </div>
 
                 <nav class="sidebar-menu">
@@ -114,6 +115,19 @@
                                 <a href="" style="color: red;">💰 Vendas</a>
                                 <a href="" style="color: red;">📦 Cautelas</a>
                                 <a href="" style="color: red;">🛠️ Serviços</a>
+                            </div>
+                        </div>
+                    {% endif %}
+
+                    {% if tem_acesso(1) %}
+                        <div class="menu-item has-submenu">
+                            <button class="menu-toggle">
+                                <span style="color: red;">Módulos</span>
+                                <span class="arrow">▸</span>
+                            </button>
+
+                            <div class="submenu">
+                                <a href="" style="color: red;">Gerenciar</a>
                             </div>
                         </div>
                     {% endif %}

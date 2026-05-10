@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}Clientes - Cautela OS{% endblock %}
+{% block title %}Clientes {{'ativos' if ativos else 'inativos'}} - Cautela OS{% endblock %}
 
 {% block extra_css %}
 <link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.min.css">
@@ -9,14 +9,24 @@
 
 {% block content %}
 
-<h2>👥 Clientes</h2>
+<h2>👥 Clientes {{'ativos' if ativos else 'inativos'}}</h2>
 <p class="subtitle">
-    Clientes: {{ qtd_artigos }} · Ativos: <strong>{{ valor_estoque }}</strong>
+    {%if ativos%}
+    Clientes cadastrados: <strong>{{ qtd_clientes.total }}</strong> · Ativos: <strong>{{ qtd_clientes.ativos }}</strong> · Inativos: <strong>{{ qtd_clientes.inativos }}</strong>
+    {%else%}
+    Clientes inativos: <strong>{{ qtd_clientes.inativos }}</strong>
+    {%endif%}
 </p>
 
 <div class="actions-bar">
-    <a href="{{ url_for('dashboard') }}" class="btn secondary">← Voltar</a>
-    <a href="{{ url_for('dashboard') }}" class="btn primary">＋ Novo cadastro</a>
+    {% if ativos %}
+        <a href="{{ url_for('dashboard') }}" class="btn secondary">← Voltar</a>
+        <a href="{{ url_for('dashboard') }}" class="btn primary">＋ Novo cadastro</a>
+        <a href="{{ url_for('visualizar_clientes_inativos') }}" class="btn secondary">🔴 Clientes inativos</a>
+    {% else %}
+        <a href="{{ url_for('visualizar_clientes') }}" class="btn secondary">← Voltar</a>
+    {% endif %}
+
 </div>
 
 <div class="table-card">
@@ -32,16 +42,19 @@
             </tr>
         </thead>
         <tbody>
-            {% for item in dados_estq %}
+            {% for cliente in lista_clientes %}
             <tr>
-                <td>{{ item.codigo }}</td>
-                <td style="text-align:left">{{ item.descricao }}</td>
-                <td style="display:none">{{ item.tipo }}</td>
-                <td>{{ item.qtd }}</td>
-                <td>R$ {{ item.valor }}</td>
-                <td>R$ {{ item.valor_atacado }}</td>
+                <td>{{ cliente.id }}</td>
+                <td style="text-align:left">{{ cliente.nome }}</td>
+                <td>{{ cliente.rsoc }}</td>
+                <td>{{ cliente.telefone }}</td>
+                {% if cliente.isAtivo == True %}
+                    <td>🟢 Ativo</td>
+                {% else %}
+                    <td>🔴 Inativo</td>
+                {% endif %}
                 <td>
-                    <a href="{{ url_for('ver_item_estoque', codigo_item=item.codigo) }}" style="text-decoration: none;">🔍︎</a>
+                    <a href="{{ url_for('detalhes_cliente', id_cliente=cliente.id) }}" class="link-reset"">🔍︎</a>
                 </td>
             </tr>
             {% endfor %}

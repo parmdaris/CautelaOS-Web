@@ -1,14 +1,14 @@
 from db_configdata import conectarBanco
 from psycopg2 import errors as pg_err
 
-def getClientes():
+def getClientes(status = 1):
 
     connection = conectarBanco()
     connection.autocommit = True
     cursor = connection.cursor() 
 
     
-    query = '''
+    query_base = '''
         select id_cliente, 
         nome_cliente,
         nome_fantasia, 
@@ -18,10 +18,21 @@ def getClientes():
         is_contrato,
         is_venda
         from cliente.dados
-        order by id_cliente asc;
-        '''
         
-    cursor.execute(query) 
+        '''
+    query_ativos = " where is_ativo = true"
+    query_inativos = " where is_ativo = false"
+
+    ordenacao = " order by id_cliente asc;"
+
+    if status == -1:
+        sql = query_base + query_inativos + ordenacao
+    if status == 0:
+        sql = query_base + ordenacao
+    if status == 1:
+        sql = query_base + query_ativos + ordenacao
+        
+    cursor.execute(sql) 
     dataset = cursor.fetchall()
     
     dados_clientes = []
@@ -41,6 +52,31 @@ def getClientes():
     connection.close() 
     return dados_clientes
 
+
+def getQtyClientes(status = 1):
+    connection = None
+    cursor = None
+
+    connection = conectarBanco()
+    connection.autocommit = True
+    cursor = connection.cursor()
+
+    query_base = '''SELECT COUNT(*) from cliente.dados'''
+    query_ativo = " where is_ativo = true"
+    query_inativo = " where is_ativo = false"
+
+    if status == 1:
+        sql = query_base + query_ativo
+    if status == 0:
+        sql = query_base
+    if status == -1:
+        sql = query_base + query_inativo
+
+    cursor.execute(sql)
+    resultado = cursor.fetchone()[0]
+    connection.close()
+
+    return resultado
 
 
 def getClientesVenda():
@@ -116,3 +152,36 @@ def getClientesContrato():
 
     connection.close() 
     return dados_clientes
+
+
+def getDadosCliente(id_cliente):
+    connection = None
+    cursor = None
+
+    connection = conectarBanco()
+    connection.autocommit = True
+    cursor = connection.cursor()
+
+    query = ''' select * from cliente.dados where id_cliente = %s '''
+
+    cursor.execute(query, id_cliente)
+
+    dados = cursor.fetchone()
+
+    dados_cliente = {
+            "id": dados[0],
+            "rsoc": dados[1],
+            "nome": dados[2],
+            "cnpj": dados[3],
+            "telefone": dados[4],
+            "is_ativo": dados[5],
+            "is_contrato": dados[6],
+            "is_venda": dados[7],
+            "data_inclusao": None,
+            "operador_inclusao": None,
+            "data_modificacao": None,
+            "operador_modificacao": None
+    }
+
+    connection.close()
+    return dados_cliente
