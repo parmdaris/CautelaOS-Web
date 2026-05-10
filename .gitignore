@@ -8,3 +8,4 @@ templates/weather.html
 *.cfg
 config.cfg
 .venv/
+modulos/
