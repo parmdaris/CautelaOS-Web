@@ -287,6 +287,9 @@ def getValorVendas(intervalo_dias = 0, vendas_validas = True):
         cursor.execute(sql)
 
     valor = cursor.fetchone()[0]
+
+    if valor == None:
+        valor = 0
     
     valor_total = f"{valor:,.2f}".replace(",", "X").replace(".", ",").replace("X", ".")
     return valor_total
