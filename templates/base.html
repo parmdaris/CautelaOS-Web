@@ -6,16 +6,37 @@
             {% block title %}Cautela OS{% endblock %}
         </title>
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <style>
+            :root {
+                --cor-primaria: {{session.get("modulo_cor_pri", "#0f2a44")}};
+                --cor-secundaria: {{session.get("modulo_cor_sec", "#1c3d5a")}};
+                --cor-terciaria: {{session.get("modulo_cor_terc", "#0f2a44")}};
+            }
+        </style>
         <link rel="stylesheet" href="{{ url_for('static', filename='index/css/base.css') }}">
-        {% block extra_css %}{% endblock %}
+        
+        {% block extra_css %}
+        
+        {% endblock %}
+
     </head>
 
     <body>
         <div class="app">
             <aside class="sidebar">
                 <div class="sidebar-brand">
-                    <a href="{{ url_for('dashboard') }}" style="text-decoration: none; color: inherit;"><h1>Cautela OS</h1></a>
-                    <span>Versão {{session["versao_sistema"]}} -</span>
+                    <a href="{{ url_for('dashboard') }}" style="text-decoration: none; color: inherit;"><h1>{{session["modulo_nome"]}}</h1></a>
+                    
+                        {% if session["modulo_nome"] == "CautelaOS" %}
+                            <span>
+                                {{session["versao_sistema"]}} -
+                            </span>
+                        {% else %}
+                            <span>    
+                                CautelaOS {{session["versao_sistema"]}} -
+                            </span>
+                        {% endif %}
+
                     <a href="{{ url_for('selecionar_modulo') }}" style="text-decoration: none; color: inherit;"><span>Trocar módulo</span></a>
                 </div>
 

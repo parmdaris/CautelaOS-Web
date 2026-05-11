@@ -26,7 +26,8 @@ table.dataTable {
 }
 
 table.dataTable thead th {
-    background: #0f2a44;
+    background: var(--cor-secundaria);
+    /*background: #0f2a44;*/
     color: #fff;
     padding: 10px;
     border-bottom: 2px solid #16385c;
@@ -74,7 +75,8 @@ table.dataTable tbody tr:hover {
 }
 
 .dataTables_wrapper .dataTables_paginate .paginate_button.current {
-    background: #1976d2;
+    background: var(--cor-secundaria);
+    /*background: #1976d2;*/
     color: #fff !important;
 }
 

@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <title>Login - CautelaOS</title>
+    <title>Selecionar módulo - CautelaOS</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='index/css/login.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='index/css/common_contents.css') }}">
 </head>
@@ -11,15 +11,19 @@
 <header class="topbar">
     <div class="topbar-content">
         <h1>Cautela OS</h1>
-        <span class="version">v1.4</span>
+        <span class="version">Versão {{session["versao_sistema"]}}</span>
     </div>
 </header>
 
 <main class="login-wrapper">
 
-    <div class="login-card" style="margin-right: 25px;"><h1>Vortex</h1></div>
-    <div class="login-card" style="margin-right: 25px;"><h1>Mimiso</h1></div>
-    <div class="login-card" style="margin-right: 25px;"><h1>Niitech</h1></div>
+    {% for modulo in modulos %}
+    <a href="{{ url_for('definir_modulo', id_modulo=modulo.id) }}" style="text-decoration: none; margin-right: 25px;">
+        <div class="login-card" style="height: 100px; width: 300px; padding: 0px; align-content: center;">
+            <img src="{{ url_for('static', filename=modulo.logo_src) }}" style="width: 250px;">
+        </div>
+    </a>
+    {% endfor %}
 
 </main>
 

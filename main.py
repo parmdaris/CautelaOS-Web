@@ -3,7 +3,8 @@ from conn_auth import login_requerido, acesso_requerido, gerarSenhaHash, tem_ace
 from db_configdata import inicializarCfg, getVersao
 from conn_estoque import moeda_para_float
 import conn_cautelas as cautelas, conn_clientes as clientes, conn_estoque as estoque, conn_vendas as vendas
-import conn_colaboradores as usuarios, datetime, json
+import conn_modulos as modulos, conn_colaboradores as usuarios
+import datetime, json
 
 data_iso = datetime.datetime.now().date().strftime("%Y-%m-%d %H:%M:%S")
 data = datetime.datetime.now().date().strftime("%d/%m/%Y")
@@ -24,6 +25,12 @@ def iniciarIndex():
     @app.route('/')
     @login_requerido
     def dashboard():
+        dados_modulo = modulos.getModulos(session["modulo_id"])
+        session["modulo_nome"] = dados_modulo["nome"]
+        session["modulo_cor_pri"] = dados_modulo["cor_pri"]
+        session["modulo_cor_sec"] = dados_modulo["cor_sec"]
+        session["modulo_cor_terc"] = dados_modulo["cor_terc"]
+            
         valor_estoque = estoque.valorEstoque()
         qtd_itens = estoque.qtdArtigos()
         criticos = estoque.countArtigosCriticos()
@@ -37,6 +44,19 @@ def iniciarIndex():
                                valor_total_hoje=valor_total_hoje,
                                qtd_vendas_hoje=qtd_vendas_hoje
                                )
+    
+    @app.route('/<id_modulo>')
+    @login_requerido
+    def definir_modulo(id_modulo):
+        session["modulo_id"] = id_modulo
+        return redirect(url_for("dashboard"))
+    
+    @app.route("/modulos")
+    @login_requerido
+    def selecionar_modulo():
+        sys_versao = getVersao()
+        sys_modulos = modulos.getModulos()
+        return render_template("selecao_modulo.html", sys_versao=sys_versao, modulos=sys_modulos)
     
     @app.route("/login", methods=["GET", "POST"])
     def login():
@@ -54,13 +74,13 @@ def iniciarIndex():
 
                 acessos = usuarios.getAcessos(int(user["u_id"]))
                 session.update(acessos)
-
-                print(session["u_apelido"], " ", session["ver_estoque"])
                 
                 if user["u_primeiro_acesso"] == True:
                     return redirect(url_for("acesso_inicial"))
                 else:
-                    return redirect(url_for("dashboard"))
+                    #If user tem mais de um módulo, abrir a tela de seleção de módulo. 
+                    #Senão ir direto para o dashboard definindo session["modulo"] = id do módulo que tem acesso. ##########################
+                    return redirect(url_for("selecionar_modulo"))
 
             return render_template("login.html", erro="Usuário ou senha inválidos")
 
@@ -71,11 +91,6 @@ def iniciarIndex():
     def logout():
         session.clear()
         return redirect(url_for("login"))
-    
-    @app.route("/modulos")
-    @login_requerido
-    def selecionar_modulo():
-        return render_template("selecao_modulo.html")
     
 
     @app.route("/start", methods=["POST", "GET"])
@@ -482,7 +497,9 @@ def alterar_senha_colab():
             usuarios.alterarSenha(session["u_id"], novo_pw, session["u_id"])
             usuarios.registrar_modificacao(session["u_id"], session["u_id"])
             print("Senha alterada com sucesso para o usuário ", session["u_id"])
-            return redirect(url_for('perfil_colaborador'))
+            session.clear()
+            return redirect(url_for("login"))
+            #return redirect(url_for('perfil_colaborador'))
         
         else:
             print("Senha INCORRETA para o usuário", session["u_id"],"! ###########################")

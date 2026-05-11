@@ -16,7 +16,8 @@ html, body {
 
 .sidebar {
     width: 260px;
-    background-color: #0f2a44;
+    background-color: var(--cor-primaria);
+    /*background-color: #0f2a44;*/
     color: #fff;
     display: flex;
     flex-direction: column;
@@ -53,7 +54,7 @@ html, body {
 }
 
 .sidebar-menu a:hover {
-    background-color: #1c3d5a;
+    background-color: var(--cor-terciaria);
     color: #fff;
 }
 
@@ -64,7 +65,8 @@ html, body {
 }
 
 .header {
-    background-color: #0f2a44;
+    background-color: var(--cor-primaria);
+    /*background-color: #0f2a44;*/
     color: #fff;
     padding: 15px 25px;
 }
@@ -176,7 +178,7 @@ html, body {
 }
 
 .menu-toggle:hover {
-    background-color: #1c3d5a;
+    background-color: var(--cor-terciaria);
     color: #fff;
 }
 
@@ -200,7 +202,7 @@ html, body {
 }
 
 .submenu a:hover {
-    background-color: #1c3d5a;
+    background-color: var(--cor-terciaria);
     color: #fff;
 }
 
@@ -216,7 +218,7 @@ html, body {
 /* ===== LINK ATIVO ===== */
 .sidebar-menu a.active,
 .menu-toggle.active {
-    background-color: #1c3d5a;
+    background-color: var(--cor-secundaria);
     color: #ffffff;
     font-weight: 600;
 }
@@ -247,7 +249,7 @@ html, body {
 }
 
 .submenu a:hover {
-    background-color: #1c3d5a;
+    background-color: var(--cor-terciaria);
     color: #fff;
 }
 
