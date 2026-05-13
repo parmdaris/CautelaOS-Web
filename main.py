@@ -30,6 +30,7 @@ def iniciarIndex():
         session["modulo_cor_pri"] = dados_modulo["cor_pri"]
         session["modulo_cor_sec"] = dados_modulo["cor_sec"]
         session["modulo_cor_terc"] = dados_modulo["cor_terc"]
+        session["modulo_cor_texto"] = dados_modulo["cor_texto"]
             
         valor_estoque = estoque.valorEstoque()
         qtd_itens = estoque.qtdArtigos()
@@ -42,7 +43,8 @@ def iniciarIndex():
                                qtd_itens=qtd_itens, 
                                criticos=criticos, 
                                valor_total_hoje=valor_total_hoje,
-                               qtd_vendas_hoje=qtd_vendas_hoje
+                               qtd_vendas_hoje=qtd_vendas_hoje,
+                               dados_modulo=dados_modulo
                                )
     
     

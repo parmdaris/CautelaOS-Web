@@ -140,3 +140,15 @@ form {
     margin-bottom: 15px;
 }
 
+.logout-btn {
+    background-color: #c62828;
+    color: #fff;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.logout-btn:hover {
+    background-color: #b71c1c;
+}

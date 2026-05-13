@@ -3,29 +3,38 @@
 <head>
     <meta charset="UTF-8">
     <title>Selecionar módulo - CautelaOS</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='index/css/login.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='index/css/selecionar_modulo.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='index/css/common_contents.css') }}">
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='logo.png') }}"/>
 </head>
 <body>
 
 <header class="topbar">
     <div class="topbar-content">
-        <h1>Cautela OS</h1>
-        <span class="version">Versão {{session["versao_sistema"]}}</span>
+        <h1>CautelaOS</h1>
+        <p>Bem-vindo, {{session.get("u_apelido")}}!</p>
+        <form action="{{ url_for('logout') }}" method="POST">
+                <button type="submit" class="logout-btn">⎋ Sair</button>
+        </form>
     </div>
 </header>
 
-<main class="login-wrapper">
-
-    {% for modulo in modulos %}
-        {% if modulo.id in usr_modulos %}
-        <a href="{{ url_for('definir_modulo', id_modulo=modulo.id) }}" style="text-decoration: none; margin-right: 25px;">
-            <div class="login-card" style="height: 100px; width: 300px; padding: 0px; align-content: center;">
-                <img src="{{ url_for('static', filename=modulo.logo_src) }}" style="width: 250px;">
-            </div>
-        </a>
-        {% endif %}
-    {% endfor %}
+<main class="module-wrapper">
+    <div class="content-container">
+        <h3>Módulos disponíveis</h3>
+        <div class="header-divider"></div>
+        <div class="module-container">
+            {% for modulo in modulos %}
+                {% if modulo.id in usr_modulos %}
+                <a href="{{ url_for('definir_modulo', id_modulo=modulo.id) }}" style="text-decoration: none; margin-right: 25px;">
+                    <div class="module-card" style="height: 100px; width: 300px; padding: 20px; align-content: center; background-color: {{ modulo.cor_pri }}">
+                        <img src="{{ url_for('static', filename=modulo.splash_src) }}" style="width: 250px;">
+                    </div>
+                </a>
+                {% endif %}
+            {% endfor %}
+        </div>
+    </div>
 
 </main>
 

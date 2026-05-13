@@ -23,7 +23,8 @@ def getModulos(id_modulo = None):
             lista_modulos.append({
                 "id": modulo[0],
                 "nome": modulo[1],
-                "logo_src": modulo[2],
+                "splash_src": "modulos/splash/" + str(modulo[0]) + ".png",
+                "logo_src": "modulos/logo/" + str(modulo[0]) + ".png",
                 "cor_pri": modulo[3],
                 "cor_sec": modulo[4],
                 "cor_terc": modulo[5],
@@ -39,15 +40,31 @@ def getModulos(id_modulo = None):
         modulo_dados = {
                 "id": modulo[0],
                 "nome": modulo[1],
-                "logo_src": modulo[2],
+                "splash_src": "modulos/splash/" + str(modulo[0]) + ".png",
+                "logo_src": "modulos/logo/" + str(modulo[0]) + ".png",
                 "cor_pri": modulo[3],
                 "cor_sec": modulo[4],
                 "cor_terc": modulo[5],
+                "cor_texto": cor_texto(modulo[3]),
                 "empresa": modulo[6]
             }
+        
+        print("Splash: ", modulo_dados["splash_src"])
+        print("Logo: ", modulo_dados["logo_src"])
 
         return modulo_dados
     
+def cor_texto(hexcolor):
+    hexcolor = hexcolor.replace("#", "")
+
+    r = int(hexcolor[0:2], 16)
+    g = int(hexcolor[2:4], 16)
+    b = int(hexcolor[4:6], 16)
+
+    luminancia = (0.299*r + 0.587*g + 0.114*b)
+
+    return "#000000" if luminancia > 100 else "#FFFFFF"
+
 
 def verificarAcesso(id_usuario):
 

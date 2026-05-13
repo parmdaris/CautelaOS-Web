@@ -16,7 +16,7 @@ html, body {
 
 .sidebar {
     width: 260px;
-    background-color: var(--cor-primaria);
+    background-color: var(--cor-secundaria);
     /*background-color: #0f2a44;*/
     color: #fff;
     display: flex;
@@ -45,7 +45,8 @@ html, body {
 }
 
 .sidebar-menu a {
-    color: #cfd8dc;
+    color: var(--cor-texto);
+    /*color: #cfd8dc;*/
     text-decoration: none;
     padding: 12px 15px;
     border-radius: 6px;
@@ -158,12 +159,14 @@ html, body {
 .menu-item {
     display: flex;
     flex-direction: column;
+
 }
 
 /* botão principal */
 .menu-toggle {
     background: none;
     border: none;
+    /*color: var(--cor-texto);*/
     color: #cfd8dc;
     text-align: left;
     padding: 12px 15px;
@@ -197,7 +200,7 @@ html, body {
 .submenu a {
     padding: 10px 15px;
     font-size: 0.9rem;
-    color: #b0bec5;
+    color: #707678;
     border-radius: 6px;
 }
 

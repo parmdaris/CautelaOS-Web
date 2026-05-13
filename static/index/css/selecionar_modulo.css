@@ -1,0 +1,100 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Segoe UI', sans-serif;
+    background: linear-gradient(135deg, #eef2f7, #d9e2ec);
+    min-height: 100vh;
+}
+
+.topbar {
+    background: #0f2a44;
+    color: white;
+    padding: 14px 24px;
+}
+
+.topbar-content {
+    max-width: 1200px;
+    margin: auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    text-align: center;
+}
+
+.topbar h1 {
+    font-size: 20px;
+    font-weight: 600;
+}
+
+.version {
+    font-size: 12px;
+    opacity: 0.85;
+}
+
+.header-divider {
+    margin-top: 24px;
+    border: 1px solid #000000;
+    border-radius: 10px;
+}
+
+.module-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 16px;
+}
+
+.module-card {
+    width: 100%;
+    max-width: 380px;
+    background: white;
+    border-radius: 14px;
+    padding: 32px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.12);
+}
+
+.module-container {
+    width: 100%;
+    max-width: fit-content;
+    background: white;
+    border-radius: 14px;
+    padding: 32px;
+    display: flex;
+}
+
+.content-container {
+    width: 100%;
+    max-width: fit-content;
+    background: white;
+    border-radius: 14px;
+    padding: 32px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.12);
+    align-items: center;
+    text-align: center;    
+}
+
+.module-card h2 {
+    text-align: center;
+    margin-bottom: 6px;
+}
+
+.error {
+    background: #ffe0e0;
+    color: #a30000;
+    padding: 10px;
+    border-radius: 8px;
+    font-size: 14px;
+    margin-bottom: 16px;
+    text-align: center;
+}
+
+
+@media (max-width: 480px) {
+    .module-card {
+        padding: 24px;
+    }
+}

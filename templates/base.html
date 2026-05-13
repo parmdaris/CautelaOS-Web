@@ -11,9 +11,11 @@
                 --cor-primaria: {{session.get("modulo_cor_pri", "#0f2a44")}};
                 --cor-secundaria: {{session.get("modulo_cor_sec", "#1c3d5a")}};
                 --cor-terciaria: {{session.get("modulo_cor_terc", "#0f2a44")}};
+                --cor-texto: {{session.get("modulo_cor_texto", "#000000")}};
             }
         </style>
         <link rel="stylesheet" href="{{ url_for('static', filename='index/css/base.css') }}">
+        <link rel="icon" type="image/png" href="{{ url_for('static', filename='logo.png') }}"/>
         
         {% block extra_css %}
         
@@ -37,7 +39,9 @@
                             </span>
                         {% endif %}
                     {% if session["u_qtd_modulos"] > 1 %}
-                        <a href="{{ url_for('selecionar_modulo') }}" style="text-decoration: none; color: inherit;"><span> - Trocar módulo</span></a>
+                        <a href="{{ url_for('selecionar_modulo') }}" style="text-decoration: none; color: inherit;">
+                            <img src="{{ url_for('static', filename=dados_modulo.logo_src) }}" alt="Trocar módulo" style="max-width: 20px;">
+                        </a>
                     {% endif %}
                 </div>
 
