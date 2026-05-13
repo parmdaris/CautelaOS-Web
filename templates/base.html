@@ -29,15 +29,16 @@
                     
                         {% if session["modulo_nome"] == "CautelaOS" %}
                             <span>
-                                {{session["versao_sistema"]}} -
+                                {{session["versao_sistema"]}}
                             </span>
                         {% else %}
                             <span>    
-                                CautelaOS {{session["versao_sistema"]}} -
+                                CautelaOS {{session["versao_sistema"]}}
                             </span>
                         {% endif %}
-
-                    <a href="{{ url_for('selecionar_modulo') }}" style="text-decoration: none; color: inherit;"><span>Trocar módulo</span></a>
+                    {% if session["u_qtd_modulos"] > 1 %}
+                        <a href="{{ url_for('selecionar_modulo') }}" style="text-decoration: none; color: inherit;"><span> - Trocar módulo</span></a>
+                    {% endif %}
                 </div>
 
                 <nav class="sidebar-menu">

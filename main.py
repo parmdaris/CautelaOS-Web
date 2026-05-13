@@ -25,7 +25,7 @@ def iniciarIndex():
     @app.route('/')
     @login_requerido
     def dashboard():
-        dados_modulo = modulos.getModulos(session["modulo_id"])
+        dados_modulo = modulos.getModulos(int(session["modulo_id"]))
         session["modulo_nome"] = dados_modulo["nome"]
         session["modulo_cor_pri"] = dados_modulo["cor_pri"]
         session["modulo_cor_sec"] = dados_modulo["cor_sec"]
@@ -45,18 +45,7 @@ def iniciarIndex():
                                qtd_vendas_hoje=qtd_vendas_hoje
                                )
     
-    @app.route('/<id_modulo>')
-    @login_requerido
-    def definir_modulo(id_modulo):
-        session["modulo_id"] = id_modulo
-        return redirect(url_for("dashboard"))
     
-    @app.route("/modulos")
-    @login_requerido
-    def selecionar_modulo():
-        sys_versao = getVersao()
-        sys_modulos = modulos.getModulos()
-        return render_template("selecao_modulo.html", sys_versao=sys_versao, modulos=sys_modulos)
     
     @app.route("/login", methods=["GET", "POST"])
     def login():
@@ -78,8 +67,6 @@ def iniciarIndex():
                 if user["u_primeiro_acesso"] == True:
                     return redirect(url_for("acesso_inicial"))
                 else:
-                    #If user tem mais de um módulo, abrir a tela de seleção de módulo. 
-                    #Senão ir direto para o dashboard definindo session["modulo"] = id do módulo que tem acesso. ##########################
                     return redirect(url_for("selecionar_modulo"))
 
             return render_template("login.html", erro="Usuário ou senha inválidos")
@@ -107,6 +94,29 @@ def iniciarIndex():
         
         return render_template("start.html", usuario = session["u_apelido"])
 
+################################################################################# Modulos de trabalho
+    
+    @app.route("/modulos")
+    @login_requerido
+    def selecionar_modulo():
+        sys_versao = getVersao()
+        sys_modulos = modulos.getModulos()
+        usr_modulos = modulos.verificarAcesso(session["u_id"])
+
+        if len(usr_modulos) == 1:
+            session["modulo_id"] = usr_modulos[0]
+            session["u_qtd_modulos"] = 1
+            return redirect(url_for("dashboard"))
+        else:
+            session["u_qtd_modulos"] = len(usr_modulos)
+            return render_template("selecao_modulo.html", sys_versao=sys_versao, modulos=sys_modulos, usr_modulos=usr_modulos)
+    
+    
+    @app.route('/<int:id_modulo>')
+    @login_requerido
+    def definir_modulo(id_modulo):
+        session["modulo_id"] = id_modulo
+        return redirect(url_for("dashboard"))
 
 ################################################################################# Cautelas
 

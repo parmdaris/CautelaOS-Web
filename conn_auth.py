@@ -51,3 +51,6 @@ def gerarSenhaHash(senha):
     senha_hash = generate_password_hash(senha)
     return senha_hash
 
+
+def verificarAcessoModulo(id_usuario):
+    pass

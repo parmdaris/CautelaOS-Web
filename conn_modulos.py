@@ -29,12 +29,11 @@ def getModulos(id_modulo = None):
                 "cor_terc": modulo[5],
                 "empresa": modulo[6]
             })
-
         return lista_modulos
     
     else:
         query = ''' SELECT * from modulos.dados where id = %s order by id ASC'''
-        cursor.execute(query, id_modulo)
+        cursor.execute(query, (id_modulo,))
         modulo = cursor.fetchone()
 
         modulo_dados = {
@@ -46,5 +45,25 @@ def getModulos(id_modulo = None):
                 "cor_terc": modulo[5],
                 "empresa": modulo[6]
             }
+
         return modulo_dados
     
+
+def verificarAcesso(id_usuario):
+
+    connection = conectarBanco()
+    cursor = connection.cursor()
+
+    query = '''
+        SELECT acesso_modulo
+        FROM modulos.permissao_modulos
+        WHERE id_usuario = %s
+    '''
+
+    cursor.execute(query, (id_usuario,))
+
+    modulos_usuario = [m[0] for m in cursor.fetchall()]
+
+    connection.close()
+
+    return modulos_usuario
