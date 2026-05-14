@@ -12,7 +12,7 @@
 <header class="topbar">
     <div class="topbar-content">
         <h1>CautelaOS</h1>
-        <p>Bem-vindo, {{session.get("u_apelido")}}!</p>
+        <p>Bem-vindo, {{session.get("usuario").get("nome")}}!</p>
         <form action="{{ url_for('logout') }}" method="POST">
                 <button type="submit" class="logout-btn">⎋ Sair</button>
         </form>

@@ -35,24 +35,23 @@ def getModulos(id_modulo = None):
     else:
         query = ''' SELECT * from modulos.dados where id = %s order by id ASC'''
         cursor.execute(query, (id_modulo,))
-        modulo = cursor.fetchone()
+        dados = cursor.fetchone()
 
-        modulo_dados = {
-                "id": modulo[0],
-                "nome": modulo[1],
-                "splash_src": "modulos/splash/" + str(modulo[0]) + ".png",
-                "logo_src": "modulos/logo/" + str(modulo[0]) + ".png",
-                "cor_pri": modulo[3],
-                "cor_sec": modulo[4],
-                "cor_terc": modulo[5],
-                "cor_texto": cor_texto(modulo[3]),
-                "empresa": modulo[6]
+        modulo = {
+                "id": dados[0],
+                "nome": dados[1],
+                "splash_src": "modulos/splash/" + str(dados[0]) + ".png",
+                "logo_src": "modulos/logo/" + str(dados[0]) + ".png",
+                "cor_pri": dados[3],
+                "cor_sec": dados[4],
+                "cor_terc": dados[5],
+                "cor_texto": cor_texto(dados[3]), ##################################################### DESCONTINUAR
+                "empresa": dados[6]
             }
-        
-        print("Splash: ", modulo_dados["splash_src"])
-        print("Logo: ", modulo_dados["logo_src"])
 
-        return modulo_dados
+        return modulo
+    
+
     
 def cor_texto(hexcolor):
     hexcolor = hexcolor.replace("#", "")

@@ -8,10 +8,10 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <style>
             :root {
-                --cor-primaria: {{session.get("modulo_cor_pri", "#0f2a44")}};
-                --cor-secundaria: {{session.get("modulo_cor_sec", "#1c3d5a")}};
-                --cor-terciaria: {{session.get("modulo_cor_terc", "#0f2a44")}};
-                --cor-texto: {{session.get("modulo_cor_texto", "#000000")}};
+                --cor-primaria: {{ session.get("modulo", {}).get("cor_pri", "#0f2a44") }};
+                --cor-secundaria: {{ session.get("modulo", {}).get("cor_sec", "#1c3d5a") }};
+                --cor-terciaria: {{ session.get("modulo", {}).get("cor_terc", "#0f2a44") }};
+                --cor-texto: {{ session.get("modulo", {}).get("cor_texto", "#000000") }};
             }
         </style>
         <link rel="stylesheet" href="{{ url_for('static', filename='index/css/base.css') }}">
@@ -27,95 +27,121 @@
         <div class="app">
             <aside class="sidebar">
                 <div class="sidebar-brand">
-                    <a href="{{ url_for('dashboard') }}" style="text-decoration: none; color: inherit;"><h1>{{session["modulo_nome"]}}</h1></a>
+                    <div style="display: flex; align-items: center; text-align: center;">
+                        {% if session["u_qtd_modulos"] > 1 %}
+                            <a href="{{ url_for('selecionar_modulo') }}" style="text-decoration: none; color: inherit;">
+                                <img src="{{ url_for('static', filename=session.get("modulo", {}).get("logo_src")) }}" alt="Trocar módulo" style="max-width: 40px;">
+                                <h1>{{session.get("modulo", {}).get("nome")}}</h1>
+                            </a>
+                        {% else %}
+                                <img src="{{ url_for('static', filename=session.get("modulo", {}).get("logo_src")) }}" alt="Trocar módulo" style="max-width: 40px;">
+                                <h1>{{session.get("modulo", {}).get("nome")}}</h1>
+                        {%endif%}
+
+                    </div>
                     
-                        {% if session["modulo_nome"] == "CautelaOS" %}
+                        {% if session.get("modulo", {}).get("nome") == "CautelaOS" %}
                             <span>
                                 {{session["versao_sistema"]}}
                             </span>
                         {% else %}
-                            <span>    
-                                CautelaOS {{session["versao_sistema"]}}
+                            <span>
+                                <div>
+                                    CautelaOS {{session["versao_sistema"]}}
+                                </div>
                             </span>
                         {% endif %}
-                    {% if session["u_qtd_modulos"] > 1 %}
-                        <a href="{{ url_for('selecionar_modulo') }}" style="text-decoration: none; color: inherit;">
-                            <img src="{{ url_for('static', filename=dados_modulo.logo_src) }}" alt="Trocar módulo" style="max-width: 20px;">
-                        </a>
-                    {% endif %}
                 </div>
 
                 <nav class="sidebar-menu">
                     <a href="{{ url_for('dashboard') }}">📈 Dashboard</a>
 
-                    <div class="menu-item has-submenu">
-                        <button class="menu-toggle">
-                            <span>📦 Estoque</span>
-                            <span class="arrow">▸</span>
-                        </button>
-
-                        <div class="submenu">
-                            <a href="{{ url_for('ver_estoque') }}">📋 Ver estoque</a>
-                            <a href="{{ url_for('adicionarItem') }}">➕ Adicionar item</a>
-                            <a href="{{ url_for('adicionarItem') }}">✏️ Alteração em lote</a>
-                        </div>
-                    </div>
-
-
-                    <div class="menu-item has-submenu">
-                        <button class="menu-toggle">
-                            <span>💰 Vendas</span>
-                            <span class="arrow">▸</span>
-                        </button>
-
-                        <div class="submenu">
-                            <a href="{{ url_for('visualizar_vendas') }}">💰 Ver vendas</a>
-                            <a href="{{ url_for('registrar_venda') }}">➕ Registrar venda</a>
-                        </div>
-                    </div>
-
-
-                    <div class="menu-item has-submenu">
-                        <button class="menu-toggle">
-                            <span style="color: red;">📦 Cautela</span>
-                            <span class="arrow">▸</span>
-                        </button>
-
-                        <div class="submenu">
-                            <a href="{{ url_for('listar_cautelas') }}" style="color: yellow;">📋 Ver cautelas</a>
-                            <a href="" style="color: red;">➕ Gerar cautela</a>
-                        </div>
-                    </div>
-
-                    {% if tem_acesso(1, 2, 4) %}
-                    <div class="menu-item has-submenu">
-                        <button class="menu-toggle">
-                            <span style="color: red;">🛠️ Serviço</span>
-                            <span class="arrow">▸</span>
-                        </button>
-
-                        <div class="submenu">
-                            <a href="" style="color: red;">📋 Ver ordens</a>
-                            <a href="" style="color: red;">➕ Gerar ordem</a>
-                            
-                        </div>
-                    </div>
-                    {% endif %}
-
-                    {% if tem_acesso(1, 2) %}
-                    <div class="menu-item has-submenu">
+                    {% if "estoque_ver" in session.get("usuario", {}).get("autorizacoes", []) %}
+                        <div class="menu-item has-submenu">
                             <button class="menu-toggle">
-                                <span style="color: yellow;">👥 Clientes</span>
+                                <span>📦 Estoque</span>
+                                <span class="arrow">▸</span>
+                            </button>
+                        
+                            <div class="submenu">
+                                <a href="{{ url_for('ver_estoque') }}">📋 Ver estoque</a>
+                                {% if "estoque_cadastrar" in session.get("usuario", {}).get("autorizacoes", []) %}
+                                    <a href="{{ url_for('adicionarItem') }}">➕ Adicionar item</a>
+                                {%endif%}
+                                {% if "estoque_editar" in session.get("usuario", {}).get("autorizacoes", []) %}
+                                    <a href="{{ url_for('adicionarItem') }}">✏️ Alteração em lote</a>
+                                {%endif%}
+                            </div>
+                        </div>
+                    {%endif%}
+
+                    {% if "vendas_ver" in session.get("usuario", {}).get("autorizacoes", []) %}
+                        <div class="menu-item has-submenu">
+                            <button class="menu-toggle">
+                                <span>💰 Vendas</span>
                                 <span class="arrow">▸</span>
                             </button>
 
                             <div class="submenu">
-                                <a href="{{ url_for('visualizar_clientes') }}" style="color: yellow;">📋 Gerenciar</a>
+                                <a href="{{ url_for('visualizar_vendas') }}">💰 Ver vendas</a>
+                                {% if "vendas_registrar" in session.get("usuario", {}).get("autorizacoes", []) %}
+                                    <a href="{{ url_for('registrar_venda') }}">➕ Registrar venda</a>
+                                {%endif%}
+                            </div>
+                        </div>
+                    {%endif%}
+
+                    {% if "cautela_ver" in session.get("usuario", {}).get("autorizacoes", []) %}
+                        <div class="menu-item has-submenu">
+                            <button class="menu-toggle">
+                                <span>📦 Cautela ***</span>
+                                <span class="arrow">▸</span>
+                            </button>
+
+                            <div class="submenu">
+                                <a href="{{ url_for('listar_cautelas') }}">📋 Ver cautelas **</a>
+                                {% if "cautela_registrar" in session.get("usuario", {}).get("autorizacoes", []) %}
+                                    <a href="">➕ Gerar cautela ***</a>
+                                {%endif%}
+                            </div>
+                        </div>
+                    {%endif%}
+
+
+                    {% if "servico_ver" in session.get("usuario", {}).get("autorizacoes", []) %}
+                        <div class="menu-item has-submenu">
+                            <button class="menu-toggle">
+                                <span>🛠️ Serviço ***</span>
+                                <span class="arrow">▸</span>
+                            </button>
+
+                            <div class="submenu">
+                                <a href="">📋 Ver ordens ***</a>
+                                {% if "servico_registrar" in session.get("usuario", {}).get("autorizacoes", []) %}
+                                    <a href="">➕ Gerar ordem ***</a>
+                                {%endif%}                                
                             </div>
                         </div>
                     {% endif %}
 
-                    {% if tem_acesso(1, 2) %}
+                    {% if "cliente_ver" in session.get("usuario", {}).get("autorizacoes", []) %}
+                        <div class="menu-item has-submenu">
+                                <button class="menu-toggle">
+                                    <span>👥 Clientes **</span>
+                                    <span class="arrow">▸</span>
+                                </button>
+
+                                <div class="submenu">
+                                    <a href="{{ url_for('visualizar_clientes') }}">📋 Gerenciar **</a>
+                                    {% if "cliente_cadastrar" in session.get("usuario", {}).get("autorizacoes", []) %}
+                                        <a href="{{ url_for('visualizar_clientes') }}">📋 Cadastrar **</a>
+                                    {%endif%}
+                                </div>
+                            </div>
+                    {% endif %}
+
+
+                    {% if "colaborador_ver" in session.get("usuario", {}).get("autorizacoes", []) %}
                         <div class="menu-item has-submenu">
                             <button class="menu-toggle">
                                 <span>👥 Colaboradores</span>
@@ -124,36 +150,40 @@
 
                             <div class="submenu">
                                 <a href="{{ url_for('visualizar_colaboradores') }}">📋 Gerenciar</a>
-                                <a href="{{ url_for('cadastrar_colab') }}">➕ Adicionar colaborador</a>
+                                {% if "colaborador_cadastrar" in session.get("usuario", {}).get("autorizacoes", []) %}
+                                    <a href="{{ url_for('cadastrar_colab') }}">➕ Adicionar colaborador</a>
+                                {%endif%}
                             </div>
                         </div>
                     {% endif %}
                     
-                    {% if tem_acesso(1, 2) %}
+
+                    {% if "relatorios_ver" in session.get("usuario", {}).get("autorizacoes", []) %}
                         <div class="menu-item has-submenu">
                             <button class="menu-toggle">
-                                <span style="color: red;">📊 Relatórios</span>
+                                <span>📊 Relatórios ***</span>
                                 <span class="arrow">▸</span>
                             </button>
 
                             <div class="submenu">
-                                <a href="" style="color: red;">📦 Estoque</a>
-                                <a href="" style="color: red;">💰 Vendas</a>
-                                <a href="" style="color: red;">📦 Cautelas</a>
-                                <a href="" style="color: red;">🛠️ Serviços</a>
+                                <a href="">📦 Estoque ***</a>
+                                <a href="">💰 Vendas ***</a>
+                                <a href="">📦 Cautelas ***</a>
+                                <a href="">🛠️ Serviços ***</a>
                             </div>
                         </div>
                     {% endif %}
 
-                    {% if tem_acesso(1) %}
+
+                    {% if "modulo_ver" in session.get("usuario", {}).get("autorizacoes", []) %}
                         <div class="menu-item has-submenu">
                             <button class="menu-toggle">
-                                <span style="color: red;">Módulos</span>
+                                <span>🧩 Módulos ***</span>
                                 <span class="arrow">▸</span>
                             </button>
 
                             <div class="submenu">
-                                <a href="" style="color: red;">Gerenciar</a>
+                                <a href="">📋 Gerenciar ***</a>
                             </div>
                         </div>
                     {% endif %}
@@ -168,12 +198,12 @@
                         <p>
                             Bem-vindo, 
                             <a href="{{ url_for('perfil_colaborador') }}" class="link-reset">
-                                <strong>{{ session.get('u_apelido', 'Usuário') }}</strong>
+                                <strong>{{ session.get('usuario').get('nome') }}! 👤</strong>
                             </a>
                         </p>
                         <hr>
                         <div class="header-meta">
-                            <span class="badge-cargo" data-id-acesso="{{ session['nivel_acesso'] }}">{{ session['cargo'] }}</span>
+                            <span class="badge-cargo" data-id-acesso="{{ session['nivel_acesso'] }}">{{ session['usuario']['cargo'] }}</span>
 
                             <form action="{{ url_for('logout') }}" method="POST">
                                 <button type="submit" class="logout-btn">⎋ Sair</button>

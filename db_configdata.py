@@ -1,5 +1,6 @@
 import configparser as cfgp, os, sys, logging, psycopg2 as pg
 from datetime import datetime
+from flask import session
 
 config = cfgp.ConfigParser()
 configFilePath = 'config.cfg'
@@ -69,3 +70,8 @@ def gravarLog(tipo, texto_log): ################################################
     if tipo == "w":
         logging.warning(data_atual + ": " + texto_log)
 
+
+def atualizarSessao(chave, variavel, valor):
+    informacao = session[chave]
+    informacao[variavel] = valor
+    session[chave] = informacao

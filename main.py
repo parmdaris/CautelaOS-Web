@@ -25,18 +25,24 @@ def iniciarIndex():
     @app.route('/')
     @login_requerido
     def dashboard():
+        
         dados_modulo = modulos.getModulos(int(session["modulo_id"]))
+        session["modulo"] = dados_modulo
+        
         session["modulo_nome"] = dados_modulo["nome"]
         session["modulo_cor_pri"] = dados_modulo["cor_pri"]
         session["modulo_cor_sec"] = dados_modulo["cor_sec"]
         session["modulo_cor_terc"] = dados_modulo["cor_terc"]
         session["modulo_cor_texto"] = dados_modulo["cor_texto"]
+        session["modulo_logo_src"] = dados_modulo["logo_src"]
             
         valor_estoque = estoque.valorEstoque()
         qtd_itens = estoque.qtdArtigos()
         criticos = estoque.countArtigosCriticos()
         valor_total_hoje = vendas.getValorVendas(0)
         qtd_vendas_hoje = vendas.getQtyVendas(0)
+
+        print(session["usuario"]["autorizacoes"])
 
         return render_template('dashboard.html', 
                                valor_estoque=valor_estoque, 
@@ -58,15 +64,17 @@ def iniciarIndex():
 
             user = usuarios.autenticar_usuario(usuario, senha)
             
-
             if user:
-                session.update(user)
-                usuarios.ultimoLogin(user['u_id'])
+                user["autorizacoes"] = usuarios.getAutorizacoes(user["id"])
+                session["usuario"] = user
 
-                acessos = usuarios.getAcessos(int(user["u_id"]))
-                session.update(acessos)
+                usuarios.ultimoLogin(user['id'])
+
+                #acessos = usuarios.getAcessos(int(user["u_id"])) ############################################################## REMOVER
+                #session.update(acessos) ####################################################################################### REMOVER
+
                 
-                if user["u_primeiro_acesso"] == True:
+                if user["primeiro_acesso"]:
                     return redirect(url_for("acesso_inicial"))
                 else:
                     return redirect(url_for("selecionar_modulo"))
@@ -88,13 +96,13 @@ def iniciarIndex():
         if request.method == "POST":
             senha_inserida = request.form["senha"]
 
-            if usuarios.compararSenhaHash(session["u_id"], senha_inserida):
+            if usuarios.compararSenhaHash(session["usuario"]["id"], senha_inserida):
                 return render_template("start.html", erro="A senha deve ser diferente da atual")
             
-            usuarios.contaIniciada(session["u_id"], gerarSenhaHash(senha_inserida))
+            usuarios.contaIniciada(session["usuario"]["id"], gerarSenhaHash(senha_inserida))
             return redirect(url_for("dashboard"))
         
-        return render_template("start.html", usuario = session["u_apelido"])
+        return render_template("start.html", usuario = session["usuario"]["u_apelido"])
 
 ################################################################################# Modulos de trabalho
     
@@ -103,7 +111,7 @@ def iniciarIndex():
     def selecionar_modulo():
         sys_versao = getVersao()
         sys_modulos = modulos.getModulos()
-        usr_modulos = modulos.verificarAcesso(session["u_id"])
+        usr_modulos = modulos.verificarAcesso(session["usuario"]["id"])
 
         if len(usr_modulos) == 1:
             session["modulo_id"] = usr_modulos[0]
@@ -213,7 +221,7 @@ def iniciarIndex():
             dados_item = request.form.to_dict()
             acao = dados_item.get('acao')
 
-            salvar_item = estoque.adicionarItemDB(dados_item, session["u_id"])
+            salvar_item = estoque.adicionarItemDB(dados_item, session["usuario"]["id"])
 
             if salvar_item == "SKU_DUPLICADO":
                 return redirect(url_for('adicionarItem', erro='sku_existente'))
@@ -233,7 +241,7 @@ def iniciarIndex():
     def alterarItem(codigo_item):
         if request.method == 'POST':
             dados_item = request.form.to_dict()
-            estoque.alterarItemDB(dados_item, codigo_item=codigo_item, id_operador=session["u_id"])
+            estoque.alterarItemDB(dados_item, codigo_item=codigo_item, id_operador=session["usuario"]["id"])
             codigo_item = dados_item.get('novo_codigo')
             return redirect(url_for('ver_item_estoque', codigo_item=codigo_item))
         
@@ -250,7 +258,7 @@ def iniciarIndex():
     @app.route('/estoque/<codigo_item>/<ativar>')
     @login_requerido
     def definirAtivo(codigo_item, ativar=bool):
-        estoque.definirAtivo(session["u_id"], codigo_item, ativar)
+        estoque.definirAtivo(session["usuario"]["id"], codigo_item, ativar)
         return redirect(url_for('ver_item_estoque', codigo_item=codigo_item))
     
     @app.route("/estoque/print", methods=['GET', 'POST'])
@@ -283,7 +291,7 @@ def iniciarIndex():
         valor_estoque = estoque.valorEstoque(tipo)
 
         operador = session["u_apelido"]
-        id_operador = session["u_id"]
+        id_operador = session["usuario"]["id"]
         return render_template(
             'estoque/template_print_estoque.html',
             data=data, hora=hora,
@@ -335,7 +343,7 @@ def iniciarIndex():
             if not itens_venda:
                 return redirect(url_for('registrar_venda'), erro="venda vazia")
             
-            id_venda = vendas.registrarDadosVenda(dados_venda, session["u_id"])
+            id_venda = vendas.registrarDadosVenda(dados_venda, session["usuario"]["id"])
 
             if id_venda:
                 vendas.registrarItensVenda(id_venda, itens_venda)
@@ -451,7 +459,7 @@ def iniciarIndex():
     @app.route('/perfil', methods=['GET','POST'])
     @login_requerido
     def perfil_colaborador():
-        id_colab = session["u_id"]
+        id_colab = session["usuario"]["id"]
         dados_colab = usuarios.getDadosColaborador(id_colab)
         return render_template('colaboradores/perfil_colaborador.html', dados_colab=dados_colab) 
     
@@ -464,7 +472,7 @@ def iniciarIndex():
         
         if request.method == 'POST':
             novos_dados_colab = request.form.to_dict()
-            usuarios.setDadosColaborador(id_colab, novos_dados_colab, session["u_id"])
+            usuarios.setDadosColaborador(id_colab, novos_dados_colab, session["usuario"]["id"])
             print(novos_dados_colab)
 
             return redirect(url_for('detalhes_colaborador', id_colab=id_colab, cargos=cargos, dados_colab=novos_dados_colab))
@@ -479,7 +487,7 @@ def iniciarIndex():
     @login_requerido
     @acesso_requerido(1)
     def cadastrar_colab():
-        id_operador = session["u_id"]
+        id_operador = session["usuario"]["id"]
 
         if request.method == 'POST':
             dados_colab = request.form.to_dict()
@@ -505,19 +513,19 @@ def alterar_senha_colab():
         pw_atual = request.form.get("senha_atual")
         novo_pw = request.form.get("nova_senha")
         
-        if usuarios.compararSenhaHash(session["u_id"], pw_atual):
-            usuarios.alterarSenha(session["u_id"], novo_pw, session["u_id"])
-            usuarios.registrar_modificacao(session["u_id"], session["u_id"])
-            print("Senha alterada com sucesso para o usuário ", session["u_id"])
+        if usuarios.compararSenhaHash(session["usuario"]["id"], pw_atual):
+            usuarios.alterarSenha(session["usuario"]["id"], novo_pw, session["usuario"]["id"])
+            usuarios.registrar_modificacao(session["usuario"]["id"], session["usuario"]["id"])
+            print("Senha alterada com sucesso para o usuário ", session["usuario"]["id"])
             session.clear()
             return redirect(url_for("login"))
             #return redirect(url_for('perfil_colaborador'))
         
         else:
-            print("Senha INCORRETA para o usuário", session["u_id"],"! ###########################")
+            print("Senha INCORRETA para o usuário", session["usuario"]["id"],"! ###########################")
             pass #######################Lidar com senha incorreta
 
-    return render_template('colaboradores/colab_alterar_senha.html', id=session["u_id"])
+    return render_template('colaboradores/colab_alterar_senha.html', id=session["usuario"]["id"])
 
 
 @app.route('/colaboradores/<id_colab>/editar/redefinirsenha', methods = ['GET', 'POST'])
@@ -526,7 +534,7 @@ def alterar_senha_colab():
 def redefinir_senha_colab(id_colab):
     if request.method == 'POST':
         cpf_informado = request.form.get("cpf_colaborador")
-        red = usuarios.recuperarSenha(id_colab, cpf_informado, session["u_id"])
+        red = usuarios.recuperarSenha(id_colab, cpf_informado, session["usuario"]["id"])
         print("FUNÇÃO DE REDEFINIÇÃO DE SENHA EXECUTADA! Resultado:", red)
         return redirect(url_for("detalhes_colaborador", id_colab = id_colab))
     

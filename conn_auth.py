@@ -4,16 +4,20 @@ from werkzeug.security import generate_password_hash, check_password_hash
 
 
 def login_requerido(f):
+
     @wraps(f)
     def decorated(*args, **kwargs):
-        if "u_id" not in session:
+
+        usuario = session.get("usuario")
+
+        if not usuario:
             return redirect(url_for("login"))
-        
-        if "u_primeiro_acesso" == True:
+
+        if usuario.get("u_primeiro_acesso") is True:
             return redirect(url_for("acesso_inicial"))
-        
+
         return f(*args, **kwargs)
-    
+
     return decorated
 
 
@@ -24,7 +28,7 @@ def acesso_requerido(*niveis_permitidos):
             id_acesso = session.get("nivel_acesso")
 
             if id_acesso is None:
-                return None
+                return redirect(url_for("login"))
 
             if id_acesso not in niveis_permitidos:
                 abort(403) #forbidden
@@ -35,7 +39,9 @@ def acesso_requerido(*niveis_permitidos):
 
 
 
-def tem_acesso(*niveis):
+
+
+def tem_acesso(*niveis): #Verifica se o nivel_acesso do usuario está na tupla "niveis" e retorna true se sim e false se não.
     return session.get("nivel_acesso") in niveis
 
 

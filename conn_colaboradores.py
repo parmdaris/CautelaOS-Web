@@ -27,11 +27,11 @@ def autenticar_usuario(usuario, senha):
 
         if checarSenhaHash(dadosColab[2], senha):
             return {
-                "u_id": dadosColab[0],
-                "u_apelido": dadosColab[1],
-                "nivel_acesso": dadosColab[3],
+                "id": dadosColab[0],
+                "nome": dadosColab[1],
+                "nivel_acesso": dadosColab[3], #############################################################Descontinuar
                 "cargo": dadosColab[4],
-                "u_primeiro_acesso": dadosColab[5]
+                "primeiro_acesso": dadosColab[5]
             }
         return None
 
@@ -77,6 +77,29 @@ def getAcessos(id):
         if connection:
             connection.close()
 
+            
+
+def getAutorizacoes(id_usuario):
+    connection = None
+    cursor = None
+    connection = conectarBanco()
+    connection.autocommit = True
+    cursor = connection.cursor()
+
+    query = '''select p.nome as permissao from colaborador.usuarios_permissoes perm
+                    join colaborador.dados u on u.id = perm.id_usuario 
+                    join colaborador.permissoes p on p.id = perm.id_permissao where u.id = %s
+                    order by permissao ASC'''
+    
+    cursor.execute(query, (id_usuario,))
+    permissoes_fetch = cursor.fetchall()
+
+    permissoes = [p[0] for p in permissoes_fetch]
+
+    connection.close()
+    return permissoes
+    
+    
 
 def contaIniciada(usuario, senha_nova_hash):
     try:
