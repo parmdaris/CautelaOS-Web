@@ -23,8 +23,8 @@ def getModulos(id_modulo = None):
             lista_modulos.append({
                 "id": modulo[0],
                 "nome": modulo[1],
-                "splash_src": "modulos/splash/" + str(modulo[0]) + ".png",
-                "logo_src": "modulos/logo/" + str(modulo[0]) + ".png",
+                "splash_src": "resources/modulos/" + str(modulo[0]) + "/splash.png",
+                "logo_src": "resources/modulos/" + str(modulo[0]) + "/logo.png",
                 "cor_pri": modulo[3],
                 "cor_sec": modulo[4],
                 "cor_terc": modulo[5],
@@ -43,8 +43,8 @@ def getModulos(id_modulo = None):
                 "empresa": dados[6],
 
                 "img_src": {
-                    "splash_src": "modulos/splash/" + str(dados[0]) + ".png",
-                    "logo_src": "modulos/logo/" + str(dados[0]) + ".png",
+                    "splash_src": "resources/modulos/" + str(dados[0]) + "/splash.png",
+                    "logo_src": "resources/modulos/" + str(dados[0]) + "/logo.png",
                 },
 
                 "cores": {
