@@ -40,14 +40,24 @@ def getModulos(id_modulo = None):
         modulo = {
                 "id": dados[0],
                 "nome": dados[1],
-                "splash_src": "modulos/splash/" + str(dados[0]) + ".png",
-                "logo_src": "modulos/logo/" + str(dados[0]) + ".png",
-                "cor_pri": dados[3],
-                "cor_sec": dados[4],
-                "cor_terc": dados[5],
-                "cor_texto": cor_texto(dados[3]), ##################################################### DESCONTINUAR
-                "empresa": dados[6]
+                "empresa": dados[6],
+
+                "img_src": {
+                    "splash_src": "modulos/splash/" + str(dados[0]) + ".png",
+                    "logo_src": "modulos/logo/" + str(dados[0]) + ".png",
+                },
+
+                "cores": {
+                    "primaria": dados[3],
+                    "secundaria": dados[4],
+                    "terciaria": dados[5],
+                    "texto_barra": cor_texto(dados[3])
+                },
+
+                "macrofuncoes": getMacrofuncoes(cursor, dados[0])
             }
+        
+        print(modulo["macrofuncoes"])
 
         return modulo
     
@@ -62,7 +72,18 @@ def cor_texto(hexcolor):
 
     luminancia = (0.299*r + 0.587*g + 0.114*b)
 
-    return "#000000" if luminancia > 100 else "#FFFFFF"
+    return "#000000" if luminancia > 180 else "#cfd8dc"
+
+
+
+def getMacrofuncoes(cursor, id_modulo):
+    query = '''select mf.nome as funcao from modulos.macrofuncoes_modulo mfunc
+                    join modulos.dados mod on mod.id = mfunc.id_modulo 
+                    join sistema.macrofuncoes mf on mf.id = mfunc.id_macrofuncao where mod.id = %s
+                    order by mf.nome ASC'''
+    cursor.execute(query, (id_modulo,))
+    return [p[0] for p in cursor.fetchall()]
+
 
 
 def verificarAcesso(id_usuario):

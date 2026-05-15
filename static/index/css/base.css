@@ -18,7 +18,7 @@ html, body {
     width: 260px;
     background-color: var(--cor-secundaria);
     /*background-color: #0f2a44;*/
-    color: #fff;
+    color: var(--cor-texto-barra);
     display: flex;
     flex-direction: column;
 }
@@ -26,6 +26,7 @@ html, body {
 .sidebar-brand {
     padding: 20px;
     border-bottom: 1px solid rgba(255,255,255,0.2);
+    color: #ffffff
 }
 
 .sidebar-brand h1 {
@@ -45,7 +46,7 @@ html, body {
 }
 
 .sidebar-menu a {
-    color: var(--cor-texto);
+    color: var(--cor-texto-barra);
     /*color: #cfd8dc;*/
     text-decoration: none;
     padding: 12px 15px;
@@ -94,30 +95,12 @@ html, body {
     border-radius: 12px;
     font-size: 0.75rem;
     font-weight: bold;
-}
-
-.badge-admin {
-    background-color: #00f7ff;
-    color: #000;
-}
-
-.badge-operador {
-    background-color: #66ff00;
-    color: #000;
-}
-
-.badge-tecnico {
-    background-color: #0400ff;
-    color: #000;
-}
-
-.badge-consulta {
-    background-color: #9c9c9c;
-    color: #000;
+    background-color: var(--cor-emblema);
+    color: var(--cor-texto-emblema);
 }
 
 .badge-default {
-    background-color: #ff0000;
+    background-color: #ffffff;
     color: #000;
 }
 
@@ -166,7 +149,6 @@ html, body {
 .menu-toggle {
     background: none;
     border: none;
-    /*color: var(--cor-texto);*/
     color: #cfd8dc;
     text-align: left;
     padding: 12px 15px;

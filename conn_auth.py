@@ -41,8 +41,8 @@ def acesso_requerido(*niveis_permitidos):
 
 
 
-def tem_acesso(*niveis): #Verifica se o nivel_acesso do usuario está na tupla "niveis" e retorna true se sim e false se não.
-    return session.get("nivel_acesso") in niveis
+def tem_acesso(*permissoes): #Verifica se o nivel_acesso do usuario está na tupla "permissoes" e retorna true se sim e false se não.
+    return session.get("nivel_acesso") in permissoes
 
 
 

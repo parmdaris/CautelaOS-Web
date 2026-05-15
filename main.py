@@ -4,7 +4,7 @@ from db_configdata import inicializarCfg, getVersao
 from conn_estoque import moeda_para_float
 import conn_cautelas as cautelas, conn_clientes as clientes, conn_estoque as estoque, conn_vendas as vendas
 import conn_modulos as modulos, conn_colaboradores as usuarios
-import datetime, json
+import datetime, json, traceback
 
 data_iso = datetime.datetime.now().date().strftime("%Y-%m-%d %H:%M:%S")
 data = datetime.datetime.now().date().strftime("%d/%m/%Y")
@@ -25,16 +25,9 @@ def iniciarIndex():
     @app.route('/')
     @login_requerido
     def dashboard():
-        
+
         dados_modulo = modulos.getModulos(int(session["modulo_id"]))
         session["modulo"] = dados_modulo
-        
-        session["modulo_nome"] = dados_modulo["nome"]
-        session["modulo_cor_pri"] = dados_modulo["cor_pri"]
-        session["modulo_cor_sec"] = dados_modulo["cor_sec"]
-        session["modulo_cor_terc"] = dados_modulo["cor_terc"]
-        session["modulo_cor_texto"] = dados_modulo["cor_texto"]
-        session["modulo_logo_src"] = dados_modulo["logo_src"]
             
         valor_estoque = estoque.valorEstoque()
         qtd_itens = estoque.qtdArtigos()
@@ -42,15 +35,12 @@ def iniciarIndex():
         valor_total_hoje = vendas.getValorVendas(0)
         qtd_vendas_hoje = vendas.getQtyVendas(0)
 
-        print(session["usuario"]["autorizacoes"])
-
         return render_template('dashboard.html', 
                                valor_estoque=valor_estoque, 
                                qtd_itens=qtd_itens, 
                                criticos=criticos, 
                                valor_total_hoje=valor_total_hoje,
                                qtd_vendas_hoje=qtd_vendas_hoje,
-                               dados_modulo=dados_modulo
                                )
     
     
@@ -65,7 +55,6 @@ def iniciarIndex():
             user = usuarios.autenticar_usuario(usuario, senha)
             
             if user:
-                user["autorizacoes"] = usuarios.getAutorizacoes(user["id"])
                 session["usuario"] = user
 
                 usuarios.ultimoLogin(user['id'])
@@ -103,6 +92,10 @@ def iniciarIndex():
             return redirect(url_for("dashboard"))
         
         return render_template("start.html", usuario = session["usuario"]["u_apelido"])
+    
+    #@app.errorhandler(Exception)
+    #def tratar_erro(e):
+    #    return render_template("erro.html", erro=str(e), tipo=type(e).__name__, traceback=traceback.format_exc()), 500
 
 ################################################################################# Modulos de trabalho
     
@@ -391,7 +384,7 @@ def iniciarIndex():
 
     @app.route('/clientes')
     @login_requerido
-    @acesso_requerido(1, 2)
+    #@acesso_requerido(1, 2)
     def visualizar_clientes():
         lista_clientes = clientes.getClientes()
         qtd_clientes = {
@@ -404,7 +397,7 @@ def iniciarIndex():
     
     @app.route('/clientes/inativos')
     @login_requerido
-    @acesso_requerido(1, 2)
+    #@acesso_requerido(1, 2)
     def visualizar_clientes_inativos():
         lista_clientes = clientes.getClientes(-1)
         qtd_clientes = {
@@ -417,7 +410,7 @@ def iniciarIndex():
 
     @app.route('/clientes/<id_cliente>')
     @login_requerido
-    @acesso_requerido(1, 2)
+    #@acesso_requerido(1, 2)
     def detalhes_cliente(id_cliente):
         dados_cliente = clientes.getDadosCliente(id_cliente)
         return render_template('clientes/detalhes_cliente.html', cliente=dados_cliente)
@@ -425,7 +418,7 @@ def iniciarIndex():
 
     @app.route('/clientes/editar/<id_cliente>')
     @login_requerido
-    @acesso_requerido(1)
+    #@acesso_requerido(1)
     def editar_cliente(id_cliente):
         modulos = [
             {"nome": "Vortex Filamentos", "apelido": "vortex"},
@@ -440,7 +433,7 @@ def iniciarIndex():
 
     @app.route('/colaboradores') 
     @login_requerido
-    @acesso_requerido(1)
+    #@acesso_requerido(1)
     def visualizar_colaboradores():
         qty_colabs = usuarios.getQtyColabs()
         dados_colabs = usuarios.getListaColaboradores()
@@ -450,7 +443,7 @@ def iniciarIndex():
 
     @app.route('/colaboradores/<int:id_colab>', methods=['GET','POST'])
     @login_requerido
-    @acesso_requerido(1)
+    #@acesso_requerido(1)
     def detalhes_colaborador(id_colab):
         dados_colab = usuarios.getDadosColaborador(id_colab)
         return render_template('colaboradores/detalhes_colaborador.html', dados_colab=dados_colab) 
@@ -466,7 +459,7 @@ def iniciarIndex():
     
     @app.route('/colaboradores/<id_colab>/editar', methods=['GET', 'POST'])
     @login_requerido
-    @acesso_requerido(1)
+    #@acesso_requerido(1)
     def edit_dados_colaborador(id_colab):
         cargos = usuarios.getCargos()
         
@@ -485,7 +478,7 @@ def iniciarIndex():
 
     @app.route('/colaboradores/novo', methods = ['GET', 'POST'])
     @login_requerido
-    @acesso_requerido(1)
+    #@acesso_requerido(1)
     def cadastrar_colab():
         id_operador = session["usuario"]["id"]
 
@@ -530,7 +523,7 @@ def alterar_senha_colab():
 
 @app.route('/colaboradores/<id_colab>/editar/redefinirsenha', methods = ['GET', 'POST'])
 @login_requerido
-@acesso_requerido(1)
+#@acesso_requerido(1)
 def redefinir_senha_colab(id_colab):
     if request.method == 'POST':
         cpf_informado = request.form.get("cpf_colaborador")

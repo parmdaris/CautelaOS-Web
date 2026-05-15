@@ -11,7 +11,7 @@ def autenticar_usuario(usuario, senha):
     try:
         connection = conectarBanco()
         cursor = connection.cursor()
-        query = """SELECT d.id, d.apelido, d.senha_hash, d.nivel_acesso, c.cargo, d.primeiro_acesso
+        query = """SELECT d.id, d.apelido, d.senha_hash, c.cargo, d.primeiro_acesso, c.cor_emblema
                     FROM colaborador.dados d
                     JOIN colaborador.cargos c
                     ON d.nivel_acesso = c.id_acesso
@@ -29,10 +29,15 @@ def autenticar_usuario(usuario, senha):
             return {
                 "id": dadosColab[0],
                 "nome": dadosColab[1],
-                "nivel_acesso": dadosColab[3], #############################################################Descontinuar
-                "cargo": dadosColab[4],
-                "primeiro_acesso": dadosColab[5]
+                "cargo": dadosColab[3],
+                "primeiro_acesso": dadosColab[4],
+                "funcoes_habilitadas": getFuncoesHabilitadas(cursor, dadosColab[0]),
+                "emblema": {
+                    "cor_emblema": dadosColab[5],
+                    "cor_texto": cor_texto(dadosColab[5])
+                }
             }
+        
         return None
 
     finally:
@@ -42,62 +47,27 @@ def autenticar_usuario(usuario, senha):
             connection.close()
 
 
-def getAcessos(id):
-    connection = None
-    cursor = None
 
-    try:
-        connection = conectarBanco()
-        cursor = connection.cursor()
-        query = """SELECT *
-                    FROM colaborador.acessos
-                    WHERE id_usuario = %s"""
-    
-        cursor.execute(query, (id,))
-        dadosAcessos = cursor.fetchone()
-        return {
-                    "ver_estoque": dadosAcessos[1],
-                    "editar_item_estoque": dadosAcessos[2],
-                    "ver_vendas": dadosAcessos[3],
-                    "registrar_vendas": dadosAcessos[4],
-                    "editar_vendas": dadosAcessos[5],
-                    "ver_os": dadosAcessos[6],
-                    "registrar_os": dadosAcessos[7],
-                    "editar_os": dadosAcessos[8],
-                    "ver_cautela": dadosAcessos[9],
-                    "registrar_cautela": dadosAcessos[10],
-                    "editar_cautela": dadosAcessos[11],
-                    "ver_relatorios": dadosAcessos[12],
-                    "apagar_dados": dadosAcessos[13]
-                }
+def cor_texto(hexcolor):
+    hexcolor = hexcolor.replace("#", "")
 
-    finally:
-        if cursor:
-            cursor.close()
-        if connection:
-            connection.close()
+    r = int(hexcolor[0:2], 16)
+    g = int(hexcolor[2:4], 16)
+    b = int(hexcolor[4:6], 16)
 
-            
+    luminancia = (0.299*r + 0.587*g + 0.114*b)
 
-def getAutorizacoes(id_usuario):
-    connection = None
-    cursor = None
-    connection = conectarBanco()
-    connection.autocommit = True
-    cursor = connection.cursor()
+    return "#000000" if luminancia > 100 else "#FFFFFF"
 
-    query = '''select p.nome as permissao from colaborador.usuarios_permissoes perm
+
+
+def getFuncoesHabilitadas(cursor, id_usuario):
+    query = '''select f.nome as permissao from colaborador.usuarios_permissoes perm
                     join colaborador.dados u on u.id = perm.id_usuario 
-                    join colaborador.permissoes p on p.id = perm.id_permissao where u.id = %s
+                    join sistema.funcoes f on f.id = perm.id_permissao where u.id = %s
                     order by permissao ASC'''
-    
     cursor.execute(query, (id_usuario,))
-    permissoes_fetch = cursor.fetchall()
-
-    permissoes = [p[0] for p in permissoes_fetch]
-
-    connection.close()
-    return permissoes
+    return [p[0] for p in cursor.fetchall()]
     
     
 
