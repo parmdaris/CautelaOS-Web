@@ -50,27 +50,180 @@
 
         </div>
 
+        <div class="permissoes-modulos-wrapper">
+            <label class="title" for="grupos-grid">Módulos</label>
+            <div class="grupos-grid">
+
+                {% if dados_colab.cargo == "Administrador" %}
+                <div class="grupo">
+                    <div class="grupo-header">
+                        <div class="grupo-icon ico-estoque">📦</div>
+                        <span class="grupo-nome">CautelaOS</span>
+                    </div>
+                    <div class="grupo-items">
+                        <label class="perm-item"><input type="checkbox" name="perm_MOD1_estoque" disabled><span>Estoque</span></label>
+                        <label class="perm-item"><input type="checkbox" name="perm_MOD1_venda" disabled><span>Vendas</span></label>
+                        <label class="perm-item"><input type="checkbox" name="perm_MOD1_cautela" disabled><span>Cautelas</span></label>
+                        <label class="perm-item"><input type="checkbox" name="perm_MOD1_servico" disabled><span>Serviços</span></label>
+                        <label class="perm-item"><input type="checkbox" name="perm_MOD1_cliente" disabled><span>Clientes</span></label>
+                        <label class="perm-item"><input type="checkbox" name="perm_MOD1_colaborador" disabled><span>Colaboradores</span></label>
+                        <label class="perm-item"><input type="checkbox" name="perm_MOD1_relatorio" disabled><span>Relatórios</span></label>
+                    </div>
+                </div>
+                {% endif %}
+
+                <div class="grupo">
+                    <div class="grupo-header">
+                        <div class="grupo-icon ico-vendas">🛒</div>
+                        <span class="grupo-nome">2</span>
+                    </div>
+                    <div class="grupo-items">
+                        <label class="perm-item"><input type="checkbox" name="perm_MOD2_estoque" disabled><span>Estoque</span></label>
+                        <label class="perm-item"><input type="checkbox" name="perm_MOD2_venda" disabled><span>Vendas</span></label>
+                        <label class="perm-item"><input type="checkbox" name="perm_MOD2_cautela" disabled><span>Cautelas</span></label>
+                        <label class="perm-item"><input type="checkbox" name="perm_MOD2_servico" disabled><span>Serviços</span></label>
+                        <label class="perm-item"><input type="checkbox" name="perm_MOD2_cliente" disabled><span>Clientes</span></label>
+                        <label class="perm-item"><input type="checkbox" name="perm_MOD2_colaborador" disabled><span>Colaboradores</span></label>
+                        <label class="perm-item"><input type="checkbox" name="perm_MOD1_relatorio" disabled><span>Relatórios</span></label>
+                    </div>
+                </div>
+
+                <div class="grupo">
+                    <div class="grupo-header">
+                        <div class="grupo-icon ico-servico">🔧</div>
+                        <span class="grupo-nome">3</span>
+                    </div>
+                    <div class="grupo-items">
+                        <label class="perm-item"><input type="checkbox" name="perm_MOD3_estoque" disabled><span>Estoque</span></label>
+                        <label class="perm-item"><input type="checkbox" name="perm_MOD3_venda" disabled><span>Vendas</span></label>
+                        <label class="perm-item"><input type="checkbox" name="perm_MOD3_cautela" disabled><span>Cautelas</span></label>
+                        <label class="perm-item"><input type="checkbox" name="perm_MOD3_servico" disabled><span>Serviços</span></label>
+                        <label class="perm-item"><input type="checkbox" name="perm_MOD3_cliente" disabled><span>Clientes</span></label>
+                        <label class="perm-item"><input type="checkbox" name="perm_MOD3_colaborador" disabled><span>Colaboradores</span></label>
+                        <label class="perm-item"><input type="checkbox" name="perm_MOD1_relatorio" disabled><span>Relatórios</span></label>
+                    </div>
+                </div>
+
+                <div class="grupo">
+                    <div class="grupo-header">
+                        <div class="grupo-icon ico-cautela">📋</div>
+                        <span class="grupo-nome">4</span>
+                    </div>
+                    <div class="grupo-items">
+                        <label class="perm-item"><input type="checkbox" name="perm_MOD4_estoque" disabled><span>Estoque</span></label>
+                        <label class="perm-item"><input type="checkbox" name="perm_MOD4_venda" disabled><span>Vendas</span></label>
+                        <label class="perm-item"><input type="checkbox" name="perm_MOD4_cautela" disabled><span>Cautelas</span></label>
+                        <label class="perm-item"><input type="checkbox" name="perm_MOD4_servico" disabled><span>Serviços</span></label>
+                        <label class="perm-item"><input type="checkbox" name="perm_MOD4_cliente" disabled><span>Clientes</span></label>
+                        <label class="perm-item"><input type="checkbox" name="perm_MOD4_colaborador" disabled><span>Colaboradores</span></label>
+                        <label class="perm-item"><input type="checkbox" name="perm_MOD1_relatorio" disabled><span>Relatórios</span></label>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+
+
+
+
+
+
+        <div class="permissoes-wrapper">
+            <label class="title" for="grupos-grid">Permissões</label>
+            <div class="grupos-grid">
+
+                <div class="grupo">
+                    <div class="grupo-header">
+                        <div class="grupo-icon ico-estoque">📦</div>
+                        <span class="grupo-nome">Estoque</span>
+                    </div>
+                    <div class="grupo-items">
+                        <label class="perm-item"><input type="checkbox" name="perm_estoque_ver" disabled><span>Ver</span></label>
+                        <label class="perm-item"><input type="checkbox" name="perm_estoque_editar" disabled><span>Editar</span></label>
+                    </div>
+                </div>
+
+                <div class="grupo">
+                    <div class="grupo-header">
+                        <div class="grupo-icon ico-vendas">🛒</div>
+                        <span class="grupo-nome">Vendas</span>
+                    </div>
+                    <div class="grupo-items">
+                        <label class="perm-item"><input type="checkbox" name="perm_vendas_ver" disabled><span>Ver</span></label>
+                        <label class="perm-item"><input type="checkbox" name="perm_vendas_editar" disabled><span>Editar</span></label>
+                        <label class="perm-item"><input type="checkbox" name="perm_vendas_registrar" disabled><span>Registrar</span></label>
+                    </div>
+                </div>
+
+                <div class="grupo">
+                    <div class="grupo-header">
+                        <div class="grupo-icon ico-servico">🔧</div>
+                        <span class="grupo-nome">Serviço</span>
+                    </div>
+                    <div class="grupo-items">
+                        <label class="perm-item"><input type="checkbox" name="perm_servico_ver" disabled><span>Ver</span></label>
+                        <label class="perm-item"><input type="checkbox" name="perm_servico_editar" disabled><span>Editar</span></label>
+                        <label class="perm-item"><input type="checkbox" name="perm_servico_registrar" disabled><span>Registrar</span></label>
+                    </div>
+                </div>
+
+                <div class="grupo">
+                    <div class="grupo-header">
+                        <div class="grupo-icon ico-cautela">📋</div>
+                        <span class="grupo-nome">Cautela</span>
+                    </div>
+                    <div class="grupo-items">
+                        <label class="perm-item"><input type="checkbox" name="perm_cautela_ver" disabled><span>Ver</span></label>
+                        <label class="perm-item"><input type="checkbox" name="perm_cautela_editar" disabled><span>Editar</span></label>
+                        <label class="perm-item"><input type="checkbox" name="perm_cautela_registrar" disabled><span>Registrar</span></label>
+                    </div>
+                </div>
+
+                <div class="grupo">
+                    <div class="grupo-header">
+                        <div class="grupo-icon ico-relat">📊</div>
+                        <span class="grupo-nome">Relatórios</span>
+                    </div>
+                    <div class="grupo-items">
+                        <label class="perm-item"><input type="checkbox" name="perm_relatorios" disabled><span>Acessar</span></label>
+                    </div>
+                </div>
+
+                <div class="grupo">
+                    <div class="grupo-header">
+                        <div class="grupo-icon ico-dados">🗑</div>
+                        <span class="grupo-nome">Dados</span>
+                    </div>
+                    <div class="grupo-items">
+                        <label class="perm-item"><input type="checkbox" name="perm_dados_apagar" disabled><span>Apagar</span></label>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
 
         <div class="seq-cadastro">
 
             <div class="campo">
-                <label>Data de cadastro</label>
-                <input name="dataCadastro" class="input padrao" disabled value="{{dados_colab.data_inclusao}}">
+                <label for="dataCadastro">Data de cadastro</label>
+                <p name="dataCadastro">{{dados_colab.data_inclusao}}</p>
             </div>
 
             <div class="campo">
                 <label>Operador do cadastro</label>
-                <input name="operadorCadastro" class="input padrao" disabled value="{{dados_colab.operador_inclusao}}">
+                <p name="operadorCadastro">{{dados_colab.operador_inclusao}}</p>
             </div>
 
             <div class="campo">
                 <label>Data de modificação</label>
-                <input name="dataModificacao" class="input padrao" disabled value="{% if dados_colab.data_modificacao == None %} - {%else%} {{dados_colab.data_modificacao}} {%endif%}">
+                <p name="dataModificacao">{% if dados_colab.data_modificacao == None %} - {%else%} {{dados_colab.data_modificacao}} {%endif%}</p>
             </div>
 
             <div class="campo">
-                <label>Operador de modificação</label>
-                <input name="operadorModificacao" class="input padrao" disabled value="{% if dados_colab.operador_modificacao == None %} - {%else%} {{dados_colab.operador_modificacao}} {%endif%}">
+                <label for="operadorModificacao">Operador de modificação</label>
+                <p name="operadorModificacao">{% if dados_colab.operador_modificacao == None %} - {%else%} {{dados_colab.operador_modificacao}} {%endif%}</p>
             </div>
 
         </div>

@@ -66,6 +66,20 @@ body {
     display: flex;
 }
 
+.content-header {
+    width: 100%;
+    background: #0f2a44;
+    border-radius: 14px;
+    align-items: center;
+    text-align: center;    
+    max-width: 100%;
+    padding: 10px;
+}
+
+.content-header h4 {
+    color: #FFFFFF;
+}
+
 .content-container {
     width: 100%;
     max-width: fit-content;

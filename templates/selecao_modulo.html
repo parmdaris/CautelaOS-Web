@@ -21,8 +21,11 @@
 
 <main class="module-wrapper">
     <div class="content-container">
-        <h3>Módulos disponíveis</h3>
-        <div class="header-divider"></div>
+
+        <div class="content-header">
+            <h4>Módulos disponíveis</h4>
+        </div>
+        
         <div class="module-container">
             {% for modulo in modulos %}
                 {% if modulo.id in usr_modulos %}
