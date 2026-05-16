@@ -56,8 +56,6 @@ def getModulos(id_modulo = None):
 
                 "macrofuncoes": getMacrofuncoes(cursor, dados[0])
             }
-        
-        print(modulo["macrofuncoes"])
 
         return modulo
     

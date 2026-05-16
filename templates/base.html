@@ -29,30 +29,40 @@
         <div class="app">
             <aside class="sidebar">
                 <div class="sidebar-brand">
-                    <div style="display: flex; align-items: center; text-align: center;">
+                    <div class="module-brand">
                         {% if session["u_qtd_modulos"] > 1 %}
-                            <a href="{{ url_for('selecionar_modulo') }}" style="text-decoration: none; color: inherit;">
-                                <img src="{{ url_for('static', filename=session.get("modulo", {}).get("img_src").get("logo_src")) }}" alt="Trocar módulo" style="max-width: 40px;">
-                                <h1>{{session.get("modulo", {}).get("nome", "MODULE")}}</h1>
+                            <a href="{{ url_for('selecionar_modulo') }}">
+                                <img src="{{ url_for('static', filename=session.get("modulo", {}).get("img_src").get("logo_src")) }}" alt="Trocar módulo">
+                                <div>
+                                    <h1 style="margin: 0;">{{ session.get("modulo", {}).get("nome", "MODULE") }}</h1>
+                                    {% if session.get("modulo", {}).get("nome") == "CautelaOS" %}
+                                        <span>Versão {{session["versao_sistema"]}}</span>
+                                    {% else %}
+                                        <span>
+                                            <div>
+                                                CautelaOS {{session["versao_sistema"]}}
+                                            </div>
+                                        </span>
+                                    {% endif %}
+                                </div>    
                             </a>
                         {% else %}
-                                <img src="{{ url_for('static', filename=session.get("modulo", {}).get("img_src").get("logo_src")) }}" alt="Trocar módulo" style="max-width: 40px;">
-                                <h1>{{session.get("modulo", {}).get("nome", "MODULE")}}</h1>
-                        {%endif%}
+                            <img src="{{ url_for('static', filename=session.get("modulo", {}).get("img_src").get("logo_src")) }}" alt="" style="max-width: 40px;">
+                            <h1 style="margin: 0;">{{ session.get("modulo", {}).get("nome", "MODULE") }}</h1>
+                            {% if session.get("modulo", {}).get("nome") == "CautelaOS" %}
+                                <span>Versão {{session["versao_sistema"]}}</span>
+                            {% else %}
+                                <span>
+                                    <div>
+                                        CautelaOS {{session["versao_sistema"]}}
+                                    </div>
+                                </span>
+                            {% endif %} 
+                        {% endif %}
 
                     </div>
                     
-                        {% if session.get("modulo", {}).get("nome") == "CautelaOS" %}
-                            <span>
-                                {{session["versao_sistema"]}}
-                            </span>
-                        {% else %}
-                            <span>
-                                <div>
-                                    CautelaOS {{session["versao_sistema"]}}
-                                </div>
-                            </span>
-                        {% endif %}
+                        
                 </div>
 
                 <nav class="sidebar-menu">

@@ -340,8 +340,6 @@ def iniciarIndex():
 
             if id_venda:
                 vendas.registrarItensVenda(id_venda, itens_venda)
-                print(itens_venda)  # debug
-                print("Valor total: ", valor_total)
                 return redirect(url_for('visualizar_vendas'))
             
         ####################################################################### Fim if POST
@@ -376,7 +374,6 @@ def iniciarIndex():
     @login_requerido
     def ver_venda(id_venda):
         dados_venda = vendas.getDadosVenda(id_venda)
-        #print(dados_venda[0]["id_venda"])
         return render_template('venda/ver_venda.html', dados_venda=dados_venda)
 
 ################################################################################# Clientes
@@ -466,7 +463,6 @@ def iniciarIndex():
         if request.method == 'POST':
             novos_dados_colab = request.form.to_dict()
             usuarios.setDadosColaborador(id_colab, novos_dados_colab, session["usuario"]["id"])
-            print(novos_dados_colab)
 
             return redirect(url_for('detalhes_colaborador', id_colab=id_colab, cargos=cargos, dados_colab=novos_dados_colab))
         
@@ -509,13 +505,11 @@ def alterar_senha_colab():
         if usuarios.compararSenhaHash(session["usuario"]["id"], pw_atual):
             usuarios.alterarSenha(session["usuario"]["id"], novo_pw, session["usuario"]["id"])
             usuarios.registrar_modificacao(session["usuario"]["id"], session["usuario"]["id"])
-            print("Senha alterada com sucesso para o usuário ", session["usuario"]["id"])
             session.clear()
             return redirect(url_for("login"))
             #return redirect(url_for('perfil_colaborador'))
         
         else:
-            print("Senha INCORRETA para o usuário", session["usuario"]["id"],"! ###########################")
             pass #######################Lidar com senha incorreta
 
     return render_template('colaboradores/colab_alterar_senha.html', id=session["usuario"]["id"])
@@ -528,12 +522,10 @@ def redefinir_senha_colab(id_colab):
     if request.method == 'POST':
         cpf_informado = request.form.get("cpf_colaborador")
         red = usuarios.recuperarSenha(id_colab, cpf_informado, session["usuario"]["id"])
-        print("FUNÇÃO DE REDEFINIÇÃO DE SENHA EXECUTADA! Resultado:", red)
         return redirect(url_for("detalhes_colaborador", id_colab = id_colab))
     
     dados_colab = usuarios.getDadosColaborador(id_colab)
     login_colab = dados_colab['nome_usuario']
-    print(id_colab, login_colab)
     return render_template('colaboradores/colab_redefinir.html', id_colab=id_colab, login_colab=login_colab)
 
 
