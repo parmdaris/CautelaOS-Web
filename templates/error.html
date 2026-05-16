@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Erro interno - CautelaOS</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='index/css/error.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='index/css/common_contents.css') }}">
+</head>
+<body>
+
+<header class="topbar">
+    <div class="topbar-content">
+        <h1>CautelaOS</h1>
+
+        {% if session.get("usuario") %}
+            <p>Bem-vindo, {{session.get("usuario", {"nome": "USUÁRIO"}).get("nome")}}!</p>         
+        {% endif %}
+
+        <form action="{{ url_for('logout') }}" method="POST">
+                <button type="submit" class="logout-btn">⎋ Sair</button>
+        </form>
+    </div>
+</header>
+
+<main class="error-wrapper">
+
+        {% if erro %}
+            <div class="box">
+                <h1>Erro interno do sistema</h1>
+                <p><strong>Tipo:</strong> {{ tipo }}</p>
+                <p><strong>Mensagem:</strong> {{ erro }}</p>
+                <h3>Stacktrace</h3>
+                <pre>{{ traceback }}</pre>
+            </div>
+        {% else %}
+            <div class="box">
+                <h1>Erro interno</h1>
+                <p><strong>Contate o administrador do sistema</strong></p>
+            </div>
+        {% endif %}
+        
+
+</main>
+
+</body>
+</html>
+
+
+
+
+
+
+

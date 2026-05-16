@@ -1,5 +1,5 @@
-from flask import Flask, url_for, render_template, request, redirect, session
-from conn_auth import login_requerido, acesso_requerido, gerarSenhaHash, tem_acesso, checarSenhaHash
+from flask import Flask, url_for, render_template, request, redirect, session, current_app
+from conn_auth import login_requerido, gerarSenhaHash, tem_acesso, permissao_requerida, macrofuncao_requerida
 from db_configdata import inicializarCfg, getVersao
 from conn_estoque import moeda_para_float
 import conn_cautelas as cautelas, conn_clientes as clientes, conn_estoque as estoque, conn_vendas as vendas
@@ -25,10 +25,8 @@ def iniciarIndex():
     @app.route('/')
     @login_requerido
     def dashboard():
-
-        dados_modulo = modulos.getModulos(int(session["modulo_id"]))
-        session["modulo"] = dados_modulo
-            
+        session["modulo"] = modulos.getModulos(int(session["modulo_id"]))
+        
         valor_estoque = estoque.valorEstoque()
         qtd_itens = estoque.qtdArtigos()
         criticos = estoque.countArtigosCriticos()
@@ -58,10 +56,6 @@ def iniciarIndex():
                 session["usuario"] = user
 
                 usuarios.ultimoLogin(user['id'])
-
-                #acessos = usuarios.getAcessos(int(user["u_id"])) ############################################################## REMOVER
-                #session.update(acessos) ####################################################################################### REMOVER
-
                 
                 if user["primeiro_acesso"]:
                     return redirect(url_for("acesso_inicial"))
@@ -73,9 +67,9 @@ def iniciarIndex():
         return render_template("login.html")
 
     @app.route("/logout", methods=["POST"])
-    @login_requerido
     def logout():
-        session.clear()
+        if session:
+            session.clear()
         return redirect(url_for("login"))
     
 
@@ -93,9 +87,20 @@ def iniciarIndex():
         
         return render_template("start.html", usuario = session["usuario"]["u_apelido"])
     
-    #@app.errorhandler(Exception)
-    #def tratar_erro(e):
-    #    return render_template("erro.html", erro=str(e), tipo=type(e).__name__, traceback=traceback.format_exc()), 500
+    @app.errorhandler(Exception)
+    def tratar_erro(e):
+
+        if current_app.debug:
+            return render_template(
+                "error.html",
+                erro=str(e),
+                tipo=type(e).__name__,
+                traceback=traceback.format_exc()
+            ), 500
+
+        return render_template(
+            "error.html"
+        ), 500
 
 ################################################################################# Modulos de trabalho
     
@@ -126,6 +131,8 @@ def iniciarIndex():
 
     @app.route("/cautelas/")
     @login_requerido
+    @permissao_requerida('cautela_ver')
+    @macrofuncao_requerida('cautela')
     def listar_cautelas():
         lista_cautelas = cautelas.listaCautelas()
         qtd_cautelas = cautelas.qtdCautelas()
@@ -133,11 +140,15 @@ def iniciarIndex():
 
     @app.route("/cautela/nova")
     @login_requerido
+    @permissao_requerida('cautela_registrar')
+    @macrofuncao_requerida('cautela')
     def nova_cautela():
         return render_template('cautela/adicionar_cautela.html')
 
     @app.route('/cautelas/<id_cautela>')
     @login_requerido
+    @permissao_requerida('cautela_ver')
+    @macrofuncao_requerida('cautela')
     def ver_cautela(id_cautela):
         detalhe_dados = cautelas.getDadosCautela(id_cautela)
         itens_cautela = cautelas.getItensCautela(id_cautela, detalhe_dados["qtd_itens"])
@@ -145,6 +156,8 @@ def iniciarIndex():
 
     @app.route("/cautelas/<id_cautela>/print")
     @login_requerido
+    @permissao_requerida('cautela_ver')
+    @macrofuncao_requerida('cautela')
     def imprimir_cautela(id_cautela):
         detalhe_dados = cautelas.getDadosCautela(id_cautela)
         itens_cautela = cautelas.getItensCautela(id_cautela, detalhe_dados["qtd_itens"])
@@ -156,6 +169,8 @@ def iniciarIndex():
 
     @app.route("/estoque")
     @login_requerido
+    @permissao_requerida('estoque_ver')
+    @macrofuncao_requerida('estoque')
     def ver_estoque():
         tipos = estoque.getTiposItens()
         dados_estoque = estoque.getEstoque()
@@ -172,6 +187,8 @@ def iniciarIndex():
 
     @app.route("/estoque/inativos")
     @login_requerido
+    @permissao_requerida('estoque_ver')
+    @macrofuncao_requerida('estoque')
     def ver_itens_inativos():
         tipos = estoque.getTiposItens()
         dados_estoque = estoque.getEstoque(None, False)
@@ -186,6 +203,8 @@ def iniciarIndex():
     
     @app.route("/estoque/editar_item/lote")
     @login_requerido
+    @permissao_requerida('estoque_editar')
+    @macrofuncao_requerida('estoque')
     def editar_lote():
         if request.method == 'POST': ####################################################################################
             return None
@@ -202,12 +221,16 @@ def iniciarIndex():
     
     @app.route("/estoque/<codigo_item>/ver")
     @login_requerido
+    @permissao_requerida('estoque_ver')
+    @macrofuncao_requerida('estoque')
     def ver_item_estoque(codigo_item):
         dados_item = estoque.getDadosItem(codigo_item)
         return render_template('estoque/ver_item_estoque.html', dados_item=dados_item)
     
     @app.route('/estoque/adicionar_item', methods=['GET', 'POST'])
     @login_requerido
+    @permissao_requerida('estoque_cadastrar')
+    @macrofuncao_requerida('estoque')
     def adicionarItem():
 
         if request.method == 'POST':
@@ -231,6 +254,8 @@ def iniciarIndex():
     
     @app.route('/estoque/editar_item/<codigo_item>', methods=['POST', 'GET'])
     @login_requerido
+    @permissao_requerida('estoque_editar')
+    @macrofuncao_requerida('estoque')
     def alterarItem(codigo_item):
         if request.method == 'POST':
             dados_item = request.form.to_dict()
@@ -244,18 +269,24 @@ def iniciarIndex():
     
     @app.route('/estoque/<codigo_item>/deletar')
     @login_requerido
+    @permissao_requerida('estoque_editar')
+    @macrofuncao_requerida('estoque')
     def deletarItem(codigo_item):
         estoque.deletarItem(codigo_item)
         return redirect(url_for('ver_estoque'))
     
     @app.route('/estoque/<codigo_item>/<ativar>')
     @login_requerido
+    @permissao_requerida('estoque_editar')
+    @macrofuncao_requerida('estoque')
     def definirAtivo(codigo_item, ativar=bool):
         estoque.definirAtivo(session["usuario"]["id"], codigo_item, ativar)
         return redirect(url_for('ver_item_estoque', codigo_item=codigo_item))
     
     @app.route("/estoque/print", methods=['GET', 'POST'])
     @login_requerido
+    @permissao_requerida('estoque_ver')
+    @macrofuncao_requerida('estoque')
     def imprimir_estoque():
         parametros = request.form.to_dict()
 
@@ -303,6 +334,8 @@ def iniciarIndex():
 
     @app.route('/vendas/nova', methods=['GET', 'POST'])
     @login_requerido
+    @permissao_requerida('venda_registrar')
+    @macrofuncao_requerida('venda')
     def registrar_venda():
         if request.method == "POST":
             codigos = request.form.getlist("codigo[]")
@@ -352,6 +385,8 @@ def iniciarIndex():
     
     @app.route('/vendas')
     @login_requerido
+    @permissao_requerida('venda_ver')
+    @macrofuncao_requerida('venda')
     def visualizar_vendas():
         if request.method == "POST":
             pass
@@ -372,6 +407,8 @@ def iniciarIndex():
 
     @app.route("/vendas/<id_venda>/ver")
     @login_requerido
+    @permissao_requerida('venda_ver')
+    @macrofuncao_requerida('venda')
     def ver_venda(id_venda):
         dados_venda = vendas.getDadosVenda(id_venda)
         return render_template('venda/ver_venda.html', dados_venda=dados_venda)
@@ -381,7 +418,8 @@ def iniciarIndex():
 
     @app.route('/clientes')
     @login_requerido
-    #@acesso_requerido(1, 2)
+    @permissao_requerida('cliente_ver')
+    @macrofuncao_requerida('cliente')
     def visualizar_clientes():
         lista_clientes = clientes.getClientes()
         qtd_clientes = {
@@ -394,7 +432,8 @@ def iniciarIndex():
     
     @app.route('/clientes/inativos')
     @login_requerido
-    #@acesso_requerido(1, 2)
+    @permissao_requerida('cliente_ver')
+    @macrofuncao_requerida('cliente')
     def visualizar_clientes_inativos():
         lista_clientes = clientes.getClientes(-1)
         qtd_clientes = {
@@ -407,7 +446,8 @@ def iniciarIndex():
 
     @app.route('/clientes/<id_cliente>')
     @login_requerido
-    #@acesso_requerido(1, 2)
+    @permissao_requerida('cliente_ver')
+    @macrofuncao_requerida('cliente')
     def detalhes_cliente(id_cliente):
         dados_cliente = clientes.getDadosCliente(id_cliente)
         return render_template('clientes/detalhes_cliente.html', cliente=dados_cliente)
@@ -415,11 +455,12 @@ def iniciarIndex():
 
     @app.route('/clientes/editar/<id_cliente>')
     @login_requerido
-    #@acesso_requerido(1)
+    @permissao_requerida('cliente_editar')
+    @macrofuncao_requerida('cliente')
     def editar_cliente(id_cliente):
         modulos = [
             {"nome": "Vortex Filamentos", "apelido": "vortex"},
-            {"nome": "Mimiso Arena Card Games", "apelido": "mimiso"},
+            {"nome": "Mimiso Arena Card Games", "apelido": "mimiso"}, ##################################################################################################!!!!!! EDITAR
             {"nome": "Niitech Outsourcing", "apelido": "niitech"}
         ]
         dados_cliente = clientes.getDadosCliente(id_cliente)
@@ -430,7 +471,8 @@ def iniciarIndex():
 
     @app.route('/colaboradores') 
     @login_requerido
-    #@acesso_requerido(1)
+    @permissao_requerida('colaborador_ver')
+    @macrofuncao_requerida('colaborador')
     def visualizar_colaboradores():
         qty_colabs = usuarios.getQtyColabs()
         dados_colabs = usuarios.getListaColaboradores()
@@ -440,7 +482,8 @@ def iniciarIndex():
 
     @app.route('/colaboradores/<int:id_colab>', methods=['GET','POST'])
     @login_requerido
-    #@acesso_requerido(1)
+    @permissao_requerida('colaborador_ver')
+    @macrofuncao_requerida('colaborador')
     def detalhes_colaborador(id_colab):
         dados_colab = usuarios.getDadosColaborador(id_colab)
         return render_template('colaboradores/detalhes_colaborador.html', dados_colab=dados_colab) 
@@ -448,6 +491,8 @@ def iniciarIndex():
 
     @app.route('/perfil', methods=['GET','POST'])
     @login_requerido
+    @permissao_requerida('colaborador_ver')
+    @macrofuncao_requerida('colaborador')
     def perfil_colaborador():
         id_colab = session["usuario"]["id"]
         dados_colab = usuarios.getDadosColaborador(id_colab)
@@ -456,7 +501,8 @@ def iniciarIndex():
     
     @app.route('/colaboradores/<id_colab>/editar', methods=['GET', 'POST'])
     @login_requerido
-    #@acesso_requerido(1)
+    @permissao_requerida('colaborador_editar')
+    @macrofuncao_requerida('colaborador')
     def edit_dados_colaborador(id_colab):
         cargos = usuarios.getCargos()
         
@@ -474,7 +520,8 @@ def iniciarIndex():
 
     @app.route('/colaboradores/novo', methods = ['GET', 'POST'])
     @login_requerido
-    #@acesso_requerido(1)
+    @permissao_requerida('colaborador_cadastrar')
+    @macrofuncao_requerida('colaborador')
     def cadastrar_colab():
         id_operador = session["usuario"]["id"]
 
@@ -497,6 +544,8 @@ def iniciarIndex():
 
 @app.route('/perfil/alterar/senha', methods = ['GET', 'POST'])
 @login_requerido
+@permissao_requerida('colaborador_editar')
+@macrofuncao_requerida('colaborador')
 def alterar_senha_colab():
     if request.method == 'POST':
         pw_atual = request.form.get("senha_atual")
@@ -517,7 +566,8 @@ def alterar_senha_colab():
 
 @app.route('/colaboradores/<id_colab>/editar/redefinirsenha', methods = ['GET', 'POST'])
 @login_requerido
-#@acesso_requerido(1)
+@permissao_requerida('colaborador_editar')
+@macrofuncao_requerida('colaborador')
 def redefinir_senha_colab(id_colab):
     if request.method == 'POST':
         cpf_informado = request.form.get("cpf_colaborador")

@@ -21,9 +21,7 @@ def conectarBanco():
                         port=os.environ.get("DB_PORT", db.get('port'))
                         )
     except Exception as e:
-        print(e)
-        print("Falha na conexão! Contate o administrador do sistema.")
-        return None
+        raise
     
     return connection
 

@@ -21,22 +21,45 @@ def login_requerido(f):
     return decorated
 
 
-def acesso_requerido(*niveis_permitidos):
+
+
+def permissao_requerida(*permissoes_requeridas):
     def decorator(f):
         @wraps(f)
         def decorated_function(*args, **kwargs):
-            id_acesso = session.get("nivel_acesso")
+            usuario = session.get("usuario")
 
-            if id_acesso is None:
+            if not usuario:
                 return redirect(url_for("login"))
 
-            if id_acesso not in niveis_permitidos:
-                abort(403) #forbidden
+            permissoes_usuario = set(usuario.get("funcoes_habilitadas") or [])
+
+            if not permissoes_usuario.intersection(permissoes_requeridas):
+                abort(403)
 
             return f(*args, **kwargs)
         return decorated_function
     return decorator
 
+
+
+def macrofuncao_requerida(*macrofuncoes_requeridas):
+    def decorator(f):
+        @wraps(f)
+        def decorated_function(*args, **kwargs):
+            modulo = session.get("modulo")
+
+            if not modulo:
+                return redirect(url_for("selecionar_modulo"))
+
+            macrofuncoes_modulo = set(modulo.get("macrofuncoes") or [])
+
+            if not macrofuncoes_modulo.intersection(macrofuncoes_requeridas):
+                abort(403)
+
+            return f(*args, **kwargs)
+        return decorated_function
+    return decorator
 
 
 
