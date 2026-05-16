@@ -1,6 +1,6 @@
 from flask import Flask, url_for, render_template, request, redirect, session, current_app
 from conn_auth import login_requerido, gerarSenhaHash, tem_acesso, permissao_requerida, macrofuncao_requerida
-from db_configdata import inicializarCfg, getVersao
+from ativ_sistema import inicializarCfg, getVersao, getListaFuncoes
 from conn_estoque import moeda_para_float
 import conn_cautelas as cautelas, conn_clientes as clientes, conn_estoque as estoque, conn_vendas as vendas
 import conn_modulos as modulos, conn_colaboradores as usuarios
@@ -25,7 +25,13 @@ def iniciarIndex():
     @app.route('/')
     @login_requerido
     def dashboard():
+
+        if not session.get("modulo_id"):
+            return redirect(url_for("selecionar_modulo"))
+    
         session["modulo"] = modulos.getModulos(int(session["modulo_id"]))
+
+        print(session.get("usuario", ""))
         
         valor_estoque = estoque.valorEstoque()
         qtd_itens = estoque.qtdArtigos()
@@ -89,18 +95,20 @@ def iniciarIndex():
     
     @app.errorhandler(Exception)
     def tratar_erro(e):
+        tipo = type(e).__name__
 
         if current_app.debug:
             return render_template(
                 "error.html",
                 erro=str(e),
-                tipo=type(e).__name__,
+                tipo=tipo,
                 traceback=traceback.format_exc()
             ), 500
 
         return render_template(
-            "error.html"
-        ), 500
+            "error.html",
+            tipo=tipo
+        ), getattr(e, 'code', 500)
 
 ################################################################################# Modulos de trabalho
     
@@ -131,7 +139,6 @@ def iniciarIndex():
 
     @app.route("/cautelas/")
     @login_requerido
-    @permissao_requerida('cautela_ver')
     @macrofuncao_requerida('cautela')
     def listar_cautelas():
         lista_cautelas = cautelas.listaCautelas()
@@ -147,7 +154,6 @@ def iniciarIndex():
 
     @app.route('/cautelas/<id_cautela>')
     @login_requerido
-    @permissao_requerida('cautela_ver')
     @macrofuncao_requerida('cautela')
     def ver_cautela(id_cautela):
         detalhe_dados = cautelas.getDadosCautela(id_cautela)
@@ -156,7 +162,6 @@ def iniciarIndex():
 
     @app.route("/cautelas/<id_cautela>/print")
     @login_requerido
-    @permissao_requerida('cautela_ver')
     @macrofuncao_requerida('cautela')
     def imprimir_cautela(id_cautela):
         detalhe_dados = cautelas.getDadosCautela(id_cautela)
@@ -169,7 +174,6 @@ def iniciarIndex():
 
     @app.route("/estoque")
     @login_requerido
-    @permissao_requerida('estoque_ver')
     @macrofuncao_requerida('estoque')
     def ver_estoque():
         tipos = estoque.getTiposItens()
@@ -187,7 +191,6 @@ def iniciarIndex():
 
     @app.route("/estoque/inativos")
     @login_requerido
-    @permissao_requerida('estoque_ver')
     @macrofuncao_requerida('estoque')
     def ver_itens_inativos():
         tipos = estoque.getTiposItens()
@@ -221,7 +224,6 @@ def iniciarIndex():
     
     @app.route("/estoque/<codigo_item>/ver")
     @login_requerido
-    @permissao_requerida('estoque_ver')
     @macrofuncao_requerida('estoque')
     def ver_item_estoque(codigo_item):
         dados_item = estoque.getDadosItem(codigo_item)
@@ -285,7 +287,6 @@ def iniciarIndex():
     
     @app.route("/estoque/print", methods=['GET', 'POST'])
     @login_requerido
-    @permissao_requerida('estoque_ver')
     @macrofuncao_requerida('estoque')
     def imprimir_estoque():
         parametros = request.form.to_dict()
@@ -385,7 +386,6 @@ def iniciarIndex():
     
     @app.route('/vendas')
     @login_requerido
-    @permissao_requerida('venda_ver')
     @macrofuncao_requerida('venda')
     def visualizar_vendas():
         if request.method == "POST":
@@ -407,7 +407,6 @@ def iniciarIndex():
 
     @app.route("/vendas/<id_venda>/ver")
     @login_requerido
-    @permissao_requerida('venda_ver')
     @macrofuncao_requerida('venda')
     def ver_venda(id_venda):
         dados_venda = vendas.getDadosVenda(id_venda)
@@ -418,7 +417,6 @@ def iniciarIndex():
 
     @app.route('/clientes')
     @login_requerido
-    @permissao_requerida('cliente_ver')
     @macrofuncao_requerida('cliente')
     def visualizar_clientes():
         lista_clientes = clientes.getClientes()
@@ -432,7 +430,6 @@ def iniciarIndex():
     
     @app.route('/clientes/inativos')
     @login_requerido
-    @permissao_requerida('cliente_ver')
     @macrofuncao_requerida('cliente')
     def visualizar_clientes_inativos():
         lista_clientes = clientes.getClientes(-1)
@@ -446,7 +443,6 @@ def iniciarIndex():
 
     @app.route('/clientes/<id_cliente>')
     @login_requerido
-    @permissao_requerida('cliente_ver')
     @macrofuncao_requerida('cliente')
     def detalhes_cliente(id_cliente):
         dados_cliente = clientes.getDadosCliente(id_cliente)
@@ -471,7 +467,6 @@ def iniciarIndex():
 
     @app.route('/colaboradores') 
     @login_requerido
-    @permissao_requerida('colaborador_ver')
     @macrofuncao_requerida('colaborador')
     def visualizar_colaboradores():
         qty_colabs = usuarios.getQtyColabs()
@@ -482,16 +477,16 @@ def iniciarIndex():
 
     @app.route('/colaboradores/<int:id_colab>', methods=['GET','POST'])
     @login_requerido
-    @permissao_requerida('colaborador_ver')
     @macrofuncao_requerida('colaborador')
     def detalhes_colaborador(id_colab):
         dados_colab = usuarios.getDadosColaborador(id_colab)
-        return render_template('colaboradores/detalhes_colaborador.html', dados_colab=dados_colab) 
+        lista_funcoes = getListaFuncoes()
+        lista_modulos = modulos.getModulos()
+        return render_template('colaboradores/detalhes_colaborador.html', dados_colab=dados_colab, lista_funcoes=lista_funcoes, lista_modulos=lista_modulos) 
     
 
     @app.route('/perfil', methods=['GET','POST'])
     @login_requerido
-    @permissao_requerida('colaborador_ver')
     @macrofuncao_requerida('colaborador')
     def perfil_colaborador():
         id_colab = session["usuario"]["id"]
@@ -542,41 +537,41 @@ def iniciarIndex():
         return render_template('colaboradores/adicionar_colaborador.html', data=data, cargos=cargos)
 
 
-@app.route('/perfil/alterar/senha', methods = ['GET', 'POST'])
-@login_requerido
-@permissao_requerida('colaborador_editar')
-@macrofuncao_requerida('colaborador')
-def alterar_senha_colab():
-    if request.method == 'POST':
-        pw_atual = request.form.get("senha_atual")
-        novo_pw = request.form.get("nova_senha")
+    @app.route('/perfil/alterar/senha', methods = ['GET', 'POST'])
+    @login_requerido
+    @permissao_requerida('colaborador_editar')
+    @macrofuncao_requerida('colaborador')
+    def alterar_senha_colab():
+        if request.method == 'POST':
+            pw_atual = request.form.get("senha_atual")
+            novo_pw = request.form.get("nova_senha")
+            
+            if usuarios.compararSenhaHash(session["usuario"]["id"], pw_atual):
+                usuarios.alterarSenha(session["usuario"]["id"], novo_pw, session["usuario"]["id"])
+                usuarios.registrar_modificacao(session["usuario"]["id"], session["usuario"]["id"])
+                session.clear()
+                return redirect(url_for("login"))
+                #return redirect(url_for('perfil_colaborador'))
+            
+            else:
+                pass #######################Lidar com senha incorreta
+
+        return render_template('colaboradores/colab_alterar_senha.html', id=session["usuario"]["id"])
+
+
+    @app.route('/colaboradores/<id_colab>/editar/redefinirsenha', methods = ['GET', 'POST'])
+    @login_requerido
+    @permissao_requerida('colaborador_editar')
+    @macrofuncao_requerida('colaborador')
+    def redefinir_senha_colab(id_colab):
+        if request.method == 'POST':
+            cpf_informado = request.form.get("cpf_colaborador")
+            red = usuarios.recuperarSenha(id_colab, cpf_informado, session["usuario"]["id"])
+            return redirect(url_for("detalhes_colaborador", id_colab = id_colab))
         
-        if usuarios.compararSenhaHash(session["usuario"]["id"], pw_atual):
-            usuarios.alterarSenha(session["usuario"]["id"], novo_pw, session["usuario"]["id"])
-            usuarios.registrar_modificacao(session["usuario"]["id"], session["usuario"]["id"])
-            session.clear()
-            return redirect(url_for("login"))
-            #return redirect(url_for('perfil_colaborador'))
-        
-        else:
-            pass #######################Lidar com senha incorreta
-
-    return render_template('colaboradores/colab_alterar_senha.html', id=session["usuario"]["id"])
-
-
-@app.route('/colaboradores/<id_colab>/editar/redefinirsenha', methods = ['GET', 'POST'])
-@login_requerido
-@permissao_requerida('colaborador_editar')
-@macrofuncao_requerida('colaborador')
-def redefinir_senha_colab(id_colab):
-    if request.method == 'POST':
-        cpf_informado = request.form.get("cpf_colaborador")
-        red = usuarios.recuperarSenha(id_colab, cpf_informado, session["usuario"]["id"])
-        return redirect(url_for("detalhes_colaborador", id_colab = id_colab))
-    
-    dados_colab = usuarios.getDadosColaborador(id_colab)
-    login_colab = dados_colab['nome_usuario']
-    return render_template('colaboradores/colab_redefinir.html', id_colab=id_colab, login_colab=login_colab)
+        dados_colab = usuarios.getDadosColaborador(id_colab)
+        login_colab = dados_colab['nome_usuario']
+        return render_template('colaboradores/colab_redefinir.html', id_colab=id_colab, login_colab=login_colab)
 
 
 ######################################## Inicialização do app Flask

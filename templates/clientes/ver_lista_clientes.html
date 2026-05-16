@@ -47,7 +47,7 @@
                 <td>{{ cliente.id }}</td>
                 <td style="text-align:left">{{ cliente.nome }}</td>
                 <td>{{ cliente.rsoc }}</td>
-                <td>{{ cliente.telefone }}</td>
+                <td>{% if cliente.telefone%}{{ cliente.telefone }}{%else%}Não informado{%endif%}</td>
                 {% if cliente.isAtivo == True %}
                     <td>🟢 Ativo</td>
                 {% else %}

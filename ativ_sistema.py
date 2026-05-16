@@ -73,3 +73,30 @@ def atualizarSessao(chave, variavel, valor):
     informacao = session[chave]
     informacao[variavel] = valor
     session[chave] = informacao
+
+
+def getListaFuncoes():
+    try:
+        connection = None
+        cursor = None
+
+        query = '''select * from sistema.funcoes order by nome ASC'''
+
+        connection = conectarBanco()
+        cursor = connection.cursor()
+        cursor.execute(query)
+
+        dados = [p[1] for p in cursor.fetchall()]
+    
+    finally:
+        if cursor:
+            cursor.close()
+        if connection:
+            connection.close()
+
+    return dados
+
+    
+    
+    
+    

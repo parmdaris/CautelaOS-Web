@@ -48,13 +48,18 @@ def macrofuncao_requerida(*macrofuncoes_requeridas):
         @wraps(f)
         def decorated_function(*args, **kwargs):
             modulo = session.get("modulo")
+            usuario = session.get("usuario")
 
             if not modulo:
                 return redirect(url_for("selecionar_modulo"))
 
             macrofuncoes_modulo = set(modulo.get("macrofuncoes") or [])
+            macrofuncoes_usuario = set(usuario.get("macrofuncoes_habilitadas"))
 
             if not macrofuncoes_modulo.intersection(macrofuncoes_requeridas):
+                abort(403)
+
+            if not macrofuncoes_usuario.intersection(macrofuncoes_requeridas):
                 abort(403)
 
             return f(*args, **kwargs)

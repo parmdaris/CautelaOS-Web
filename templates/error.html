@@ -12,13 +12,13 @@
     <div class="topbar-content">
         <h1>CautelaOS</h1>
 
-        {% if session.get("usuario") %}
-            <p>Bem-vindo, {{session.get("usuario", {"nome": "USUÁRIO"}).get("nome")}}!</p>         
-        {% endif %}
-
+        {% if session %}
+        <p>Bem-vindo, {{session.get("usuario", {"nome": "USUÁRIO"}).get("nome")}}!</p>
+        
         <form action="{{ url_for('logout') }}" method="POST">
                 <button type="submit" class="logout-btn">⎋ Sair</button>
         </form>
+        {% endif %}
     </div>
 </header>
 
@@ -33,10 +33,29 @@
                 <pre>{{ traceback }}</pre>
             </div>
         {% else %}
-            <div class="box">
-                <h1>Erro interno</h1>
-                <p><strong>Contate o administrador do sistema</strong></p>
-            </div>
+            {% if tipo == "Forbidden" %}
+                <div class="box">
+                    <h1>403 - Não autorizado</h1>
+                    <p><strong>Você não possui autorização para acessar o recurso solicitado.</strong></p>
+                    <p>Contate o administrador do sistema.</p>
+                </div>
+            {% else %}
+                {% if tipo == "NotFound" %}
+                    <div class="box">
+                        <h1>404 - Não encontrado</h1>
+                        <p><strong>O sistema não conseguiu localizar o recurso solicitado.</strong></p>
+                        <p>Contate o administrador do sistema.</p>
+                    </div>
+                {% else %}
+                    <div class="box">
+                        <h1>Erro interno</h1>
+                        <p><strong>Ocorreu um erro interno no sistema.</strong></p>
+                        <p>Contate o administrador do sistema e informe:</p>
+                        <br>
+                        <p>{{ tipo }}</p>
+                    </div>
+                {% endif %}
+            {% endif %}
         {% endif %}
         
 

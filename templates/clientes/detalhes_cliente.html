@@ -40,22 +40,22 @@
 
             <div class="campo">
                 <label>Data de cadastro</label>
-                <input name="dataCadastro" class="input padrao" disabled value="{{cliente.data_inclusao}}">
+                <input name="dataCadastro" class="input padrao" disabled value="{{cliente.data_cadastro}}">
             </div>
 
             <div class="campo">
                 <label>Operador do cadastro</label>
-                <input name="operadorCadastro" class="input padrao" disabled value="{{cliente.operador_inclusao}}">
+                <input name="operadorCadastro" class="input padrao" disabled value="{{cliente.operador_cadastro}}">
             </div>
 
             <div class="campo">
                 <label>Data de modificação</label>
-                <input name="dataModificacao" class="input padrao" disabled value="{% if cliente.data_modificacao == None %} - {%else%} {{dados_colab.data_modificacao}} {%endif%}">
+                <input name="dataModificacao" class="input padrao" disabled value="{% if cliente.data_modificacao == None %} - {%else%} {{cliente.data_modificacao}} {%endif%}">
             </div>
 
             <div class="campo">
                 <label>Operador de modificação</label>
-                <input name="operadorModificacao" class="input padrao" disabled value="{% if cliente.operador_modificacao == None %} - {%else%} {{dados_colab.operador_modificacao}} {%endif%}">
+                <input name="operadorModificacao" class="input padrao" disabled value="{% if cliente.operador_modificacao == None %} - {%else%} {{cliente.operador_modificacao}} {%endif%}">
             </div>
 
         </div>
@@ -64,7 +64,10 @@
 
         <div class="actions-bar">
             <a href="{{ url_for('visualizar_clientes') }}" class="btn cancelar">← Voltar</a>
-            <a href="{{ url_for('editar_cliente', id_cliente=cliente.id) }}" class="btn acao">✎ Editar dados</a>
+            {% if "cliente_editar" in session.get("usuario").get("funcoes_habilitadas") %}
+                <a href="{{ url_for('editar_cliente', id_cliente=cliente.id) }}" class="btn acao">✎ Editar dados</a>
+            {% endif %}
+            
         </div>
 
 </div>

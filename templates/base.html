@@ -69,7 +69,7 @@
                         <a href="{{ url_for('dashboard') }}">📈 Dashboard</a>
 
                     {% if "estoque" in session.get("modulo", {}).get("macrofuncoes", []) %}
-                        {% if "estoque_ver" in session.get("usuario", {}).get("funcoes_habilitadas", []) %}
+                        {% if "estoque" in session.get("usuario", {}).get("macrofuncoes_habilitadas", []) %}
                             <div class="menu-item has-submenu">
                                 <button class="menu-toggle">
                                     <span>📦 Estoque</span>
@@ -91,7 +91,7 @@
                     
 
                     {% if "venda" in session.get("modulo", {}).get("macrofuncoes", []) %}
-                        {% if "vendas_ver" in session.get("usuario", {}).get("funcoes_habilitadas", []) %}
+                        {% if "venda" in session.get("usuario", {}).get("macrofuncoes_habilitadas", []) %}
                             <div class="menu-item has-submenu">
                                 <button class="menu-toggle">
                                     <span>💰 Vendas</span>
@@ -110,7 +110,7 @@
 
 
                     {% if "cautela" in session.get("modulo", {}).get("macrofuncoes", []) %}
-                        {% if "cautela_ver" in session.get("usuario", {}).get("funcoes_habilitadas", []) %}
+                        {% if "cautela" in session.get("usuario", {}).get("macrofuncoes_habilitadas", []) %}
                             <div class="menu-item has-submenu">
                                 <button class="menu-toggle">
                                     <span>📦 Cautela ***</span>
@@ -129,7 +129,7 @@
 
                     
                     {% if "servico" in session.get("modulo", {}).get("macrofuncoes", []) %}
-                        {% if "servico_ver" in session.get("usuario", {}).get("funcoes_habilitadas", []) %}
+                        {% if "servico" in session.get("usuario", {}).get("macrofuncoes_habilitadas", []) %}
                             <div class="menu-item has-submenu">
                                 <button class="menu-toggle">
                                     <span>🛠️ Serviço ***</span>
@@ -148,7 +148,7 @@
 
 
                     {% if "cliente" in session.get("modulo", {}).get("macrofuncoes", []) %}
-                        {% if "cliente_ver" in session.get("usuario", {}).get("funcoes_habilitadas", []) %}
+                        {% if "cliente" in session.get("usuario", {}).get("macrofuncoes_habilitadas", []) %}
                             <div class="menu-item has-submenu">
                                     <button class="menu-toggle">
                                         <span>👥 Clientes **</span>
@@ -167,7 +167,7 @@
 
                     
                     {% if "colaborador" in session.get("modulo", {}).get("macrofuncoes", []) %}
-                        {% if "colaborador_ver" in session.get("usuario", {}).get("funcoes_habilitadas", []) %}
+                        {% if "colaborador" in session.get("usuario", {}).get("macrofuncoes_habilitadas", []) %}
                             <div class="menu-item has-submenu">
                                 <button class="menu-toggle">
                                     <span>👥 Colaboradores</span>
@@ -185,7 +185,7 @@
                     {%endif%}
                     
                     {% if "relatorio" in session.get("modulo", {}).get("macrofuncoes", []) %}
-                        {% if "relatorios_ver" in session.get("usuario", {}).get("funcoes_habilitadas", []) %}
+                        {% if "relatorio" in session.get("usuario", {}).get("macrofuncoes_habilitadas", []) %}
                             <div class="menu-item has-submenu">
                                 <button class="menu-toggle">
                                     <span>📊 Relatórios ***</span>
@@ -203,7 +203,7 @@
                     {%endif%}
 
                     {% if "modulo" in session.get("modulo", {}).get("macrofuncoes", []) %}
-                        {% if "modulo_ver" in session.get("usuario", {}).get("funcoes_habilitadas", []) %}
+                        {% if "modulo" in session.get("usuario", {}).get("macrofuncoes_habilitadas", []) %}
                             <div class="menu-item has-submenu">
                                 <button class="menu-toggle">
                                     <span>🧩 Módulos ***</span>

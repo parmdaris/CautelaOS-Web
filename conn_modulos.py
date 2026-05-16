@@ -1,4 +1,4 @@
-from db_configdata import conectarBanco
+from ativ_sistema import conectarBanco
 from psycopg2 import errors as pg_err
 from flask import session
 

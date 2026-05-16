@@ -71,7 +71,7 @@
                     </div>
                 </div>
                 {% endif %}
-
+                
                 <div class="grupo">
                     <div class="grupo-header">
                         <div class="grupo-icon ico-vendas">🛒</div>
@@ -232,7 +232,9 @@
 
         <div class="actions-bar">
             <a href="{{ url_for('visualizar_colaboradores') }}" class="btn cancelar">← Voltar</a>
-            <a href="{{ url_for('edit_dados_colaborador', id_colab=dados_colab.id) }}" class="btn acao">✎ Editar dados</a>
+            {% if "colaborador_editar" in session.get("usuario").get("funcoes_habilitadas") %}
+                <a href="{{ url_for('edit_dados_colaborador', id_colab=dados_colab.id) }}" class="btn acao">✎ Editar dados</a>
+            {% endif %}
         </div>
 
 </div>

@@ -1,4 +1,4 @@
-from db_configdata import conectarBanco
+from ativ_sistema import conectarBanco
 from conn_auth import gerarSenhaHash, checarSenhaHash
 from psycopg2 import errors as pg_err
 from datetime import datetime
@@ -31,6 +31,7 @@ def autenticar_usuario(usuario, senha):
                 "nome": dadosColab[1],
                 "cargo": dadosColab[3],
                 "primeiro_acesso": dadosColab[4],
+                "macrofuncoes_habilitadas": getMacrofuncoesHabilitadas(cursor, dadosColab[0]),
                 "funcoes_habilitadas": getFuncoesHabilitadas(cursor, dadosColab[0]),
                 "emblema": {
                     "cor_emblema": dadosColab[5],
@@ -68,8 +69,16 @@ def getFuncoesHabilitadas(cursor, id_usuario):
                     order by permissao ASC'''
     cursor.execute(query, (id_usuario,))
     return [p[0] for p in cursor.fetchall()]
+
     
-    
+def getMacrofuncoesHabilitadas(cursor, id_usuario):
+    query = '''select mf.nome as macrofuncao from colaborador.usuarios_macrofuncoes umf
+                    join colaborador.dados u on u.id = umf.id_usuario 
+                    join sistema.macrofuncoes mf on mf.id = umf.id_macrofuncao where u.id = 1
+                    order by macrofuncao ASC'''
+    cursor.execute(query, (id_usuario,))
+    return [p[0] for p in cursor.fetchall()]
+
 
 def contaIniciada(usuario, senha_nova_hash):
     try:

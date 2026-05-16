@@ -1,4 +1,4 @@
-from db_configdata import conectarBanco
+from ativ_sistema import conectarBanco
 from psycopg2 import errors as pg_err
 
 def getClientes(status = 1):
@@ -162,9 +162,27 @@ def getDadosCliente(id_cliente):
     connection.autocommit = True
     cursor = connection.cursor()
 
-    query = ''' select * from cliente.dados where id_cliente = %s '''
+    query = ''' SELECT 
+                cli.id_cliente,
+                cli.nome_cliente,
+                cli.nome_fantasia,
+                cli.cnpj,
+                cli.telefone_contato,
+                cli.is_ativo,
+                cli.is_contrato,
+                cli.is_venda,
+                cli.data_cadastro,
+                c1.apelido AS operador_cadastro,
+                cli.data_modificacao,
+                c2.apelido AS operador_modificacao
+            FROM cliente.dados cli
+            JOIN colaborador.dados c1
+                ON c1.id = cli.operador_cadastro
+            LEFT JOIN colaborador.dados c2
+                ON c2.id = cli.operador_modificacao
+            WHERE cli.id_cliente = %s'''
 
-    cursor.execute(query, id_cliente)
+    cursor.execute(query, (id_cliente,))
 
     dados = cursor.fetchone()
 
@@ -177,10 +195,10 @@ def getDadosCliente(id_cliente):
             "is_ativo": dados[5],
             "is_contrato": dados[6],
             "is_venda": dados[7],
-            "data_inclusao": None,
-            "operador_inclusao": None,
-            "data_modificacao": None,
-            "operador_modificacao": None
+            "data_cadastro": dados[8],
+            "operador_cadastro": dados[9],
+            "data_modificacao": dados[10],
+            "operador_modificacao": dados[11]
     }
 
     connection.close()
