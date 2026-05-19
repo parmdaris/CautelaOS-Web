@@ -1,5 +1,5 @@
 from flask import Flask, url_for, render_template, request, redirect, session, current_app
-from conn_auth import login_requerido, gerarSenhaHash, tem_acesso, permissao_requerida, macrofuncao_requerida
+from conn_auth import login_requerido, gerarSenhaHash, tem_acesso, permissao_requerida, macrofuncao_requerida, tem_acao
 from ativ_sistema import inicializarCfg, getVersao, getListaFuncoes
 from conn_estoque import moeda_para_float
 import conn_cautelas as cautelas, conn_clientes as clientes, conn_estoque as estoque, conn_vendas as vendas
@@ -15,7 +15,11 @@ app = Flask(__name__)
 def iniciarIndex():
 
     app.secret_key = "cautelaos"
-    app.jinja_env.globals.update(tem_acesso=tem_acesso)
+
+    app.jinja_env.globals.update( #Torna as funções acessiveis em todo o escopo do sistema
+    tem_acesso=tem_acesso,
+    tem_acao=tem_acao
+    )
     
 
     #app.secret_key = os.environ.get("SECRET_KEY", "cautelaos-secret")
@@ -32,12 +36,13 @@ def iniciarIndex():
         session["modulo"] = modulos.getModulos(int(session["modulo_id"]))
 
         print(session.get("usuario", ""))
+        id_modulo = session.get("modulo").get("id")
         
-        valor_estoque = estoque.valorEstoque()
-        qtd_itens = estoque.qtdArtigos()
-        criticos = estoque.countArtigosCriticos()
-        valor_total_hoje = vendas.getValorVendas(0)
-        qtd_vendas_hoje = vendas.getQtyVendas(0)
+        valor_estoque = estoque.valorEstoque(id_modulo=id_modulo)
+        qtd_itens = estoque.qtdArtigos(id_modulo=id_modulo)
+        criticos = estoque.countArtigosCriticos(id_modulo=id_modulo)
+        valor_total_hoje = vendas.getValorVendas(0, id_modulo=id_modulo)
+        qtd_vendas_hoje = vendas.getQtyVendas(0, id_modulo=id_modulo)
 
         return render_template('dashboard.html', 
                                valor_estoque=valor_estoque, 
@@ -176,10 +181,11 @@ def iniciarIndex():
     @login_requerido
     @macrofuncao_requerida('estoque')
     def ver_estoque():
+        id_modulo = session.get("modulo").get("id")
         tipos = estoque.getTiposItens()
-        dados_estoque = estoque.getEstoque(id_modulo = session.get("modulo").get("id"))
-        valor_estoque = estoque.valorEstoque(id_modulo = session.get("modulo").get("id"))
-        qtd_artigos = estoque.qtdArtigos()
+        dados_estoque = estoque.getEstoque(id_modulo = id_modulo)
+        valor_estoque = estoque.valorEstoque(id_modulo = id_modulo)
+        qtd_artigos = estoque.qtdArtigos(id_modulo = id_modulo)
         return render_template('estoque/visualizar_lista_estoque.html', 
                                dados_estq=dados_estoque, 
                                valor_estoque=valor_estoque, 
@@ -267,7 +273,7 @@ def iniciarIndex():
         
         tiposItens = estoque.getTiposItens()
         dados_item = estoque.getDadosItem(codigo_item)
-        return render_template('estoque/editar_item_estoque.html', dados_item=dados_item, tiposItens=tiposItens, nivel_acesso=session["nivel_acesso"])
+        return render_template('estoque/editar_item_estoque.html', dados_item=dados_item, tiposItens=tiposItens)
     
     @app.route('/estoque/<codigo_item>/deletar')
     @login_requerido
@@ -377,10 +383,9 @@ def iniciarIndex():
                 return redirect(url_for('visualizar_vendas'))
             
         ####################################################################### Fim if POST
-        itens = estoque.getEstoque()
+        itens = estoque.getEstoque(id_modulo=session.get("modulo").get("id"))
         dados_clientes = clientes.getClientesVenda()
-        id_atual = vendas.getQtyVendas(0, True) + 1
-        dados = [{"data": data, "operador": session["u_apelido"], "id_venda": id_atual}]
+        dados = [{"data": data, "operador": session.get("usuario").get("nome")}]
         lista_colaboradores = usuarios.getListaColaboradores(True)
         return render_template('venda/registrar_venda.html', dados_itens=json.dumps(itens), dados_gerais=json.dumps(dados), dados_clientes=json.dumps(dados_clientes), lista_colaboradores=json.dumps(lista_colaboradores))
     
@@ -388,16 +393,17 @@ def iniciarIndex():
     @login_requerido
     @macrofuncao_requerida('venda')
     def visualizar_vendas():
+        id_modulo = session.get("modulo").get("id")
         if request.method == "POST":
             pass
 
-        valor_vendas = vendas.getValorVendas(-1)
-        valor_vendas_hoje = vendas.getValorVendas(0)
+        valor_vendas = vendas.getValorVendas(-1, id_modulo=id_modulo)
+        valor_vendas_hoje = vendas.getValorVendas(0, id_modulo=id_modulo)
 
-        qtd_vendas = vendas.getQtyVendas(-1)
-        qtd_vendas_hoje = vendas.getQtyVendas(0)
+        qtd_vendas = vendas.getQtyVendas(-1, id_modulo=id_modulo)
+        qtd_vendas_hoje = vendas.getQtyVendas(0, id_modulo=id_modulo)
 
-        dados_vendas = vendas.getListaVendas()
+        dados_vendas = vendas.getListaVendas(id_modulo=id_modulo)
 
         for item in dados_vendas:
             item["data_venda"] = item["data_venda"].strftime("%d/%m/%Y")

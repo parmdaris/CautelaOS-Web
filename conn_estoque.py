@@ -1,5 +1,6 @@
 from ativ_sistema import conectarBanco
 from psycopg2 import errors as pg_err
+from flask import session
 
 def getEstoque(tipo_item = None, item_ativo = True, itens_criticos = False, id_modulo = None):
     connection = None
@@ -19,22 +20,33 @@ def getEstoque(tipo_item = None, item_ativo = True, itens_criticos = False, id_m
                             is_ativo, limiar_alerta, qty_atacado
                         from estoque.suprimentos where is_ativo = %s'''
         
+            sql_end = ''' order by codigo asc;''' 
+            sql_tipo = ''' and tipo_suprimento = %s'''
+            
+            if tipo_item is None:
+                sql = sql_start + sql_end
+                cursor.execute(sql, (item_ativo,))
+
+            else:
+                sql = sql_start + sql_tipo + sql_end
+                cursor.execute(sql, (item_ativo, tipo_item))
+        
         else:
             sql_start = '''select e.codigo, e.nome_item, e.tipo_suprimento, e.qty, e.valor_unitario, e.valor_atacado, 
                             e.is_ativo, e.limiar_alerta, e.qty_atacado, em.id_modulo from estoque.suprimentos e
-                            join estoque.estoques_modulos em on e.codigo = em.id_item where is_ativo = %s'''
+                            join estoque.estoques_modulos em on e.codigo = em.id_item where em.id_modulo = %s and is_ativo = %s'''
         
         
-        sql_end = ''' order by codigo asc;''' 
-        sql_tipo = ''' and tipo_suprimento = %s'''
-        
-        if tipo_item is None:
-            sql = sql_start + sql_end
-            cursor.execute(sql, (item_ativo,))
+            sql_end = ''' order by codigo asc;''' 
+            sql_tipo = ''' and tipo_suprimento = %s'''
+            
+            if tipo_item is None:
+                sql = sql_start + sql_end
+                cursor.execute(sql, (id_modulo, item_ativo))
 
-        else:
-            sql = sql_start + sql_tipo + sql_end
-            cursor.execute(sql, (item_ativo, tipo_item))
+            else:
+                sql = sql_start + sql_tipo + sql_end
+                cursor.execute(sql, (id_modulo, item_ativo, tipo_item))
 
 
         row = cursor.fetchall()
@@ -177,40 +189,69 @@ def valorEstoque(tipo_item = None, id_modulo = None):
     return valor_total
 
 
-def qtdArtigos(tipo_item = None, criticos=False, ativos = True, estoque_modulo = None):
+def qtdArtigos(tipo_item = None, criticos=False, ativos = True, id_modulo = None):
     connection = conectarBanco()
 
     connection.autocommit = True
     cursor = connection.cursor() 
 
-    if tipo_item == "":
-            tipo_item = None
-    
-    if tipo_item is None:
-        sql = '''select COUNT(*)  
-                from estoque.suprimentos where is_ativo = %s;'''
-        cursor.execute(sql, (ativos,))
+    if id_modulo == 1:
+        if tipo_item == "":
+                tipo_item = None
+        
+        if tipo_item is None:
+            sql = '''select COUNT(*)  
+                    from estoque.suprimentos where is_ativo = %s;'''
+            cursor.execute(sql, (ativos,))
+        else:
+            sql = '''select COUNT(*)  
+                        from estoque.suprimentos item where item.tipo_suprimento = %s and item.is_ativo = %s;'''
+            cursor.execute(sql, (tipo_item, ativos))
     else:
-        sql = '''select COUNT(*)  
-                    from estoque.suprimentos item where item.tipo_suprimento = %s and item.is_ativo = %s;'''
-        cursor.execute(sql, (tipo_item, ativos))
-    
+        if tipo_item == "":
+                tipo_item = None
+        
+        if tipo_item is None:
+            sql = '''select COUNT(*)  
+                    from estoque.suprimentos e
+                    join estoque.estoques_modulos em on e.codigo = em.id_item
+                    where em.id_modulo = %s
+                    and e.is_ativo = %s;'''
+            cursor.execute(sql, (id_modulo, ativos))
+        else:
+            sql = '''select COUNT(*)  
+                        from estoque.suprimentos e
+                        join estoque.estoques_modulos em on e.codigo = em.id_item
+                        where em.id_modulo = %s
+                        and e.tipo_suprimento = %s and e.is_ativo = %s;'''
+            cursor.execute(sql, (id_modulo, tipo_item, ativos))
+
     row = cursor.fetchall()
     qtd_artigos = int(row[0][0])
     return qtd_artigos
 
 
-def countArtigosCriticos(estoque_modulo = None):
+def countArtigosCriticos(id_modulo = None):
     connection = conectarBanco()
 
     connection.autocommit = True
     cursor = connection.cursor() 
 
-    sql = '''select COUNT(*)  
-                from estoque.suprimentos item where item.qty < item.limiar_alerta
+    if id_modulo == 1:
+        sql = '''select COUNT(*)  
+                    from estoque.suprimentos item where item.qty < item.limiar_alerta
+                    and item.is_ativo = True
+                    '''
+        cursor.execute(sql)
+    
+    else:
+        sql = '''select COUNT(*)  
+                from estoque.suprimentos item
+                join estoque.estoques_modulos em on item.codigo = em.id_item 
+                where item.qty < item.limiar_alerta
                 and item.is_ativo = True
                 '''
-    cursor.execute(sql)
+        cursor.execute(sql)
     
     criticos = cursor.fetchone()[0]
     return criticos
@@ -435,6 +476,8 @@ def adicionarItemDB(dados_item, id_operador):
             )
         )
 
+        registrarItemModulo(cursor, dados_item.get('codigo'))
+
         connection.commit()
 
     except pg_err.UniqueViolation:
@@ -455,6 +498,11 @@ def adicionarItemDB(dados_item, id_operador):
             connection.close()
 
     return True
+
+
+def registrarItemModulo(cursor, id_item):
+    query = '''insert into estoque.estoques_modulos (id_item, id_modulo) values (%s, %s)'''
+    cursor.execute(query, (id_item, session.get("modulo").get("id")))
 
 
 def definirAtivo(operador, codigo_item, ativar = bool):

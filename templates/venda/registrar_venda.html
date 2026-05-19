@@ -91,16 +91,14 @@
                 <label for="vendedor" name="vendedor">
                     Vendedor/Operador
 
-                    {% if tem_acesso(1, 2) %}
+                    {% if tem_acao("super_vendas") %}
                         <select name="vendedor">
+                        </select>
                     {%else%}
-                        <select disabled>
+                        <h3>{{session.get('usuario').get('nome')}}</h3>
+                        <input type="hidden" name="vendedor" value="{{ session.get('usuario').get('id') }}">
                     {% endif %}
-                    </select>
-
-                    {% if not tem_acesso(1, 2) %}
-                        <input type="hidden" name="vendedor" value="{{ session['u_id'] }}">
-                    {% endif %}
+                    
 
                 </label>
             </div>

@@ -91,7 +91,7 @@
     
     
     <div class="actions-bar rodape">
-        {%if nivel_acesso|int == 1 %}
+        {%if tem_acao("super_estoque") %}
         <a href="{{ url_for('deletarItem', codigo_item=dados_item.codigo) }}"
         class="btn remover"
         onclick="return confirm('Tem certeza que deseja excluir este item?')">

@@ -374,9 +374,6 @@ function focoLeitor(){
 document.addEventListener("DOMContentLoaded", function () {
 
     focoLeitor();
-    
-    const header = document.querySelector("header p");
-    header.textContent = `ID da Venda: ${dadosGerais.id_venda} - Data: ${dadosGerais.data} - Operador: ${dadosGerais.operador}`;
 
     document.querySelectorAll('select[name="id_cliente[]"]').forEach(select => {
         dadosClientes.forEach(cliente => {
@@ -401,7 +398,7 @@ document.addEventListener("DOMContentLoaded", function () {
         listaVendedores.forEach(vendedor => {
             const option = document.createElement('option');
             option.value = vendedor.id;
-            option.textContent = vendedor.apelido;
+            option.textContent = vendedor.nome;
             select.appendChild(option);
         });
     });

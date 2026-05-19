@@ -70,8 +70,11 @@ def macrofuncao_requerida(*macrofuncoes_requeridas):
 
 
 def tem_acesso(*permissoes): #Verifica se o nivel_acesso do usuario está na tupla "permissoes" e retorna true se sim e false se não.
-    return session.get("nivel_acesso") in permissoes
+    return session.get("usuario").get("funcoes_habilitadas") in permissoes
 
+
+def tem_acao(*permissoes):
+    return any(p in session.get("usuario").get("funcoes_habilitadas") for p in permissoes)
 
 
 def checarSenhaHash(hash, senha):
