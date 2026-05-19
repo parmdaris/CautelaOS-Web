@@ -177,8 +177,8 @@ def iniciarIndex():
     @macrofuncao_requerida('estoque')
     def ver_estoque():
         tipos = estoque.getTiposItens()
-        dados_estoque = estoque.getEstoque()
-        valor_estoque = estoque.valorEstoque()
+        dados_estoque = estoque.getEstoque(id_modulo = session.get("modulo").get("id"))
+        valor_estoque = estoque.valorEstoque(id_modulo = session.get("modulo").get("id"))
         qtd_artigos = estoque.qtdArtigos()
         return render_template('estoque/visualizar_lista_estoque.html', 
                                dados_estq=dados_estoque, 

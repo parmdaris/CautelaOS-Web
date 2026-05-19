@@ -1,7 +1,7 @@
 from ativ_sistema import conectarBanco
 from psycopg2 import errors as pg_err
 
-def getEstoque(tipo_item = None, item_ativo = True, itens_criticos = False):
+def getEstoque(tipo_item = None, item_ativo = True, itens_criticos = False, id_modulo = None):
     connection = None
     cursor = None
 
@@ -14,9 +14,17 @@ def getEstoque(tipo_item = None, item_ativo = True, itens_criticos = False):
         if tipo_item == "":
                 tipo_item = None
 
-        sql_start = '''select codigo, nome_item, tipo_suprimento, qty, valor_unitario, valor_atacado, 
+        if id_modulo == 1:
+            sql_start = '''select codigo, nome_item, tipo_suprimento, qty, valor_unitario, valor_atacado, 
                             is_ativo, limiar_alerta, qty_atacado
                         from estoque.suprimentos where is_ativo = %s'''
+        
+        else:
+            sql_start = '''select e.codigo, e.nome_item, e.tipo_suprimento, e.qty, e.valor_unitario, e.valor_atacado, 
+                            e.is_ativo, e.limiar_alerta, e.qty_atacado, em.id_modulo from estoque.suprimentos e
+                            join estoque.estoques_modulos em on e.codigo = em.id_item where is_ativo = %s'''
+        
+        
         sql_end = ''' order by codigo asc;''' 
         sql_tipo = ''' and tipo_suprimento = %s'''
         
@@ -68,7 +76,7 @@ def getEstoque(tipo_item = None, item_ativo = True, itens_criticos = False):
             connection.rollback()
         print(f"Erro ao conectar!")
         print(e)
-        return []
+        raise
 
     finally:
         if cursor:
@@ -77,27 +85,6 @@ def getEstoque(tipo_item = None, item_ativo = True, itens_criticos = False):
             connection.close()
 
     return itens_estoque
-
-def getTiposItens():
-    connection = conectarBanco()
-    connection.autocommit = True
-    cursor = connection.cursor() 
-    
-    sql = '''
-            select *
-            from estoque.tipos_itens 
-        '''
-    
-    cursor.execute(sql) 
-    row = cursor.fetchall()
-
-    tipo_item = [row[0] for row in row]
-
-    connection.close() 
-
-    return tipo_item
-
-
 
 
 def getDadosItem(codigo_item):
@@ -148,6 +135,107 @@ def getDadosItem(codigo_item):
     return dados_item
 
 
+def valorEstoque(tipo_item = None, id_modulo = None):
+    connection = conectarBanco()
+
+    connection.autocommit = True
+    cursor = connection.cursor() 
+
+    if tipo_item == "":
+            tipo_item = None
+
+    if id_modulo == 1:
+        if tipo_item is None:
+            sql = '''select qty, valor_unitario  
+                        from estoque.suprimentos;'''
+            cursor.execute(sql) 
+        else:
+            sql = '''select qty, valor_unitario  
+                        from estoque.suprimentos where tipo_suprimento = %s and is_ativo = True;'''
+            cursor.execute(sql, (tipo_item,))
+    else:
+        if tipo_item is None:
+            sql = '''select e.qty, e.valor_unitario  
+                        from estoque.suprimentos e 
+                        join estoque.estoques_modulos em 
+                        on e.codigo = em.id_item where em.id_modulo = %s'''
+            cursor.execute(sql, (id_modulo,)) 
+        else:
+            sql = '''select e.qty, e.valor_unitario  
+                        from estoque.suprimentos e 
+                        join estoque.estoques_modulos em 
+                        on e.codigo = em.id_item where em.id_modulo = %s and tipo_suprimento = %s and is_ativo = True;'''
+            cursor.execute(sql, (id_modulo, tipo_item))
+
+    row = cursor.fetchall()
+
+    valor = 0.0
+    for item in row:
+        valor += item[0] * float(item[1])
+    
+    valor_total = f"{valor:,.2f}".replace(",", "X").replace(".", ",").replace("X", ".")
+    return valor_total
+
+
+def qtdArtigos(tipo_item = None, criticos=False, ativos = True, estoque_modulo = None):
+    connection = conectarBanco()
+
+    connection.autocommit = True
+    cursor = connection.cursor() 
+
+    if tipo_item == "":
+            tipo_item = None
+    
+    if tipo_item is None:
+        sql = '''select COUNT(*)  
+                from estoque.suprimentos where is_ativo = %s;'''
+        cursor.execute(sql, (ativos,))
+    else:
+        sql = '''select COUNT(*)  
+                    from estoque.suprimentos item where item.tipo_suprimento = %s and item.is_ativo = %s;'''
+        cursor.execute(sql, (tipo_item, ativos))
+    
+    row = cursor.fetchall()
+    qtd_artigos = int(row[0][0])
+    return qtd_artigos
+
+
+def countArtigosCriticos(estoque_modulo = None):
+    connection = conectarBanco()
+
+    connection.autocommit = True
+    cursor = connection.cursor() 
+
+    sql = '''select COUNT(*)  
+                from estoque.suprimentos item where item.qty < item.limiar_alerta
+                and item.is_ativo = True
+                '''
+    cursor.execute(sql)
+    
+    criticos = cursor.fetchone()[0]
+    return criticos
+
+
+
+def getTiposItens():
+    connection = conectarBanco()
+    connection.autocommit = True
+    cursor = connection.cursor() 
+    
+    sql = '''
+            select *
+            from estoque.tipos_itens 
+        '''
+    
+    cursor.execute(sql) 
+    row = cursor.fetchall()
+
+    tipo_item = [row[0] for row in row]
+
+    connection.close() 
+
+    return tipo_item
+
 
 def decrementarItem(codigo_item, quantidade):
     try:
@@ -171,7 +259,7 @@ def decrementarItem(codigo_item, quantidade):
         if connection:
             connection.rollback()
         print(f"Erro ao atualizar item: {e}")
-        return 1
+        raise
     
     finally:
         if cursor:
@@ -203,7 +291,7 @@ def incrementarItem(codigo_item, quantidade):
         if connection:
             connection.rollback()
         print(f"Erro ao atualizar item: {e}")
-        return 1
+        raise
     
     finally:
         if cursor:
@@ -212,76 +300,6 @@ def incrementarItem(codigo_item, quantidade):
             connection.close()
 
     return 0
-
-
-def valorEstoque(tipo_item = None):
-    connection = conectarBanco()
-
-    connection.autocommit = True
-    cursor = connection.cursor() 
-
-    if tipo_item == "":
-            tipo_item = None
-
-    if tipo_item is None:
-        sql = '''select qty, valor_unitario  
-                    from estoque.suprimentos;'''
-        cursor.execute(sql) 
-    else:
-        sql = '''select qty, valor_unitario  
-                    from estoque.suprimentos where tipo_suprimento = %s and is_ativo = True;'''
-        cursor.execute(sql, (tipo_item,))
-
-    row = cursor.fetchall()
-
-    valor = 0.0
-    for item in row:
-        valor += item[0] * float(item[1])
-    
-    valor_total = f"{valor:,.2f}".replace(",", "X").replace(".", ",").replace("X", ".")
-    return valor_total
-
-
-
-
-def qtdArtigos(tipo_item = None, criticos=False, ativos = True):
-    connection = conectarBanco()
-
-    connection.autocommit = True
-    cursor = connection.cursor() 
-
-    if tipo_item == "":
-            tipo_item = None
-    
-    if tipo_item is None:
-        sql = '''select COUNT(*)  
-                from estoque.suprimentos where is_ativo = %s;'''
-        cursor.execute(sql, (ativos,))
-    else:
-        sql = '''select COUNT(*)  
-                    from estoque.suprimentos item where item.tipo_suprimento = %s and item.is_ativo = %s;'''
-        cursor.execute(sql, (tipo_item, ativos))
-    
-    row = cursor.fetchall()
-    qtd_artigos = int(row[0][0])
-    return qtd_artigos
-
-
-def countArtigosCriticos():
-    connection = conectarBanco()
-
-    connection.autocommit = True
-    cursor = connection.cursor() 
-
-    sql = '''select COUNT(*)  
-                from estoque.suprimentos item where item.qty < item.limiar_alerta
-                and item.is_ativo = True
-                '''
-    cursor.execute(sql)
-    
-    criticos = cursor.fetchone()[0]
-    return criticos
-
 
 
 def alterarItemDB(dados_item, codigo_item, id_operador):
@@ -349,7 +367,7 @@ def alterarItemDB(dados_item, codigo_item, id_operador):
         if connection:
             connection.rollback()
         print(f"Erro ao atualizar item: {e}")
-        return 1
+        raise
     
     finally:
         if cursor:
@@ -428,7 +446,7 @@ def adicionarItemDB(dados_item, id_operador):
         if connection:
             connection.rollback()
         print(f"Erro ao atualizar item: {e}")
-        return False
+        raise
     
     finally:
         if cursor:
@@ -456,7 +474,7 @@ def definirAtivo(operador, codigo_item, ativar = bool):
         traceModificacao(operador, codigo_item)
     except Exception as e:
         print(f"Erro ao atualizar item: {e}")
-        return 1
+        raise
     return 0
 
 
@@ -475,7 +493,7 @@ def deletarItem(codigo_item):
         connection.close()
     except Exception as e:
         print(f"Erro ao atualizar item: {e}")
-        return 1
+        raise
     return 0
 
 
@@ -489,6 +507,6 @@ def traceModificacao(u_id, codigo_item):
                     (u_id, codigo_item)
                 )
     except Exception as e:
-        print(f"Erro ao atualizar traceback de modificações: {e}")
+        raise
 
 
