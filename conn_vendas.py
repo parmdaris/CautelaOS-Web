@@ -102,7 +102,7 @@ def registrarItensVenda(id_venda, itens_venda):
         if connection:
             connection.rollback()
         print(f"Erro ao gravar item: {e}")
-        return 1
+        raise
     
     finally:
         if cursor:
@@ -167,7 +167,7 @@ def getQtyVendas(intervalo_dias = 0, todas = False, id_modulo = None):
         if connection:
             connection.rollback()
         print(f"Erro ao gravar item: {e}")
-        return 1
+        raise
     
     finally:
         if cursor:

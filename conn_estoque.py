@@ -159,24 +159,24 @@ def valorEstoque(tipo_item = None, id_modulo = None):
     if id_modulo == 1:
         if tipo_item is None:
             sql = '''select qty, valor_unitario  
-                        from estoque.suprimentos;'''
+                        from estoque.suprimentos where is_ativo = true;'''
             cursor.execute(sql) 
         else:
             sql = '''select qty, valor_unitario  
-                        from estoque.suprimentos where tipo_suprimento = %s and is_ativo = True;'''
+                        from estoque.suprimentos where tipo_suprimento = %s and is_ativo = true;'''
             cursor.execute(sql, (tipo_item,))
     else:
         if tipo_item is None:
             sql = '''select e.qty, e.valor_unitario  
                         from estoque.suprimentos e 
                         join estoque.estoques_modulos em 
-                        on e.codigo = em.id_item where em.id_modulo = %s'''
+                        on e.codigo = em.id_item where em.id_modulo = %s and is_ativo = true'''
             cursor.execute(sql, (id_modulo,)) 
         else:
             sql = '''select e.qty, e.valor_unitario  
                         from estoque.suprimentos e 
                         join estoque.estoques_modulos em 
-                        on e.codigo = em.id_item where em.id_modulo = %s and tipo_suprimento = %s and is_ativo = True;'''
+                        on e.codigo = em.id_item where em.id_modulo = %s and tipo_suprimento = %s and is_ativo = true;'''
             cursor.execute(sql, (id_modulo, tipo_item))
 
     row = cursor.fetchall()
