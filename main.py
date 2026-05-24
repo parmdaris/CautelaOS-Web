@@ -1,4 +1,4 @@
-from flask import Flask, url_for, render_template, request, redirect, session, current_app
+from flask import Flask, url_for, render_template, request, redirect, session, current_app, jsonify
 from conn_auth import login_requerido, gerarSenhaHash, tem_acesso, permissao_requerida, macrofuncao_requerida, tem_acao
 from ativ_sistema import inicializarCfg, getVersao, getListaFuncoes
 from conn_estoque import moeda_para_float
@@ -226,6 +226,14 @@ def iniciarIndex():
                                qtd_artigos=qtd_artigos_inativos,
                                tipos_itens=tipos
                                )
+    
+    @app.route("/buscar", methods=["POST"])
+    def buscar():
+        dados = request.get_json()
+        #filtro = dados.get("filtro")
+        resultado = [{"nome": "Item 1","descricao": "Descrição 1"},{"nome": "Item 2","descricao": "Descrição 2"}]
+
+        return jsonify(resultado)
 
     
     @app.route("/estoque/<codigo_item>/ver")
@@ -343,6 +351,7 @@ def iniciarIndex():
             criticos=itens_criticos,
             nome_modulo=nome_modulo
         )
+
 
 
 ################################################################################# Vendas

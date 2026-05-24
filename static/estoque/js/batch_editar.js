@@ -51,3 +51,47 @@ document.addEventListener("DOMContentLoaded", function () {
         .replace(/[^A-Z0-9-]/g, "");
     });
 });
+
+
+async function buscarDados() {
+
+    const filtro = document.getElementById("filtro").value;
+
+    const resposta = await fetch("/buscar", {
+        method: "POST",
+
+        headers: {
+            "Content-Type": "application/json"
+        },
+
+        body: JSON.stringify({
+            filtro: filtro
+        })
+    });
+
+    const dados = await resposta.json();
+
+    let html = "";
+
+    dados.forEach(item => {
+
+        html += `
+            <div class="item">
+                <strong>${item.nome}</strong>
+                <p>${item.descricao}</p>
+            </div>
+        `;
+    });
+
+    document.getElementById("resultado").innerHTML = html;
+
+    abrirModal();
+}
+
+function abrirModal() {
+    document.getElementById("modal").style.display = "flex";
+}
+
+function fecharModal() {
+    document.getElementById("modal").style.display = "none";
+}

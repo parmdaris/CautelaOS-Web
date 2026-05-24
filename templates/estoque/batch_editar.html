@@ -3,7 +3,7 @@
 {% block title %}Edição em lote - CautelaOS{% endblock %}
 
 {% block extra_css %}
-<link rel="stylesheet" href="{{ url_for('static', filename='estoque/css/adicionar_item_estoque.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='estoque/css/batch_editar.css') }}">
 <link rel="stylesheet" href="{{ url_for('static', filename='index/css/common_contents.css') }}">
 {% endblock %}
 
@@ -17,38 +17,114 @@
           action="{{ url_for('adicionarItem') }}"
           method="POST">
 
-          <div>
+          <div class="container-filtros">
+                <h3>Filtros</h3>
+                <hr>
                 <div style="display: flex; flex-direction: column;">
-                    <p>Filtros</p>
                     <div style="display: inline-flex; flex-direction: row;">
-                        <select name="combobox1" style="margin: 10px; width: 150px;">
-                            <option value="1">1</option>
-                            <option value="2">2</option>
-                            <option value="3">3</option>
-                        </select>
-                        <select name="combobox2" style="margin: 10px; width: 150px;">
-                            <option value="1">1</option>
-                            <option value="2">2</option>
-                            <option value="3">3</option>
-                        </select>
-                        <select name="combobox3" style="margin: 10px; width: 150px;">
-                            <option value="1">1</option>
-                            <option value="2">2</option>
-                            <option value="3">3</option>
-                        </select>
+
+                        <div class="label-combobox-filtro">
+                            <label for="combobox1">Tipo</label>
+                            <select class="select padrao" id="combobox1" style="width: 100%;">
+                                <option value="0">Não aplicar</option>
+                                <option value="1">1</option>
+                                <option value="2">2</option>
+                                <option value="3">3</option>
+                            </select>
+                        </div>
+
+                        <div class="label-combobox-filtro">
+                            <label for="combobox2">Subtipo</label>
+                            <select class="select padrao" id="combobox2" style="width: 100%;">
+                                <option value="0">Não aplicar</option>
+                                <option value="1">1</option>
+                                <option value="2">2</option>
+                                <option value="3">3</option>
+                            </select>
+                        </div>
+
+                        {% if session.get('modulo').get('id') == 1 %}
+                        <div class="label-combobox-filtro">
+                            <label for="combobox3">Módulo</label>
+                            <select class="select padrao" id="combobox3" style="width: 100%;">
+                                <option value="0">Não aplicar</option>
+                                <option value="1">1</option>
+                                <option value="2">2</option>
+                                <option value="3">3</option>
+                            </select>
+                        </div>
+                        {% endif %}
                     </div>
                 </div>
 
                 <div style="display: flex; flex-direction: column;">
-                    <p>Lista de SKU</p>
-                    <textarea></textarea>
+                    <label for="lista_sku">Lista de SKU</p>
+                    <textarea id="lista_sku"></textarea>
                 </div>
-          </div>
+            </div>
+
+            <div class="container-dados-alt">
+                <h3>Dados a alterar</h3>
+                <hr>
+
+                <div class="campos-row">
+                    <div class="label-campo-dado">
+                        <label for="tipo-item">Tipo de item:</label>
+                        <select id="tipo-item" name="tipo-item" class="select padrao">
+                            <option value="0">Não alterar</option>
+                        </select>
+                    </div>
+                    
+                    <div class="label-campo-dado">
+                        <label for="subtipo-item">Subtipo do item:</label>
+                        <select id="subtipo-item" name="subtipo-item" class="select padrao">
+                            <option value="0">Não alterar</option>
+                        </select>
+                    </div>
+                    
+                    <div class="label-campo-dado">
+                        <label for="modulo-item">Módulo:</label>
+                        <select id="modulo-item" name="modulo-item" class="select padrao">
+                            <option value="0">Não alterar</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="campos-row">
+
+                    <div class="label-campo-dado">
+                        <label for="qtd-item">Quantidade:</label>
+                        <input class="input padrao" type="number">
+                    </div>
+
+                    <div class="label-campo-dado">
+                        <label for="limiar-alerta">Limiar de alerta:</label>
+                        <input class="input padrao" type="number">
+                    </div>
+
+                    <div class="label-campo-dado">
+                        <label for="valor-atacado">Valor de atacado:</label>
+                        <input class="input padrao" type="text">
+                    </div>
+                </div>
+                
+                <div class="campos-row">
+                    <div class="label-campo-dado">
+                        <label for="valor-varejo">Valor de varejo:</label>
+                        <input class="input padrao" type="text">
+                    </div>
+
+                    <div class="label-campo-dado">
+                        <label for="qtd-atacado">Quantidade de atacado:</label>
+                        <input class="input padrao" type="number">
+                    </div>
+                </div>
+
+            </div>
 
         <div class="actions-bar rodape">
             <a href="{{ url_for('ver_estoque') }}" class="btn cancelar">🛇 Cancelar</a>
-            <button type="submit" name="acao" value="salvar_outro" class="btn adicionar">+ Salvar e adicionar outro</button>
-            <button type="submit" name="acao" value="salvar" class="btn salvar">✓ Salvar</button>
+            <button type="submit" name="acao" value="salvar" class="btn salvar">✓ Aplicar edição</button>
         </div>
 
     </form>

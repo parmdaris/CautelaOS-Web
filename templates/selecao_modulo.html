@@ -6,6 +6,9 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='index/css/selecionar_modulo.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='index/css/common_contents.css') }}">
     <link rel="icon" type="image/png" href="{{ url_for('static', filename='resources/logo.png') }}"/>
+    {% for modulo in modulos %}
+        <style>:root {--cor-primaria: {{ modulo.cor_pri }};</style>
+    {% endfor %}
 </head>
 <body>
 
@@ -29,9 +32,9 @@
         <div class="module-container">
             {% for modulo in modulos %}
                 {% if modulo.id in usr_modulos %}
-                <a href="{{ url_for('definir_modulo', id_modulo=modulo.id) }}" style="text-decoration: none; margin-right: 25px;">
-                    <div class="module-card" style="height: 100px; width: 300px; padding: 20px; align-content: center; background-color: {{ modulo.cor_pri }}">
-                        <img src="{{ url_for('static', filename=modulo.splash_src) }}" style="width: 250px;">
+                <a href="{{ url_for('definir_modulo', id_modulo=modulo.id) }}" class="module-link">
+                    <div class="module-card" style="--cor-primaria: {{ modulo.cor_pri }}">
+                        <img src="{{ url_for('static', filename=modulo.splash_src) }}" alt="{{ modulo.nome }}">
                     </div>
                 </a>
                 {% endif %}
