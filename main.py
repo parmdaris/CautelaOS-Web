@@ -221,7 +221,7 @@ def iniciarIndex():
         tipos = estoque.getTiposItens()
         dados_estoque = estoque.getEstoque(None, False)
         qtd_artigos_inativos = estoque.qtdArtigos(None, False)
-        return render_template('estoque/editar_lote.html', 
+        return render_template('estoque/batch_editar.html', 
                                dados_estq=dados_estoque, 
                                qtd_artigos=qtd_artigos_inativos,
                                tipos_itens=tipos
@@ -295,6 +295,7 @@ def iniciarIndex():
     @login_requerido
     @macrofuncao_requerida('estoque')
     def imprimir_estoque():
+        id_modulo = session.get("modulo").get("id")
         parametros = request.form.to_dict()
 
         tipo = parametros.get('tipo-filtro')
@@ -308,21 +309,28 @@ def iniciarIndex():
 
         itens_criticos = True if estado == "True" else False
         if itens_criticos:
-            qtd_artigos = estoque.countArtigosCriticos()
+            qtd_artigos = estoque.countArtigosCriticos(id_modulo=id_modulo)
         else:
-            qtd_artigos = estoque.qtdArtigos(tipo)
+            qtd_artigos = estoque.qtdArtigos(tipo_item=tipo, id_modulo=id_modulo)
 
 
         itens_estoque = estoque.getEstoque(
             tipo_item=tipo,
             item_ativo=True,
-            itens_criticos=itens_criticos
+            itens_criticos=itens_criticos,
+            id_modulo= id_modulo
         )
 
-        valor_estoque = estoque.valorEstoque(tipo)
+        valor_estoque = estoque.valorEstoque(tipo_item = tipo, id_modulo = id_modulo)
 
-        operador = session["u_apelido"]
-        id_operador = session["usuario"]["id"]
+        operador = session.get("usuario").get("nome")
+        id_operador = session.get("usuario").get("id")
+
+        if session.get("modulo").get("id") == 1:
+            nome_modulo = session.get("modulo").get("nome")
+        else:
+            nome_modulo = session.get("modulo").get("nome") + " (" + session.get("modulo").get("empresa") + ")"
+
         return render_template(
             'estoque/template_print_estoque.html',
             data=data, hora=hora,
@@ -332,7 +340,8 @@ def iniciarIndex():
             categoria=tipo or "Todos",
             operador=operador,
             id_operador=id_operador,
-            criticos=itens_criticos
+            criticos=itens_criticos,
+            nome_modulo=nome_modulo
         )
 
 

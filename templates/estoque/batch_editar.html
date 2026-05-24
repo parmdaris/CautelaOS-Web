@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+
+{% block title %}Edição em lote - CautelaOS{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='estoque/css/adicionar_item_estoque.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='index/css/common_contents.css') }}">
+{% endblock %}
+
+{% block content %}
+
+<h1 class="page-title">📦 Estoque • Edição em lote</h1>
+
+<div class="page-card">
+
+    <form class="form-group"
+          action="{{ url_for('adicionarItem') }}"
+          method="POST">
+
+          <div>
+                <div style="display: flex; flex-direction: column;">
+                    <p>Filtros</p>
+                    <div style="display: inline-flex; flex-direction: row;">
+                        <select name="combobox1" style="margin: 10px; width: 150px;">
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                        </select>
+                        <select name="combobox2" style="margin: 10px; width: 150px;">
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                        </select>
+                        <select name="combobox3" style="margin: 10px; width: 150px;">
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div style="display: flex; flex-direction: column;">
+                    <p>Lista de SKU</p>
+                    <textarea></textarea>
+                </div>
+          </div>
+
+        <div class="actions-bar rodape">
+            <a href="{{ url_for('ver_estoque') }}" class="btn cancelar">🛇 Cancelar</a>
+            <button type="submit" name="acao" value="salvar_outro" class="btn adicionar">+ Salvar e adicionar outro</button>
+            <button type="submit" name="acao" value="salvar" class="btn salvar">✓ Salvar</button>
+        </div>
+
+    </form>
+
+</div>
+
+
+
+{% endblock %}
+
+{% block extra_js %}
+<script>const nomeOperador = "{{ session['nome_operador'] }}";</script>
+<script id="tipos-itens" type="application/json"></script>
+{% endblock %}

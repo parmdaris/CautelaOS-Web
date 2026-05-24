@@ -20,7 +20,7 @@ def getEstoque(tipo_item = None, item_ativo = True, itens_criticos = False, id_m
                             is_ativo, limiar_alerta, qty_atacado
                         from estoque.suprimentos where is_ativo = %s'''
         
-            sql_end = ''' order by codigo asc;''' 
+            sql_end = ''' order by nome_item asc;''' 
             sql_tipo = ''' and tipo_suprimento = %s'''
             
             if tipo_item is None:
@@ -37,7 +37,7 @@ def getEstoque(tipo_item = None, item_ativo = True, itens_criticos = False, id_m
                             join estoque.estoques_modulos em on e.codigo = em.id_item where em.id_modulo = %s and is_ativo = %s'''
         
         
-            sql_end = ''' order by codigo asc;''' 
+            sql_end = ''' order by e.nome_item asc;''' 
             sql_tipo = ''' and tipo_suprimento = %s'''
             
             if tipo_item is None:

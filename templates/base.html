@@ -82,7 +82,7 @@
                                         <a href="{{ url_for('adicionarItem') }}">➕ Adicionar item</a>
                                     {%endif%}
                                     {% if "estoque_editar" in session.get("usuario", {}).get("funcoes_habilitadas", []) %}
-                                        <a href="{{ url_for('adicionarItem') }}">✏️ Alteração em lote</a>
+                                        <a href="{{ url_for('editar_lote') }}">✏️ Edição em lote</a>
                                     {%endif%}
                                 </div>
                             </div>
